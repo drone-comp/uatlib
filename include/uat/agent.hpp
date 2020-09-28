@@ -102,7 +102,7 @@ public:
   template <typename Agent>
   agent(Agent a) : interface_(new agent_model<Agent>(std::move(a)))
   {
-    static_assert(is_detected_convertible_v<bool, act_t, Agent>, "missing method 'Agent::act(bid_t) -> Boolean'");
+    static_assert(is_detected_convertible_v<bool, act_t, Agent>, "missing method 'Agent::act(t, bid, status, seed) -> Boolean'");
     assert(interface_);
   }
 

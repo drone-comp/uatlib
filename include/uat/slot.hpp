@@ -39,6 +39,12 @@ using shortest_path_t = decltype(std::declval<const T&>().shortest_path(std::dec
 template <typename T>
 using print_t = decltype(std::declval<const T&>().print(std::declval<std::function<void(std::string_view, fmt::format_args)>>()));
 
+template <typename T>
+using climb_t = decltype(std::declval<const T&>().climb(std::declval<const T&>()));
+
+template <typename T>
+using turn_t = decltype(std::declval<const T&>().turn(std::declval<const T&>(), std::declval<const T&>()));
+
 class slot
 {
   class slot_interface
@@ -125,14 +131,20 @@ class slot
 
     auto turn(const slot_interface& before, const slot_interface& to) const -> bool override
     {
-      return slot_.turn(
-          dynamic_cast<const slot_model&>(before).slot_,
-          dynamic_cast<const slot_model&>(to).slot_);
+      if constexpr (is_detected_convertible_v<bool, turn_t, Slot>)
+        return slot_.turn(
+            dynamic_cast<const slot_model&>(before).slot_,
+            dynamic_cast<const slot_model&>(to).slot_);
+      else
+        return false;
     }
 
     auto climb(const slot_interface& to) const -> bool override
     {
-      return slot_.climb(dynamic_cast<const slot_model&>(to).slot_);
+      if constexpr (is_detected_convertible_v<bool, climb_t, Slot>)
+        return slot_.climb(dynamic_cast<const slot_model&>(to).slot_);
+      else
+        return false;
     }
 
   private:
