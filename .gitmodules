@@ -1,0 +1,9 @@
+[submodule "external/jules"]
+	path = external/jules
+	url = https://github.com/verri/jules
+[submodule "external/cool"]
+	path = external/cool
+	url = https://github.com/verri/cool
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt
