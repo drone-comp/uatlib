@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+project(UAT VERSION 0.5.0)
 
 add_subdirectory(external/fmt)
 add_subdirectory(external/cool)
@@ -21,5 +22,11 @@ target_compile_features(uat PRIVATE cxx_std_17)
 target_include_directories(uat PUBLIC include)
 
 find_package(Boost 1.56 REQUIRED)
-target_link_libraries(uat PRIVATE cool jules fmt)
+target_link_libraries(uat PUBLIC cool jules fmt)
 # target_link_libraries(uat PUBLIC type_safe)
+
+option(UAT_BUILD_TEST "whether or not to build the test" OFF)
+if(UAT_BUILD_TEST)
+  enable_testing()
+  add_subdirectory(test)
+endif()
