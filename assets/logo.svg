@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="123.49306mm"
+   width="121.90556mm"
    height="44.140923mm"
-   viewBox="0 0 123.49306 44.140923"
+   viewBox="0 0 121.90557 44.140923"
    version="1.1"
    id="svg1572"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.2260529"
-     inkscape:cx="233.37271"
-     inkscape:cy="78.86149"
+     inkscape:zoom="1.5740571"
+     inkscape:cx="336.01551"
+     inkscape:cy="86.500713"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -91,11 +91,11 @@
        sodipodi:nodetypes="cccccccc"
        inkscape:connector-curvature="0"
        id="path949"
-       d="m 119.17134,75.94774 2.45712,6.552666 -5.88449,22.553974 16.12924,6.95328 2.43516,6.49416 -23.96896,-8.81829 -1.93057,-5.14852 z"
+       d="m 119.70051,75.94774 2.45712,6.552666 -5.88449,22.553974 16.12924,6.95328 2.43516,6.49416 -23.96896,-8.81829 -1.93057,-5.14852 z"
        style="fill:#000000;stroke:#000000;stroke-width:0.699819px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     <g
        id="g974"
-       transform="matrix(2.6448935,0.02230474,-0.02230474,2.6448935,-85.525485,-72.23181)">
+       transform="matrix(2.6448935,0.02230474,-0.02230474,2.6448935,-87.112986,-72.23181)">
       <path
          style="fill:#000000;stroke:#000000;stroke-width:0.214542px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 86.580884,62.559063 -0.09229,-0.987894 c 5.940046,-0.748571 4.829199,-1.655294 -0.229912,-2.460938 l -0.09147,-0.979082 c 12.533689,0.60382 12.174055,3.701925 0.413676,4.427914 z"
@@ -117,7 +117,7 @@
     </g>
     <path
        style="fill:#000000;stroke:#000000;stroke-width:1.01425px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 137.67343,104.04101 137.319,90.42846 131.49601,88.148605 c 1.34653,7.196387 2.04002,9.144482 -1.76098,15.755925 l 8.4177,0.57402"
+       d="m 137.14426,104.04101 -0.35443,-13.61255 -5.82299,-2.279855 c 1.34653,7.196387 2.04002,9.144482 -1.76098,15.755925 l 8.4177,0.57402"
        id="path969"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />

@@ -1,3 +1,3 @@
 <img src="assets/logo.png"></img>
 
-# uatlib: Urban Airspace Traffic Simulation Library
+# uatlib: a C++ simulation library for Urban Airspace Tradable Permit Model
