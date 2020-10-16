@@ -95,7 +95,7 @@ int main()
   };
 
   jules::vector<value_t> cost(n * lambda);
-  simulate(factory, my_airspace{}, 17, [&](trade_info_t info) {
+  simulate(factory, my_airspace{}, 1000, 17, [&](trade_info_t info) {
     if (info.from != no_owner)
       cost[info.from] -= info.value;
     cost[info.to] += info.value;

@@ -27,15 +27,17 @@ struct used {
   uint_t owner;
 };
 
+struct out_of_limits {
+};
 
-using private_status = std::variant<onsale, used>;
+using private_status = std::variant<onsale, used, out_of_limits>;
 
 } // namespace uat
 
 namespace uat
 {
 
-auto simulate(factory_t factory, airspace space, int seed, trade_callback_t callback) -> void
+auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callback_t callback) -> void
 {
   std::mt19937 rnd(seed);
 
@@ -45,8 +47,12 @@ auto simulate(factory_t factory, airspace space, int seed, trade_callback_t call
   uint_t t0 = 0;
 
   std::deque<std::unordered_map<tslot, private_status>> data;
-  auto book = [&t0, &data](const slot& slot, uint_t t) mutable -> private_status& {
+
+  private_status ool = out_of_limits{};
+  auto book = [T, &t0, &data, &ool](const slot& slot, uint_t t) mutable -> private_status& {
     assert(t >= t0);
+    if (t > t0 + T)
+      return ool;
     while (t - t0 >= data.size())
       data.emplace_back();
     return data[t - t0][{slot, t}];
@@ -55,6 +61,7 @@ auto simulate(factory_t factory, airspace space, int seed, trade_callback_t call
   auto public_access = [&book](auto id) {
     return [id = id, &book](const slot& s, uint_t t) -> slot_status {
       return std::visit(cool::compose{
+        [](out_of_limits) -> slot_status { return unavailable{}; },
         [&](used status) -> slot_status { return status.owner == id ? slot_status{owned{}} : unavailable{}; },
         [&](onsale status) -> slot_status { return status.owner == id ? slot_status{unavailable{}} : available{status.min_value}; }
       }, book(s, t));
@@ -83,6 +90,7 @@ auto simulate(factory_t factory, airspace space, int seed, trade_callback_t call
         const auto r = agents[id].act(t0, [&](const slot& s, uint_t t, value_t v) -> bool {
           if (t < t0) return false;
           return std::visit(cool::compose{
+            [](out_of_limits) { return false; },
             [](used) { return false; },
             [&](onsale& status) {
               if (v > status.min_value && v > status.highest_bid)
@@ -125,6 +133,7 @@ auto simulate(factory_t factory, airspace space, int seed, trade_callback_t call
         agents[id].after_auction(t0, [&](const slot& s, uint_t t, value_t v) -> bool {
           if (t < t0) return false;
           return std::visit(cool::compose{
+            [](out_of_limits) { return false; },
             [](onsale) { return false; },
             [&](used& status) {
               if (status.owner != id)

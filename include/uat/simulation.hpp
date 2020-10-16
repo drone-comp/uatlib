@@ -28,7 +28,7 @@ struct trade_info_t {
 using trade_callback_t = std::function<void(trade_info_t)>;
 
 // (First-price sealed-bid auction)
-auto simulate(factory_t, airspace, int seed, trade_callback_t) -> void;
+auto simulate(factory_t, airspace, uint_t T, int seed, trade_callback_t) -> void;
 
 } // namespace uat
 
