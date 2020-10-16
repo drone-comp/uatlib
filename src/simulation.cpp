@@ -37,7 +37,7 @@ using private_status = std::variant<onsale, used, out_of_limits>;
 namespace uat
 {
 
-auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callback_t callback) -> void
+auto simulate(factory_t factory, airspace space, int seed, const simulation_opts_t& opts) -> void
 {
   std::mt19937 rnd(seed);
 
@@ -49,9 +49,9 @@ auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callb
   std::deque<std::unordered_map<tslot, private_status>> data;
 
   private_status ool = out_of_limits{};
-  auto book = [T, &t0, &data, &ool](const slot& slot, uint_t t) mutable -> private_status& {
+  auto book = [&t0, &data, &ool, &opts](const slot& slot, uint_t t) mutable -> private_status& {
     assert(t >= t0);
-    if (t > t0 + T)
+    if (opts.time_window && t > t0 + *opts.time_window)
       return ool;
     while (t - t0 >= data.size())
       data.emplace_back();
@@ -66,6 +66,13 @@ auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callb
         [&](onsale status) -> slot_status { return status.owner == id ? slot_status{unavailable{}} : available{status.min_value}; }
       }, book(s, t));
     };
+  };
+
+  const auto stop = [&] {
+    return std::visit(cool::compose{
+      [&](no_agents_t) { return active.size() == 0;  },
+      [&](time_threshold_t th) { return t0 > th.t; },
+    }, opts.stop_criteria);
   };
 
   do
@@ -115,8 +122,8 @@ auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callb
       for (const auto& [s, t] : bids)
       {
         const auto status = std::get<onsale>(book(s, t));
-        if (callback)
-          callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
+        if (opts.trade_callback)
+          opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
         agents[status.highest_bidder].on_bought(s, t, status.highest_bid);
         if (status.owner != no_owner)
@@ -155,7 +162,7 @@ auto simulate(factory_t factory, airspace space, uint_t T, int seed, trade_callb
     std::swap(active, keep_active);
     data.pop_front();
     ++t0;
-  } while (active.size() > 0);
+  } while (!stop());
 }
 
 } // namespace uat

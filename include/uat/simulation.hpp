@@ -27,8 +27,21 @@ struct trade_info_t {
 
 using trade_callback_t = std::function<void(trade_info_t)>;
 
+struct no_agents_t {};
+struct time_threshold_t {
+  uint_t t;
+};
+
+using stop_criteria_t = std::variant<no_agents_t, time_threshold_t>;
+
+struct simulation_opts_t {
+  std::optional<uint_t> time_window;
+  stop_criteria_t stop_criteria;
+  trade_callback_t trade_callback;
+};
+
 // (First-price sealed-bid auction)
-auto simulate(factory_t, airspace, uint_t T, int seed, trade_callback_t) -> void;
+auto simulate(factory_t, airspace, int seed, const simulation_opts_t& = {}) -> void;
 
 } // namespace uat
 

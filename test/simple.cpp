@@ -95,11 +95,15 @@ int main()
   };
 
   jules::vector<value_t> cost(n * lambda);
-  simulate(factory, my_airspace{}, 1000, 17, [&](trade_info_t info) {
+
+  simulation_opts_t opts;
+  opts.trade_callback = [&](trade_info_t info) {
     if (info.from != no_owner)
       cost[info.from] -= info.value;
     cost[info.to] += info.value;
-  });
+  };
+
+  simulate(factory, my_airspace{}, 17, opts);
 
   const auto [mean, sd] = jules::meansd(cost);
   fmt::print("Average cost: {} ± {}\n", mean, sd);
