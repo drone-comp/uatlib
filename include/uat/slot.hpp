@@ -235,7 +235,7 @@ template <>
 struct fmt::formatter<uat::slot>
 {
   constexpr auto parse(format_parse_context& ctx) {
-    if (*ctx.begin() != '}')
+    if (ctx.begin() != ctx.end() && *ctx.begin() != '}')
       throw format_error("invalid format");
     return ctx.begin();
   }
