@@ -245,7 +245,7 @@ struct fmt::formatter<uat::slot>
   {
     auto out = ctx.out();
     p.print_to([&ctx, &out](std::string_view str, format_args args) {
-      out = vformat_to(ctx.out(), str, args);
+      out = vformat_to(ctx.out(), str, std::move(args));
     });
     return out;
   }
