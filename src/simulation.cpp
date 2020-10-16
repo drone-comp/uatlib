@@ -15,22 +15,6 @@
 namespace uat
 {
 
-struct onsale {
-  uint_t owner = no_owner;
-  value_t min_value = 1.0;
-
-  uint_t highest_bidder = no_owner;
-  value_t highest_bid = 0.0;
-};
-
-struct used {
-  uint_t owner;
-};
-
-struct out_of_limits {
-};
-
-using private_status = std::variant<onsale, used, out_of_limits>;
 
 } // namespace uat
 
@@ -77,6 +61,9 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
 
   do
   {
+    if (opts.status_callback)
+      opts.status_callback(t0, space, [&book](const slot& slot, uint_t t) -> private_status { return book(slot, t); });
+
     {
       using namespace jules::ranges;
       auto new_agents = factory(t0, space, rnd());
