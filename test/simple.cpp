@@ -13,8 +13,9 @@ class my_agent
 public:
   explicit my_agent(mission_t mission) : mission_{std::move(mission)} {}
 
-  auto act(uint_t t, bid_t bid, status_t status, int seed)
+  auto act(uint_t t, bid_fn bid, permit_public_status_fn status, int seed)
   {
+    using namespace permit_public_status;
     // it stops if it owns the end points
     if (std::holds_alternative<owned>(status(mission_.from, t)) &&
         std::holds_alternative<owned>(status(mission_.to, t + 1)))

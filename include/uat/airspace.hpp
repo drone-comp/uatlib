@@ -13,7 +13,7 @@ namespace uat
 {
 
 template<class T>
-using random_mission_t = decltype(std::declval<const T&>().random_mission(int{}));
+using mb_random_mission_t = decltype(std::declval<const T&>().random_mission(int{}));
 
 struct mission_t
 {
@@ -53,7 +53,7 @@ public:
   template <typename Airspace>
   airspace(Airspace a) : interface_(new airspace_model<Airspace>(std::move(a)))
   {
-    static_assert(is_detected_convertible_v<mission_t, random_mission_t, Airspace>, "missing method 'Airspace::random_mission() -> mission_t'");
+    static_assert(is_detected_convertible_v<mission_t, mb_random_mission_t, Airspace>, "missing member function Airspace::random_mission() -> mission_t");
 
     assert(interface_);
   }

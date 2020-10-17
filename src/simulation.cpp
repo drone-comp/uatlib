@@ -15,7 +15,7 @@
 namespace uat
 {
 
-auto simulate(factory_t factory, airspace space, int seed, const simulation_opts_t& opts) -> void
+auto simulate(factory_fn factory, airspace space, int seed, const simulation_opts_t& opts) -> void
 {
   std::mt19937 rnd(seed);
 
@@ -24,10 +24,10 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
 
   uint_t t0 = 0;
 
-  std::deque<std::unordered_map<permit, private_status>> data;
+  std::deque<std::unordered_map<permit, permit_private_status_t>> data;
 
-  private_status ool = out_of_limits{};
-  auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> private_status& {
+  permit_private_status_t ool = permit_private_status::out_of_limits{};
+  auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> permit_private_status_t& {
     assert(t >= t0);
     if (opts.time_window && t > t0 + *opts.time_window)
       return ool;
@@ -37,16 +37,19 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
   };
 
   auto public_access = [&book](auto id) {
-    return [id = id, &book](const region& s, uint_t t) -> permit_status {
+    return [id = id, &book](const region& s, uint_t t) -> permit_public_status_t {
+      using namespace permit_private_status;
+      using namespace permit_public_status;
       return std::visit(cool::compose{
-        [](out_of_limits) -> permit_status { return unavailable{}; },
-        [&](used status) -> permit_status { return status.owner == id ? permit_status{owned{}} : unavailable{}; },
-        [&](onsale status) -> permit_status { return status.owner == id ? permit_status{unavailable{}} : available{status.min_value}; }
+        [](out_of_limits) -> permit_public_status_t { return unavailable{}; },
+        [&](in_use status) -> permit_public_status_t { return status.owner == id ? permit_public_status_t{owned{}} : unavailable{}; },
+        [&](on_sale status) -> permit_public_status_t { return status.owner == id ? permit_public_status_t{unavailable{}} : available{status.min_value}; }
       }, book(s, t));
     };
   };
 
   const auto stop = [&] {
+    using namespace stop_criteria;
     return std::visit(cool::compose{
       [&](no_agents_t) { return active.size() == 0;  },
       [&](time_threshold_t th) { return t0 > th.t; },
@@ -56,7 +59,7 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
   do
   {
     if (opts.status_callback)
-      opts.status_callback(t0, space, [&book](const region& loc, uint_t t) -> private_status { return book(loc, t); });
+      opts.status_callback(t0, space, [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
 
     {
       using namespace jules::ranges;
@@ -76,11 +79,13 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
       for (const auto id : active)
       {
         const auto r = agents[id].act(t0, [&](const region& s, uint_t t, value_t v) -> bool {
-          if (t < t0) return false;
+          if (t < t0)
+            return false;
+          using namespace permit_private_status;
           return std::visit(cool::compose{
             [](out_of_limits) { return false; },
-            [](used) { return false; },
-            [&](onsale& status) {
+            [](in_use) { return false; },
+            [&](on_sale& status) {
               if (v > status.min_value && v > status.highest_bid)
               {
                 if (status.highest_bidder == no_owner)
@@ -102,7 +107,7 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
 
       for (const auto& [s, t] : bids)
       {
-        const auto status = std::get<onsale>(book(s, t));
+        const auto status = std::get<permit_private_status::on_sale>(book(s, t));
         if (opts.trade_callback)
           opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
@@ -110,7 +115,7 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
         if (status.owner != no_owner)
           agents[status.owner].on_sold(s, t, status.highest_bid);
 
-        book(s, t) = used{status.highest_bidder};
+        book(s, t) = permit_private_status::in_use{status.highest_bidder};
       }
     }
 
@@ -118,12 +123,14 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
       std::vector<std::tuple<region, uint_t, uint_t, value_t>> asks;
       for (const auto id : active)
       {
-        agents[id].after_auction(t0, [&](const region& s, uint_t t, value_t v) -> bool {
-          if (t < t0) return false;
+        agents[id].after_trading(t0, [&](const region& s, uint_t t, value_t v) -> bool {
+          if (t < t0)
+            return false;
+          using namespace permit_private_status;
           return std::visit(cool::compose{
             [](out_of_limits) { return false; },
-            [](onsale) { return false; },
-            [&](used& status) {
+            [](on_sale) { return false; },
+            [&](in_use& status) {
               if (status.owner != id)
                 return false;
               asks.emplace_back(s, t, id, v);
@@ -134,7 +141,7 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
       }
 
       for (const auto& [s, t, id, v] : asks)
-        book(s, t) = onsale{ .owner = id, .min_value = v };
+        book(s, t) = permit_private_status::on_sale{ .owner = id, .min_value = v };
     }
 
     for (const auto id : to_finished)
