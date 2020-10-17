@@ -23,15 +23,25 @@ auto region::operator!=(const region& other) const -> bool { return !interface_-
 
 auto region::distance(const region& other) const -> uint_t { return interface_->distance(*other.interface_); }
 
-auto region::heuristic_distance(const region& other) const -> value_t { return interface_->heuristic_distance(*other.interface_); }
+auto region::heuristic_distance(const region& other) const -> value_t
+{
+  return interface_->heuristic_distance(*other.interface_);
+}
 
-auto region::shortest_path(const region& other, int seed) const -> std::vector<region> { return interface_->shortest_path(*other.interface_, seed); }
+auto region::shortest_path(const region& other, int seed) const -> std::vector<region>
+{
+  return interface_->shortest_path(*other.interface_, seed);
+}
 
-auto region::print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void {
+auto region::print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void
+{
   interface_->print_to(std::move(f));
 }
 
-auto region::turn(const region& before, const region& to) const -> bool { return interface_->turn(*before.interface_, *to.interface_); }
+auto region::turn(const region& before, const region& to) const -> bool
+{
+  return interface_->turn(*before.interface_, *to.interface_);
+}
 
 auto region::climb(const region& to) const -> bool { return interface_->climb(*to.interface_); }
 
@@ -48,14 +58,12 @@ auto permit::operator!=(const permit& other) const -> bool { return !(*this == o
 
 namespace std
 {
-auto hash<uat::region>::operator()(const uat::region& s) const noexcept -> size_t {
-  return s.hash();
-}
-auto hash<uat::permit>::operator()(const uat::permit& p) const noexcept -> size_t {
+auto hash<uat::region>::operator()(const uat::region& s) const noexcept -> size_t { return s.hash(); }
+auto hash<uat::permit>::operator()(const uat::permit& p) const noexcept -> size_t
+{
   size_t seed = 0;
   boost::hash_combine(seed, p.location().hash());
   boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));
   return seed;
 }
 } // namespace std
-

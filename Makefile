@@ -1,5 +1,5 @@
 HEADERS := $(shell find include -name \*.[ch]pp)
-SRC := $(shell find test -name \*.[ch]pp) $(HEADERS)
+SRC := $(shell find src test -name \*.[ch]pp) $(HEADERS)
 
 all:
 	@echo Please, use CMake instead.
