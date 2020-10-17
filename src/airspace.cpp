@@ -13,4 +13,6 @@ auto airspace::operator=(const airspace& other) -> airspace&
 
 auto airspace::random_mission(int seed) const -> mission_t { return interface_->random_mission(seed); }
 
+auto airspace::iterate(region_fn callback) const -> void { return interface_->iterate(std::move(callback)); }
+
 } // namespace uat

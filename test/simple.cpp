@@ -74,6 +74,12 @@ public:
     const auto to = from + 1;
     return {my_region{from}, my_region{to}};
   }
+
+  void iterate(region_fn callback) const {
+    for (const auto i : cool::indices(std::size_t{10}))
+      if (!callback(my_region{i}))
+        return;
+  }
 };
 
 int main()
