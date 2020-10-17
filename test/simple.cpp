@@ -1,9 +1,9 @@
 #include <uat/simulation.hpp>
 
-#include <random>
 #include <cool/indices.hpp>
-#include <jules/base/random.hpp>
 #include <jules/array/array.hpp>
+#include <jules/base/random.hpp>
+#include <random>
 #include <variant>
 
 using namespace uat;
@@ -17,14 +17,12 @@ public:
   {
     using namespace permit_public_status;
     // it stops if it owns the end points
-    if (std::holds_alternative<owned>(status(mission_.from, t)) &&
-        std::holds_alternative<owned>(status(mission_.to, t + 1)))
+    if (std::holds_alternative<owned>(status(mission_.from, t)) && std::holds_alternative<owned>(status(mission_.to, t + 1)))
       return false;
 
     // otherwise, it tries to buy in the next time
     if (std::holds_alternative<available>(status(mission_.from, t + 1)) &&
-        std::holds_alternative<available>(status(mission_.to, t + 2)))
-    {
+        std::holds_alternative<available>(status(mission_.to, t + 2))) {
       // note: in a real simulation there would exist intermediate regions
       std::mt19937 gen(seed);
       const auto price = 1.0 + jules::canon_sample(gen);
@@ -75,7 +73,8 @@ public:
     return {my_region{from}, my_region{to}};
   }
 
-  void iterate(region_fn callback) const {
+  void iterate(region_fn callback) const
+  {
     for (const auto i : cool::indices(std::size_t{10}))
       if (!callback(my_region{i}))
         return;

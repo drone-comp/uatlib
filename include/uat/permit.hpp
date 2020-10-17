@@ -3,41 +3,37 @@
 
 #include <uat/type.hpp>
 
-#include <string_view>
-#include <tuple>
 #include <cassert>
+#include <functional>
 #include <iterator>
 #include <memory>
+#include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <functional>
 
 #include <fmt/format.h>
 
 namespace uat
 {
 
-template <typename T>
-using mb_adjacent_regions_t = decltype(std::declval<const T&>().adjacent_regions());
+template <typename T> using mb_adjacent_regions_t = decltype(std::declval<const T&>().adjacent_regions());
 
-template <typename T>
-using mb_hash_t = decltype(std::declval<const T&>().hash());
+template <typename T> using mb_hash_t = decltype(std::declval<const T&>().hash());
 
-template <typename T>
-using mb_distance_t = decltype(std::declval<const T&>().distance(std::declval<const T&>()));
+template <typename T> using mb_distance_t = decltype(std::declval<const T&>().distance(std::declval<const T&>()));
 
 template <typename T>
 using mb_heuristic_distance_t = decltype(std::declval<const T&>().heuristic_distance(std::declval<const T&>()));
 
-template <typename T>
-using mb_shortest_path_t = decltype(std::declval<const T&>().shortest_path(std::declval<const T&>()));
+template <typename T> using mb_shortest_path_t = decltype(std::declval<const T&>().shortest_path(std::declval<const T&>()));
 
 template <typename T>
-using mb_print_t = decltype(std::declval<const T&>().print(std::declval<std::function<void(std::string_view, fmt::format_args)>>()));
+using mb_print_t =
+  decltype(std::declval<const T&>().print(std::declval<std::function<void(std::string_view, fmt::format_args)>>()));
 
-template <typename T>
-using mb_climb_t = decltype(std::declval<const T&>().climb(std::declval<const T&>()));
+template <typename T> using mb_climb_t = decltype(std::declval<const T&>().climb(std::declval<const T&>()));
 
 template <typename T>
 using mb_turn_t = decltype(std::declval<const T&>().turn(std::declval<const T&>(), std::declval<const T&>()));
@@ -61,27 +57,25 @@ class region
     virtual auto climb(const region_interface&) const -> bool = 0;
   };
 
-  template <typename Region>
-  class region_model : public region_interface
+  template <typename Region> class region_model : public region_interface
   {
   public:
     region_model(Region region) : region_(std::move(region)) {}
     virtual ~region_model() = default;
 
-    auto clone() const -> std::unique_ptr<region_interface> override {
+    auto clone() const -> std::unique_ptr<region_interface> override
+    {
       return std::unique_ptr<region_interface>{new region_model(region_)};
     }
 
     auto adjacent_regions() const -> std::vector<region> override
     {
-      if constexpr (is_detected_convertible_v<std::vector<region>, mb_adjacent_regions_t, Region>)
-      {
+      if constexpr (is_detected_convertible_v<std::vector<region>, mb_adjacent_regions_t, Region>) {
         return region_.adjacent_regions();
-      }
-      else
-      {
+      } else {
         auto nei = region_.adjacent_regions();
-        static_assert(std::is_convertible_v<region, typename decltype(nei)::value_type>, "member function Region::adjacent_regions must return a container of Region");
+        static_assert(std::is_convertible_v<region, typename decltype(nei)::value_type>,
+                      "member function Region::adjacent_regions must return a container of Region");
 
         std::vector<region> converted;
         converted.reserve(nei.size());
@@ -90,10 +84,7 @@ class region
       }
     }
 
-    auto hash() const -> std::size_t override
-    {
-      return region_.hash();
-    }
+    auto hash() const -> std::size_t override { return region_.hash(); }
 
     auto equals(const region_interface& other) const -> bool override
     {
@@ -132,9 +123,7 @@ class region
     auto turn(const region_interface& before, const region_interface& to) const -> bool override
     {
       if constexpr (is_detected_convertible_v<bool, mb_turn_t, Region>)
-        return region_.turn(
-            dynamic_cast<const region_model&>(before).region_,
-            dynamic_cast<const region_model&>(to).region_);
+        return region_.turn(dynamic_cast<const region_model&>(before).region_, dynamic_cast<const region_model&>(to).region_);
       else
         return false;
     }
@@ -152,13 +141,15 @@ class region
   };
 
 public:
-  template <typename Region>
-  region(Region a) : interface_(new region_model<Region>(std::move(a)))
+  template <typename Region> region(Region a) : interface_(new region_model<Region>(std::move(a)))
   {
-    static_assert(is_detected_v<mb_adjacent_regions_t, Region>, "missing member function Region::adjacent_regions() -> Container<Region>");
-    static_assert(is_detected_convertible_v<std::size_t, mb_hash_t, Region>, "missing member function Region::hash() -> convertible_to<size_t>");
+    static_assert(is_detected_v<mb_adjacent_regions_t, Region>,
+                  "missing member function Region::adjacent_regions() -> Container<Region>");
+    static_assert(is_detected_convertible_v<std::size_t, mb_hash_t, Region>,
+                  "missing member function Region::hash() -> convertible_to<size_t>");
     static_assert(is_detected_convertible_v<bool, equality_t, Region>, "Region does not satisfy equality comparable");
-    static_assert(is_detected_convertible_v<uint_t, mb_distance_t, Region>, "missing member function Region::distance(Region) -> convertible_to<uint_t>");
+    static_assert(is_detected_convertible_v<uint_t, mb_distance_t, Region>,
+                  "missing member function Region::distance(Region) -> convertible_to<uint_t>");
 
     assert(interface_);
   }
@@ -229,23 +220,19 @@ template <std::size_t I> decltype(auto) get(const permit& ts)
 
 } // namespace uat
 
-
-template <>
-struct fmt::formatter<uat::region>
+template <> struct fmt::formatter<uat::region>
 {
-  constexpr auto parse(format_parse_context& ctx) {
+  constexpr auto parse(format_parse_context& ctx)
+  {
     if (ctx.begin() != ctx.end() && *ctx.begin() != '}')
       throw format_error("invalid format");
     return ctx.begin();
   }
 
-  template <typename FormatContext>
-  auto format(const uat::region& p, FormatContext& ctx)
+  template <typename FormatContext> auto format(const uat::region& p, FormatContext& ctx)
   {
     auto out = ctx.out();
-    p.print_to([&ctx, &out](std::string_view str, format_args args) {
-      out = vformat_to(ctx.out(), str, std::move(args));
-    });
+    p.print_to([&ctx, &out](std::string_view str, format_args args) { out = vformat_to(ctx.out(), str, std::move(args)); });
     return out;
   }
 };
@@ -262,7 +249,8 @@ template <> struct hash<uat::permit>
   auto operator()(const uat::permit&) const noexcept -> size_t;
 };
 
-template <> struct tuple_size<uat::permit> : public integral_constant<size_t, 2> {};
+template <> struct tuple_size<uat::permit> : public integral_constant<size_t, 2>
+{};
 
 template <> struct tuple_element<0, uat::permit>
 {

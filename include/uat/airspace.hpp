@@ -1,8 +1,8 @@
 #ifndef UAT_AIRSPACE_HPP
 #define UAT_AIRSPACE_HPP
 
-#include <uat/type.hpp>
 #include <uat/permit.hpp>
+#include <uat/type.hpp>
 
 #include <cassert>
 #include <memory>
@@ -14,11 +14,9 @@ namespace uat
 
 using region_fn = std::function<bool(const region&)>;
 
-template<class T>
-using mb_random_mission_t = decltype(std::declval<const T&>().random_mission(int{}));
+template <class T> using mb_random_mission_t = decltype(std::declval<const T&>().random_mission(int{}));
 
-template<class T>
-using mb_iterate_t = decltype(std::declval<const T&>().iterate(std::declval<region_fn>()));
+template <class T> using mb_iterate_t = decltype(std::declval<const T&>().iterate(std::declval<region_fn>()));
 
 struct mission_t
 {
@@ -38,14 +36,14 @@ class airspace
     virtual auto iterate(region_fn) const -> void = 0;
   };
 
-  template <typename Airspace>
-  class airspace_model : public airspace_interface
+  template <typename Airspace> class airspace_model : public airspace_interface
   {
   public:
     airspace_model(Airspace airspace) : airspace_(std::move(airspace)) {}
     virtual ~airspace_model() = default;
 
-    auto clone() const -> std::unique_ptr<airspace_interface> override {
+    auto clone() const -> std::unique_ptr<airspace_interface> override
+    {
       return std::unique_ptr<airspace_interface>{new airspace_model(airspace_)};
     }
 
@@ -58,10 +56,10 @@ class airspace
   };
 
 public:
-  template <typename Airspace>
-  airspace(Airspace a) : interface_(new airspace_model<Airspace>(std::move(a)))
+  template <typename Airspace> airspace(Airspace a) : interface_(new airspace_model<Airspace>(std::move(a)))
   {
-    static_assert(is_detected_convertible_v<mission_t, mb_random_mission_t, Airspace>, "missing member function Airspace::random_mission() -> mission_t");
+    static_assert(is_detected_convertible_v<mission_t, mb_random_mission_t, Airspace>,
+                  "missing member function Airspace::random_mission() -> mission_t");
     static_assert(is_detected_exact_v<void, mb_iterate_t, Airspace>, "missing member function Airspace::iterate(region_fn)");
 
     assert(interface_);
