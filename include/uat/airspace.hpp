@@ -2,7 +2,7 @@
 #define UAT_AIRSPACE_HPP
 
 #include <uat/type.hpp>
-#include <uat/slot.hpp>
+#include <uat/permit.hpp>
 
 #include <cassert>
 #include <memory>
@@ -17,8 +17,8 @@ using random_mission_t = decltype(std::declval<const T&>().random_mission(int{})
 
 struct mission_t
 {
-  slot from, to;
-  auto distance() const { return from.distance(to); }
+  region from, to;
+  auto length() const { return from.distance(to); }
 };
 
 class airspace

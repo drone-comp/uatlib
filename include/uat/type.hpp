@@ -13,7 +13,9 @@ using id_t = std::size_t;
 using value_t = double;
 
 class airspace;
-class slot;
+class region;
+class permit;
+class agent;
 
 namespace detail
 {
@@ -61,6 +63,9 @@ using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>
 
 template <class To, template<class...> class Op, class... Args>
 constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
+
+template <typename T>
+using equality_t = decltype(std::declval<const T&>() == std::declval<const T&>());
 
 } // namespace uat
 

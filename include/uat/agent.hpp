@@ -18,12 +18,12 @@ struct unavailable { };
 struct available { value_t min_value; };
 struct owned { };
 
-using slot_status = std::variant<unavailable, available, owned>;
+using permit_status = std::variant<unavailable, available, owned>;
 
 // XXX: is it possible to use function_ref?
-using bid_t = std::function<bool(const slot&, uint_t, value_t)>;
-using ask_t = std::function<bool(const slot&, uint_t, value_t)>;
-using status_t = std::function<slot_status(const slot&, uint_t)>;
+using bid_t = std::function<bool(const region&, uint_t, value_t)>;
+using ask_t = std::function<bool(const region&, uint_t, value_t)>;
+using status_t = std::function<permit_status(const region&, uint_t)>;
 
 template <typename T>
 using act_t = decltype(std::declval<T&>().act(uint_t{}, std::declval<bid_t>(), std::declval<status_t>(), int{}));
@@ -32,10 +32,10 @@ template <typename T>
 using after_auction_t = decltype(std::declval<T&>().after_auction(uint_t{}, std::declval<ask_t>(), std::declval<status_t>(), int{}));
 
 template <typename T>
-using on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<const slot&>(), uint_t{}, value_t{}));
+using on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<const region&>(), uint_t{}, value_t{}));
 
 template <typename T>
-using on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<const slot&>(), uint_t{}, value_t{}));
+using on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<const region&>(), uint_t{}, value_t{}));
 
 template <typename T>
 using on_finished_t = decltype(std::declval<T&>().on_finished(uint_t{}, uint_t{}));
@@ -51,8 +51,8 @@ class agent
       virtual auto act(uint_t, bid_t, status_t, int) -> bool = 0;
       virtual auto after_auction(uint_t, ask_t, status_t, int) -> void = 0;
 
-      virtual auto on_bought(const slot&, uint_t, value_t) -> void = 0;
-      virtual auto on_sold(const slot&, uint_t, value_t) -> void = 0;
+      virtual auto on_bought(const region&, uint_t, value_t) -> void = 0;
+      virtual auto on_sold(const region&, uint_t, value_t) -> void = 0;
 
       virtual auto on_finished(uint_t, uint_t) -> void = 0;
   };
@@ -76,13 +76,13 @@ class agent
         agent_.after_auction(t, std::move(a), std::move(i), seed);
     }
 
-    auto on_bought([[maybe_unused]] const slot& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
+    auto on_bought([[maybe_unused]] const region& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
     {
       if constexpr (is_detected_exact_v<void, on_bought_t, Agent>)
         agent_.on_bought(s, t, v);
     }
 
-    auto on_sold([[maybe_unused]] const slot& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
+    auto on_sold([[maybe_unused]] const region& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
     {
       if constexpr (is_detected_exact_v<void, on_sold_t, Agent>)
         agent_.on_sold(s, t, v);
@@ -115,8 +115,8 @@ public:
   auto act(uint_t, bid_t, status_t, int) -> bool;
   auto after_auction(uint_t, ask_t, status_t, int) -> void;
 
-  auto on_bought(const slot&, uint_t, value_t) -> void;
-  auto on_sold(const slot&, uint_t, value_t) -> void;
+  auto on_bought(const region&, uint_t, value_t) -> void;
+  auto on_sold(const region&, uint_t, value_t) -> void;
 
   auto on_finished(uint_t, uint_t) -> void;
 

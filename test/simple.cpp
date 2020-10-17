@@ -24,7 +24,7 @@ public:
     if (std::holds_alternative<available>(status(mission_.from, t + 1)) &&
         std::holds_alternative<available>(status(mission_.to, t + 2)))
     {
-      // note: in a real simulation there would exist intermediate slots
+      // note: in a real simulation there would exist intermediate regions
       std::mt19937 gen(seed);
       const auto price = 1.0 + jules::canon_sample(gen);
       bid(mission_.from, t + 1, price);
@@ -38,26 +38,26 @@ private:
   mission_t mission_;
 };
 
-// unidimensional space with 10 slots
-class my_slot
+// unidimensional space with 10 regions
+class my_region
 {
 public:
-  explicit my_slot(std::size_t pos) : pos_{pos} {}
+  explicit my_region(std::size_t pos) : pos_{pos} {}
 
   auto hash() const -> std::size_t { return pos_; }
 
-  auto neighbors() const -> std::vector<slot>
+  auto adjacent_regions() const -> std::vector<region>
   {
     if (pos_ == 0)
-      return {my_slot{pos_ + 1}};
+      return {my_region{pos_ + 1}};
     if (pos_ == 9)
-      return {my_slot{pos_ - 1}};
-    return {my_slot{pos_ - 1}, my_slot{pos_ + 1}};
+      return {my_region{pos_ - 1}};
+    return {my_region{pos_ - 1}, my_region{pos_ + 1}};
   }
 
-  auto operator==(const my_slot& other) const { return pos_ == other.pos_; }
+  auto operator==(const my_region& other) const { return pos_ == other.pos_; }
 
-  auto distance(const my_slot& other) const { return pos_ > other.pos_ ? pos_ - other.pos_ : other.pos_ - pos_; }
+  auto distance(const my_region& other) const { return pos_ > other.pos_ ? pos_ - other.pos_ : other.pos_ - pos_; }
 
 private:
   std::size_t pos_;
@@ -71,7 +71,7 @@ public:
     std::mt19937 gen(seed);
     const auto from = jules::uniform_index_sample(9u, gen);
     const auto to = from + 1;
-    return {my_slot{from}, my_slot{to}};
+    return {my_region{from}, my_region{to}};
   }
 };
 

@@ -15,12 +15,6 @@
 namespace uat
 {
 
-
-} // namespace uat
-
-namespace uat
-{
-
 auto simulate(factory_t factory, airspace space, int seed, const simulation_opts_t& opts) -> void
 {
   std::mt19937 rnd(seed);
@@ -30,24 +24,24 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
 
   uint_t t0 = 0;
 
-  std::deque<std::unordered_map<tslot, private_status>> data;
+  std::deque<std::unordered_map<permit, private_status>> data;
 
   private_status ool = out_of_limits{};
-  auto book = [&t0, &data, &ool, &opts](const slot& slot, uint_t t) mutable -> private_status& {
+  auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> private_status& {
     assert(t >= t0);
     if (opts.time_window && t > t0 + *opts.time_window)
       return ool;
     while (t - t0 >= data.size())
       data.emplace_back();
-    return data[t - t0][{slot, t}];
+    return data[t - t0][{loc, t}];
   };
 
   auto public_access = [&book](auto id) {
-    return [id = id, &book](const slot& s, uint_t t) -> slot_status {
+    return [id = id, &book](const region& s, uint_t t) -> permit_status {
       return std::visit(cool::compose{
-        [](out_of_limits) -> slot_status { return unavailable{}; },
-        [&](used status) -> slot_status { return status.owner == id ? slot_status{owned{}} : unavailable{}; },
-        [&](onsale status) -> slot_status { return status.owner == id ? slot_status{unavailable{}} : available{status.min_value}; }
+        [](out_of_limits) -> permit_status { return unavailable{}; },
+        [&](used status) -> permit_status { return status.owner == id ? permit_status{owned{}} : unavailable{}; },
+        [&](onsale status) -> permit_status { return status.owner == id ? permit_status{unavailable{}} : available{status.min_value}; }
       }, book(s, t));
     };
   };
@@ -62,7 +56,7 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
   do
   {
     if (opts.status_callback)
-      opts.status_callback(t0, space, [&book](const slot& slot, uint_t t) -> private_status { return book(slot, t); });
+      opts.status_callback(t0, space, [&book](const region& loc, uint_t t) -> private_status { return book(loc, t); });
 
     {
       using namespace jules::ranges;
@@ -78,10 +72,10 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
     to_finished.reserve(active.size());
 
     {
-      std::vector<std::tuple<slot, uint_t>> bids;
+      std::vector<std::tuple<region, uint_t>> bids;
       for (const auto id : active)
       {
-        const auto r = agents[id].act(t0, [&](const slot& s, uint_t t, value_t v) -> bool {
+        const auto r = agents[id].act(t0, [&](const region& s, uint_t t, value_t v) -> bool {
           if (t < t0) return false;
           return std::visit(cool::compose{
             [](out_of_limits) { return false; },
@@ -121,10 +115,10 @@ auto simulate(factory_t factory, airspace space, int seed, const simulation_opts
     }
 
     {
-      std::vector<std::tuple<slot, uint_t, uint_t, value_t>> asks;
+      std::vector<std::tuple<region, uint_t, uint_t, value_t>> asks;
       for (const auto id : active)
       {
-        agents[id].after_auction(t0, [&](const slot& s, uint_t t, value_t v) -> bool {
+        agents[id].after_auction(t0, [&](const region& s, uint_t t, value_t v) -> bool {
           if (t < t0) return false;
           return std::visit(cool::compose{
             [](out_of_limits) { return false; },

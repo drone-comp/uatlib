@@ -10,11 +10,11 @@ add_library(uat
   src/agent.cpp
   src/airspace.cpp
   src/simulation.cpp
-  src/slot.cpp
+  src/permit.cpp
   include/uat/agent.hpp
   include/uat/airspace.hpp
   include/uat/simulation.hpp
-  include/uat/slot.hpp
+  include/uat/permit.hpp
   include/uat/type.hpp)
 
 target_compile_features(uat PRIVATE cxx_std_17)

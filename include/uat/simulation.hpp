@@ -4,7 +4,7 @@
 #include <uat/type.hpp>
 #include <uat/agent.hpp>
 #include <uat/airspace.hpp>
-#include <uat/slot.hpp>
+#include <uat/permit.hpp>
 
 #include <functional>
 #include <vector>
@@ -20,8 +20,8 @@ struct trade_info_t {
   uint_t transaction_time;
   uint_t from;
   uint_t to;
-  slot s;
-  uint_t t;
+  region location;
+  uint_t time;
   value_t value;
 };
 
@@ -51,7 +51,7 @@ struct out_of_limits {
 
 using private_status = std::variant<onsale, used, out_of_limits>;
 
-using private_status_t = std::function<private_status(const slot&, uint_t)>;
+using private_status_t = std::function<private_status(const region&, uint_t)>;
 using status_callback_t = std::function<void(uint_t, const airspace&, private_status_t)>;
 
 struct simulation_opts_t {
