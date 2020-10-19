@@ -183,8 +183,8 @@ public:
 
   auto climb(const region& to) const -> bool;
 
-  template <typename T> auto downcast() -> T& { return dynamic_cast<region_model<T>&>(interface_).downcast(); }
-  template <typename T> auto downcast() const -> const T& { return dynamic_cast<region_model<T>&>(interface_).downcast(); }
+  template <typename T> auto downcast() -> T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
+  template <typename T> auto downcast() const -> const T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
 
 private:
   std::unique_ptr<region_interface> interface_;
