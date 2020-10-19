@@ -136,6 +136,9 @@ class region
         return false;
     }
 
+    auto downcast() -> Region& { return region_; }
+    auto downcast() const -> const Region& { return region_; }
+
   private:
     Region region_;
   };
@@ -179,6 +182,9 @@ public:
   auto turn(const region& before, const region& to) const -> bool;
 
   auto climb(const region& to) const -> bool;
+
+  template <typename T> auto downcast() -> T& { return dynamic_cast<region_model<T>&>(interface_).downcast(); }
+  template <typename T> auto downcast() const -> const T& { return dynamic_cast<region_model<T>&>(interface_).downcast(); }
 
 private:
   std::unique_ptr<region_interface> interface_;
