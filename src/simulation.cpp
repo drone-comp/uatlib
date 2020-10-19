@@ -28,7 +28,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
   permit_private_status_t ool = permit_private_status::out_of_limits{};
   auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> permit_private_status_t& {
-    if (t <= t0)
+    if (t < t0) // XXX agents can check the state at t0, however they should be prohibited to bid for.
       return ool;
     if (opts.time_window && t > t0 + 1 + *opts.time_window)
       return ool;
