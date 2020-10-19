@@ -48,7 +48,7 @@ using permit_private_status_t =
 // TODO: is it possible to use function_ref?
 using permit_private_status_fn = std::function<permit_private_status_t(const region&, uint_t)>;
 using trade_info_fn = std::function<void(trade_info_t)>;
-using status_info_fn = std::function<void(uint_t, const airspace&, permit_private_status_fn)>;
+using status_info_fn = std::function<void(uint_t, uint_t, const airspace&, permit_private_status_fn)>; // TODO: full agent data
 
 namespace stop_criteria
 {

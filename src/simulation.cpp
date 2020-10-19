@@ -20,7 +20,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
   std::mt19937 rnd(seed);
 
   std::vector<agent> agents;
-  std::vector<id_t> active, keep_active, to_finished;
+  std::vector<id_t> active, keep_active, to_finished; // TODO: use smarter strategy for active (similar to book data)
 
   uint_t t0 = 0;
 
@@ -63,9 +63,6 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
   };
 
   do {
-    if (opts.status_callback)
-      opts.status_callback(t0, space, [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
-
     {
       using namespace jules::ranges;
       auto new_agents = factory(t0, space, rnd());
@@ -78,6 +75,9 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
     to_finished.clear();
     to_finished.reserve(active.size());
+
+    if (opts.status_callback)
+      opts.status_callback(t0, active.size(), space, [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
 
     {
       std::vector<std::tuple<region, uint_t>> bids;
