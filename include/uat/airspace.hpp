@@ -76,7 +76,7 @@ public:
   auto iterate(region_fn) const -> void;
 
 private:
-  std::unique_ptr<airspace_interface> interface_;
+  std::shared_ptr<airspace_interface> interface_;
 };
 
 } // namespace uat

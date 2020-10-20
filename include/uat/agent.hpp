@@ -135,7 +135,7 @@ public:
   auto on_finished(uint_t, uint_t) -> void;
 
 private:
-  std::unique_ptr<agent_interface> interface_;
+  std::shared_ptr<agent_interface> interface_;
 };
 
 } // namespace uat
