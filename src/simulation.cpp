@@ -8,19 +8,53 @@
 #include <variant>
 
 #include <cool/compose.hpp>
-#include <cool/indices.hpp>
 #include <fmt/format.h>
-#include <jules/core/ranges.hpp>
 
 namespace uat
 {
+
+auto agents_private_status_fn::operator()(id_t id) const -> agent_private_status_t { return {}; }
+
+auto agents_private_status_fn::active_count() const -> uint_t { return active_.size(); }
+
+void agents_private_status_fn::insert(agent a)
+{
+  active_.push_back(first_id_ + agents_.size());
+  agents_.push_back(std::move(a));
+}
+
+void agents_private_status_fn::update_active(std::vector<id_t> new_agents)
+{
+  active_ = std::move(new_agents);
+  // TODO: assert it is sorted.
+  if (active_.size() == 0)
+    return;
+
+  const auto first = active_.front();
+  while (first_id_ < first) {
+    ++first_id_;
+    agents_.pop_front();
+  }
+}
+
+struct agents_private_status_accessor
+{
+  auto active(const agents_private_status_fn& self) const -> const std::vector<id_t>& { return self.active_; }
+  auto at(agents_private_status_fn& self, id_t id) const -> agent&
+  {
+    assert(id >= self.first_id_);
+    assert(id - self.first_id_ < self.agents_.size());
+    return self.agents_[id - self.first_id_];
+  }
+};
 
 auto simulate(factory_fn factory, airspace space, int seed, const simulation_opts_t& opts) -> void
 {
   std::mt19937 rnd(seed);
 
-  std::vector<agent> agents;
-  std::vector<id_t> active, keep_active, to_finished; // TODO: use smarter strategy for active (similar to book data)
+  agents_private_status_fn agents;
+  constexpr agents_private_status_accessor accessor;
+  std::vector<id_t> keep_active, to_finished;
 
   uint_t t0 = 0;
 
@@ -56,7 +90,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
   const auto stop = [&] {
     using namespace stop_criteria;
     return std::visit(cool::compose{
-                        [&](no_agents_t) { return active.size() == 0; },
+                        [&](no_agents_t) { return agents.active_count() == 0; },
                         [&](time_threshold_t th) { return t0 > th.t; },
                       },
                       opts.stop_criteria);
@@ -64,44 +98,45 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
   do {
     {
-      using namespace jules::ranges;
       auto new_agents = factory(t0, space, rnd());
-      copy(cool::indices(agents.size(), agents.size() + new_agents.size()), back_inserter(active));
-      move(new_agents, back_inserter(agents));
+      for (auto& agent : new_agents)
+        agents.insert(std::move(agent));
     }
 
     keep_active.clear();
-    keep_active.reserve(active.size());
+    keep_active.reserve(agents.active_count());
 
     to_finished.clear();
-    to_finished.reserve(active.size());
+    to_finished.reserve(agents.active_count());
 
     if (opts.status_callback)
-      opts.status_callback(t0, active.size(), space, [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
+      opts.status_callback(t0, std::as_const(agents), space,
+                           [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
 
     {
       std::vector<std::tuple<region, uint_t>> bids;
-      for (const auto id : active) {
-        const auto r = agents[id].act(
-          t0,
-          [&](const region& s, uint_t t, value_t v) -> bool {
-            if (t < t0)
-              return false;
-            using namespace permit_private_status;
-            return std::visit(cool::compose{[](out_of_limits) { return false; }, [](in_use) { return false; },
-                                            [&](on_sale& status) {
-                                              if (v > status.min_value && v > status.highest_bid) {
-                                                if (status.highest_bidder == no_owner)
-                                                  bids.emplace_back(s, t);
+      for (const auto id : accessor.active(agents)) {
+        const auto r = accessor.at(agents, id)
+                         .act(
+                           t0,
+                           [&](const region& s, uint_t t, value_t v) -> bool {
+                             if (t < t0)
+                               return false;
+                             using namespace permit_private_status;
+                             return std::visit(cool::compose{[](out_of_limits) { return false; }, [](in_use) { return false; },
+                                                             [&](on_sale& status) {
+                                                               if (v > status.min_value && v > status.highest_bid) {
+                                                                 if (status.highest_bidder == no_owner)
+                                                                   bids.emplace_back(s, t);
 
-                                                status.highest_bidder = id;
-                                                status.highest_bid = v;
-                                              }
-                                              return true;
-                                            }},
-                              book(s, t));
-          },
-          public_access(id), rnd());
+                                                                 status.highest_bidder = id;
+                                                                 status.highest_bid = v;
+                                                               }
+                                                               return true;
+                                                             }},
+                                               book(s, t));
+                           },
+                           public_access(id), rnd());
 
         if (r)
           keep_active.push_back(id);
@@ -114,9 +149,9 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
         if (opts.trade_callback)
           opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
-        agents[status.highest_bidder].on_bought(s, t, status.highest_bid);
+        accessor.at(agents, status.highest_bidder).on_bought(s, t, status.highest_bid);
         if (status.owner != no_owner)
-          agents[status.owner].on_sold(s, t, status.highest_bid);
+          accessor.at(agents, status.owner).on_sold(s, t, status.highest_bid);
 
         book(s, t) = permit_private_status::in_use{status.highest_bidder};
       }
@@ -124,23 +159,24 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
     {
       std::vector<std::tuple<region, uint_t, uint_t, value_t>> asks;
-      for (const auto id : active) {
-        agents[id].after_trading(
-          t0,
-          [&](const region& s, uint_t t, value_t v) -> bool {
-            if (t < t0)
-              return false;
-            using namespace permit_private_status;
-            return std::visit(cool::compose{[](out_of_limits) { return false; }, [](on_sale) { return false; },
-                                            [&](in_use& status) {
-                                              if (status.owner != id)
-                                                return false;
-                                              asks.emplace_back(s, t, id, v);
-                                              return true;
-                                            }},
-                              book(s, t));
-          },
-          public_access(id), rnd());
+      for (const auto id : accessor.active(agents)) {
+        accessor.at(agents, id)
+          .after_trading(
+            t0,
+            [&](const region& s, uint_t t, value_t v) -> bool {
+              if (t < t0)
+                return false;
+              using namespace permit_private_status;
+              return std::visit(cool::compose{[](out_of_limits) { return false; }, [](on_sale) { return false; },
+                                              [&](in_use& status) {
+                                                if (status.owner != id)
+                                                  return false;
+                                                asks.emplace_back(s, t, id, v);
+                                                return true;
+                                              }},
+                                book(s, t));
+            },
+            public_access(id), rnd());
       }
 
       for (const auto& [s, t, id, v] : asks)
@@ -148,9 +184,10 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
     }
 
     for (const auto id : to_finished)
-      agents[id].on_finished(id, t0);
+      accessor.at(agents, id).on_finished(id, t0);
 
-    std::swap(active, keep_active);
+    agents.update_active(std::move(keep_active));
+
     data.pop_front();
     ++t0;
   } while (!stop());

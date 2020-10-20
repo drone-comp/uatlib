@@ -6,6 +6,7 @@
 #include <uat/permit.hpp>
 #include <uat/type.hpp>
 
+#include <deque>
 #include <functional>
 #include <vector>
 
@@ -45,10 +46,44 @@ struct out_of_limits
 using permit_private_status_t =
   std::variant<permit_private_status::on_sale, permit_private_status::in_use, permit_private_status::out_of_limits>;
 
+namespace agent_private_status
+{
+struct inactive
+{
+  id_t id;
+};
+struct active
+{
+  id_t id;
+  agent data;
+};
+struct out_of_limits
+{};
+} // namespace agent_private_status
+using agent_private_status_t =
+  std::variant<agent_private_status::out_of_limits, agent_private_status::inactive, agent_private_status::active>;
+
+class agents_private_status_fn
+{
+  friend class agents_private_status_accessor;
+
+public:
+  auto operator()(id_t) const -> agent_private_status_t;
+  auto active_count() const -> uint_t;
+
+  void insert(agent);
+  void update_active(std::vector<id_t>);
+
+private:
+  uint_t first_id_ = 0u;
+  std::deque<agent> agents_;
+  std::vector<id_t> active_;
+};
+
 // TODO: is it possible to use function_ref?
 using permit_private_status_fn = std::function<permit_private_status_t(const region&, uint_t)>;
 using trade_info_fn = std::function<void(trade_info_t)>;
-using status_info_fn = std::function<void(uint_t, uint_t, const airspace&, permit_private_status_fn)>; // TODO: full agent data
+using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, const airspace&, permit_private_status_fn)>;
 
 namespace stop_criteria
 {
