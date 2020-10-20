@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <uat/simulation.hpp>
 
 #include <deque>
@@ -13,7 +14,10 @@
 namespace uat
 {
 
-auto agents_private_status_fn::operator()(id_t id) const -> agent_private_status_t { return {}; }
+auto agents_private_status_fn::operator()(id_t id) const -> agent_private_status_t
+{
+  throw std::runtime_error{"not implemented yet"};
+}
 
 auto agents_private_status_fn::active_count() const -> uint_t { return active_.size(); }
 
@@ -144,16 +148,19 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
           to_finished.push_back(id);
       }
 
-      for (const auto& [s, t] : bids) {
-        const auto status = std::get<permit_private_status::on_sale>(book(s, t));
-        if (opts.trade_callback)
-          opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
+      if (bids.size() > 0) {
+        const auto first_active = accessor.active(agents).front();
+        for (const auto& [s, t] : bids) {
+          const auto status = std::get<permit_private_status::on_sale>(book(s, t));
+          if (opts.trade_callback)
+            opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
-        accessor.at(agents, status.highest_bidder).on_bought(s, t, status.highest_bid);
-        if (status.owner != no_owner)
-          accessor.at(agents, status.owner).on_sold(s, t, status.highest_bid);
+          accessor.at(agents, status.highest_bidder).on_bought(s, t, status.highest_bid);
+          if (status.owner != no_owner && status.owner >= first_active)
+            accessor.at(agents, status.owner).on_sold(s, t, status.highest_bid);
 
-        book(s, t) = permit_private_status::in_use{status.highest_bidder};
+          book(s, t) = permit_private_status::in_use{status.highest_bidder};
+        }
       }
     }
 
