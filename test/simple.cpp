@@ -1,3 +1,5 @@
+#include <limits>
+#include <stdexcept>
 #include <uat/simulation.hpp>
 
 #include <cool/indices.hpp>
@@ -13,12 +15,9 @@ class my_agent
 public:
   explicit my_agent(mission_t mission) : mission_{std::move(mission)} {}
 
-  auto act(uint_t t, bid_fn bid, permit_public_status_fn status, int seed)
+  auto bid_phase(uint_t t, bid_fn bid, permit_public_status_fn status, int seed)
   {
     using namespace permit_public_status;
-    // it stops if it owns the end points
-    if (std::holds_alternative<owned>(status(mission_.from, t)) && std::holds_alternative<owned>(status(mission_.to, t + 1)))
-      return false;
 
     // otherwise, it tries to buy in the next time
     if (std::holds_alternative<available>(status(mission_.from, t + 1)) &&
@@ -28,13 +27,17 @@ public:
       const auto price = 1.0 + jules::canon_sample(gen);
       bid(mission_.from, t + 1, price);
       bid(mission_.to, t + 2, price);
+      remaining_ = 2;
     }
-
-    return true; // keeps active
   }
+
+  auto on_bought(const region&, uint_t, value_t) { --remaining_; }
+
+  auto stop(uint_t, int) { return remaining_ == 0; }
 
 private:
   mission_t mission_;
+  uint_t remaining_ = std::numeric_limits<uint_t>::max();
 };
 
 // unidimensional space with 10 regions
@@ -80,6 +83,12 @@ public:
         return;
   }
 };
+
+using atraits = agent_traits<my_agent>;
+static_assert(atraits::has_mb_bid_phase);
+static_assert(!atraits::has_mb_ask_phase);
+static_assert(atraits::has_mb_on_bought);
+static_assert(!atraits::has_mb_on_sold);
 
 int main()
 {

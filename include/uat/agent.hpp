@@ -35,12 +35,12 @@ using ask_fn = std::function<bool(const region&, uint_t, value_t)>;
 using permit_public_status_fn = std::function<permit_public_status_t(const region&, uint_t)>;
 
 template <typename T>
-using mb_act_t =
-  decltype(std::declval<T&>().act(uint_t{}, std::declval<bid_fn>(), std::declval<permit_public_status_fn>(), int{}));
+using mb_bid_phase_t =
+  decltype(std::declval<T&>().bid_phase(uint_t{}, std::declval<bid_fn>(), std::declval<permit_public_status_fn>(), int{}));
 
 template <typename T>
-using mb_after_trading_t =
-  decltype(std::declval<T&>().after_trading(uint_t{}, std::declval<ask_fn>(), std::declval<permit_public_status_fn>(), int{}));
+using mb_ask_phase_t =
+  decltype(std::declval<T&>().ask_phase(uint_t{}, std::declval<ask_fn>(), std::declval<permit_public_status_fn>(), int{}));
 
 template <typename T>
 using mb_on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<const region&>(), uint_t{}, value_t{}));
@@ -48,7 +48,7 @@ using mb_on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<const 
 template <typename T>
 using mb_on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<const region&>(), uint_t{}, value_t{}));
 
-template <typename T> using mb_on_finished_t = decltype(std::declval<T&>().on_finished(uint_t{}, uint_t{}));
+template <typename T> using mb_stop_t = decltype(std::declval<T&>().stop(uint_t{}, int{}));
 
 class agent
 {
@@ -58,13 +58,13 @@ class agent
     virtual ~agent_interface() = default;
     virtual auto clone() const -> std::unique_ptr<agent_interface> = 0;
 
-    virtual auto act(uint_t, bid_fn, permit_public_status_fn, int) -> bool = 0;
-    virtual auto after_trading(uint_t, ask_fn, permit_public_status_fn, int) -> void = 0;
+    virtual auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void = 0;
+    virtual auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void = 0;
 
     virtual auto on_bought(const region&, uint_t, value_t) -> void = 0;
     virtual auto on_sold(const region&, uint_t, value_t) -> void = 0;
 
-    virtual auto on_finished(uint_t, uint_t) -> void = 0;
+    virtual auto stop(uint_t, int) -> bool = 0;
   };
 
   template <typename Agent> class agent_model : public agent_interface
@@ -78,16 +78,18 @@ class agent
       return std::unique_ptr<agent_interface>{new agent_model(agent_)};
     }
 
-    auto act(uint_t t, bid_fn b, permit_public_status_fn i, int seed) -> bool override
+    auto bid_phase([[maybe_unused]] uint_t t, [[maybe_unused]] bid_fn b, [[maybe_unused]] permit_public_status_fn i,
+                   [[maybe_unused]] int seed) -> void override
     {
-      return agent_.act(t, std::move(b), std::move(i), seed);
+      if constexpr (is_detected_exact_v<void, mb_bid_phase_t, Agent>)
+        agent_.bid_phase(t, std::move(b), std::move(i), seed);
     }
 
-    auto after_trading([[maybe_unused]] uint_t t, [[maybe_unused]] ask_fn a, [[maybe_unused]] permit_public_status_fn i,
-                       [[maybe_unused]] int seed) -> void override
+    auto ask_phase([[maybe_unused]] uint_t t, [[maybe_unused]] ask_fn a, [[maybe_unused]] permit_public_status_fn i,
+                   [[maybe_unused]] int seed) -> void override
     {
-      if constexpr (is_detected_exact_v<void, mb_after_trading_t, Agent>)
-        agent_.after_trading(t, std::move(a), std::move(i), seed);
+      if constexpr (is_detected_exact_v<void, mb_ask_phase_t, Agent>)
+        agent_.ask_phase(t, std::move(a), std::move(i), seed);
     }
 
     auto on_bought([[maybe_unused]] const region& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
@@ -102,11 +104,7 @@ class agent
         agent_.on_sold(s, t, v);
     }
 
-    auto on_finished([[maybe_unused]] uint_t id, [[maybe_unused]] uint_t t) -> void override
-    {
-      if constexpr (is_detected_exact_v<void, mb_on_finished_t, Agent>)
-        agent_.on_finished(id, t);
-    }
+    auto stop([[maybe_unused]] uint_t t, [[maybe_unused]] int seed) -> bool override { return agent_.stop(t, seed); }
 
   private:
     Agent agent_;
@@ -115,8 +113,8 @@ class agent
 public:
   template <typename Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a)))
   {
-    static_assert(is_detected_convertible_v<bool, mb_act_t, Agent>,
-                  "missing function member Agent::act(...) -> convertible_to<bool>");
+    static_assert(is_detected_convertible_v<bool, mb_stop_t, Agent>,
+                  "missing function member Agent::stop(uint_t, int) -> convertible_to<bool>");
     assert(interface_);
   }
 
@@ -126,16 +124,24 @@ public:
   auto operator=(const agent& other) -> agent&;
   auto operator=(agent&& other) noexcept -> agent& = default;
 
-  auto act(uint_t, bid_fn, permit_public_status_fn, int) -> bool;
-  auto after_trading(uint_t, ask_fn, permit_public_status_fn, int) -> void;
+  auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void;
+  auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void;
 
   auto on_bought(const region&, uint_t, value_t) -> void;
   auto on_sold(const region&, uint_t, value_t) -> void;
 
-  auto on_finished(uint_t, uint_t) -> void;
+  auto stop(uint_t, int) -> bool;
 
 private:
   std::shared_ptr<agent_interface> interface_;
+};
+
+template <typename Agent> struct agent_traits
+{
+  static constexpr bool has_mb_bid_phase = is_detected_exact_v<void, mb_bid_phase_t, Agent>;
+  static constexpr bool has_mb_ask_phase = is_detected_exact_v<void, mb_ask_phase_t, Agent>;
+  static constexpr bool has_mb_on_bought = is_detected_exact_v<void, mb_on_bought_t, Agent>;
+  static constexpr bool has_mb_on_sold = is_detected_exact_v<void, mb_on_sold_t, Agent>;
 };
 
 } // namespace uat

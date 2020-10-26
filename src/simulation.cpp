@@ -58,7 +58,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
   agents_private_status_fn agents;
   constexpr agents_private_status_accessor accessor;
-  std::vector<id_t> keep_active, to_finished;
+  std::vector<id_t> keep_active;
 
   uint_t t0 = 0;
 
@@ -74,6 +74,8 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
       data.emplace_back();
     return data[t - t0][{loc, t}];
   };
+
+  const auto safe_book = [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); };
 
   auto public_access = [&book](auto id) {
     return [id = id, &book](const region& s, uint_t t) -> permit_public_status_t {
@@ -101,6 +103,9 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
   };
 
   do {
+    if (opts.status_callback)
+      opts.status_callback(t0, std::as_const(agents), space, safe_book);
+
     {
       auto new_agents = factory(t0, space, rnd());
       for (auto& agent : new_agents)
@@ -110,42 +115,28 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
     keep_active.clear();
     keep_active.reserve(agents.active_count());
 
-    to_finished.clear();
-    to_finished.reserve(agents.active_count());
-
-    if (opts.status_callback)
-      opts.status_callback(t0, std::as_const(agents), space,
-                           [&book](const region& loc, uint_t t) -> permit_private_status_t { return book(loc, t); });
-
     {
       std::vector<std::tuple<region, uint_t>> bids;
       for (const auto id : accessor.active(agents)) {
-        const auto r = accessor.at(agents, id)
-                         .act(
-                           t0,
-                           [&](const region& s, uint_t t, value_t v) -> bool {
-                             if (t < t0)
-                               return false;
-                             using namespace permit_private_status;
-                             return std::visit(cool::compose{[](out_of_limits) { return false; }, [](in_use) { return false; },
-                                                             [&](on_sale& status) {
-                                                               if (v > status.min_value && v > status.highest_bid) {
-                                                                 if (status.highest_bidder == no_owner)
-                                                                   bids.emplace_back(s, t);
+        auto bid = [&](const region& s, uint_t t, value_t v) -> bool {
+          if (t < t0)
+            return false;
+          using namespace permit_private_status;
+          const auto visitor = cool::compose{[](out_of_limits) { return false; }, [](in_use) { return false; },
+                                             [&](on_sale& status) {
+                                               if (v > status.min_value && v > status.highest_bid) {
+                                                 if (status.highest_bidder == no_owner)
+                                                   bids.emplace_back(s, t);
 
-                                                                 status.highest_bidder = id;
-                                                                 status.highest_bid = v;
-                                                               }
-                                                               return true;
-                                                             }},
-                                               book(s, t));
-                           },
-                           public_access(id), rnd());
+                                                 status.highest_bidder = id;
+                                                 status.highest_bid = v;
+                                               }
+                                               return true;
+                                             }};
+          return std::visit(visitor, book(s, t));
+        };
 
-        if (r)
-          keep_active.push_back(id);
-        else
-          to_finished.push_back(id);
+        accessor.at(agents, id).bid_phase(t0, std::move(bid), public_access(id), rnd());
       }
 
       if (bids.size() > 0) {
@@ -167,35 +158,34 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
     {
       std::vector<std::tuple<region, uint_t, uint_t, value_t>> asks;
       for (const auto id : accessor.active(agents)) {
-        accessor.at(agents, id)
-          .after_trading(
-            t0,
-            [&](const region& s, uint_t t, value_t v) -> bool {
-              if (t < t0)
-                return false;
-              using namespace permit_private_status;
-              return std::visit(cool::compose{[](out_of_limits) { return false; }, [](on_sale) { return false; },
-                                              [&](in_use& status) {
-                                                if (status.owner != id)
-                                                  return false;
-                                                asks.emplace_back(s, t, id, v);
-                                                return true;
-                                              }},
-                                book(s, t));
-            },
-            public_access(id), rnd());
+        auto ask = [&](const region& s, uint_t t, value_t v) -> bool {
+          if (t < t0)
+            return false;
+          using namespace permit_private_status;
+          const auto visitor = cool::compose{[](out_of_limits) { return false; }, [](on_sale) { return false; },
+                                             [&](in_use& status) {
+                                               if (status.owner != id)
+                                                 return false;
+                                               asks.emplace_back(s, t, id, v);
+                                               return true;
+                                             }};
+          return std::visit(visitor, book(s, t));
+        };
+
+        accessor.at(agents, id).ask_phase(t0, std::move(ask), public_access(id), rnd());
       }
 
       for (const auto& [s, t, id, v] : asks)
         book(s, t) = permit_private_status::on_sale{.owner = id, .min_value = v};
     }
 
-    for (const auto id : to_finished)
-      accessor.at(agents, id).on_finished(id, t0);
-
+    for (const auto id : accessor.active(agents))
+      if (!accessor.at(agents, id).stop(t0, rnd()))
+        keep_active.push_back(id);
     agents.update_active(std::move(keep_active));
 
-    data.pop_front();
+    if (data.size() > 0)
+      data.pop_front();
     ++t0;
   } while (!stop());
 }
