@@ -138,6 +138,7 @@ private:
 
 template <typename Agent> struct agent_traits
 {
+  static constexpr bool is_valid = is_detected_convertible_v<bool, mb_stop_t, Agent>;
   static constexpr bool has_mb_bid_phase = is_detected_exact_v<void, mb_bid_phase_t, Agent>;
   static constexpr bool has_mb_ask_phase = is_detected_exact_v<void, mb_ask_phase_t, Agent>;
   static constexpr bool has_mb_on_bought = is_detected_exact_v<void, mb_on_bought_t, Agent>;

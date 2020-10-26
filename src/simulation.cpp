@@ -106,16 +106,15 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
     if (opts.status_callback)
       opts.status_callback(t0, std::as_const(agents), space, safe_book);
 
+    // Generate new agents
     {
       auto new_agents = factory(t0, space, rnd());
       for (auto& agent : new_agents)
         agents.insert(std::move(agent));
     }
 
-    keep_active.clear();
-    keep_active.reserve(agents.active_count());
-
     {
+      // Bid phase
       std::vector<std::tuple<region, uint_t>> bids;
       for (const auto id : accessor.active(agents)) {
         auto bid = [&](const region& s, uint_t t, value_t v) -> bool {
@@ -139,6 +138,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
         accessor.at(agents, id).bid_phase(t0, std::move(bid), public_access(id), rnd());
       }
 
+      // Trading
       if (bids.size() > 0) {
         const auto first_active = accessor.active(agents).front();
         for (const auto& [s, t] : bids) {
@@ -155,6 +155,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
       }
     }
 
+    // Ask phase
     {
       std::vector<std::tuple<region, uint_t, uint_t, value_t>> asks;
       for (const auto id : accessor.active(agents)) {
@@ -179,6 +180,9 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
         book(s, t) = permit_private_status::on_sale{.owner = id, .min_value = v};
     }
 
+    // Stop condition
+    keep_active.clear();
+    keep_active.reserve(agents.active_count());
     for (const auto id : accessor.active(agents))
       if (!accessor.at(agents, id).stop(t0, rnd()))
         keep_active.push_back(id);
