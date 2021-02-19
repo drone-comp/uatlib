@@ -64,7 +64,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
   std::deque<std::unordered_map<permit, permit_private_status_t>> data;
 
-  permit_private_status_t ool = permit_private_status::out_of_limits{};
+  permit_private_status_t ool = {permit_private_status::out_of_limits{}, {}};
   auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> permit_private_status_t& {
     if (t < t0) // XXX agents can check the state at t0, however they should be prohibited to bid for.
       return ool;
@@ -81,15 +81,18 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
     return [id = id, &book](const region& s, uint_t t) -> permit_public_status_t {
       using namespace permit_private_status;
       using namespace permit_public_status;
+      const auto& pstatus = book(s, t);
+      using history_t = std::add_const_t<decltype(pstatus.history)>&;
       return std::visit(cool::compose{[](out_of_limits) -> permit_public_status_t { return unavailable{}; },
                                       [&](in_use status) -> permit_public_status_t {
                                         return status.owner == id ? permit_public_status_t{owned{}} : unavailable{};
                                       },
                                       [&](on_sale status) -> permit_public_status_t {
-                                        return status.owner == id ? permit_public_status_t{unavailable{}}
-                                                                  : available{status.min_value};
+                                        return status.owner == id
+                                                 ? permit_public_status_t{unavailable{}}
+                                                 : available{status.min_value, [&]() -> history_t { return pstatus.history; }};
                                       }},
-                        book(s, t));
+                        pstatus.current);
     };
   };
 
@@ -132,7 +135,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
                                                }
                                                return true;
                                              }};
-          return std::visit(visitor, book(s, t));
+          return std::visit(visitor, book(s, t).current);
         };
 
         accessor.at(agents, id).bid_phase(t0, std::move(bid), public_access(id), rnd());
@@ -142,7 +145,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
       if (bids.size() > 0) {
         const auto first_active = accessor.active(agents).front();
         for (const auto& [s, t] : bids) {
-          const auto status = std::get<permit_private_status::on_sale>(book(s, t));
+          const auto status = std::get<permit_private_status::on_sale>(book(s, t).current);
           if (opts.trade_callback)
             opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
@@ -150,7 +153,9 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
           if (status.owner != no_owner && status.owner >= first_active)
             accessor.at(agents, status.owner).on_sold(s, t, status.highest_bid);
 
-          book(s, t) = permit_private_status::in_use{status.highest_bidder};
+          auto& pstatus = book(s, t);
+          pstatus.current = permit_private_status::in_use{status.highest_bidder};
+          pstatus.history.push_back({{status.min_value, status.highest_bid}});
         }
       }
     }
@@ -170,14 +175,14 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
                                                asks.emplace_back(s, t, id, v);
                                                return true;
                                              }};
-          return std::visit(visitor, book(s, t));
+          return std::visit(visitor, book(s, t).current);
         };
 
         accessor.at(agents, id).ask_phase(t0, std::move(ask), public_access(id), rnd());
       }
 
       for (const auto& [s, t, id, v] : asks)
-        book(s, t) = permit_private_status::on_sale{.owner = id, .min_value = v};
+        book(s, t).current = permit_private_status::on_sale{.owner = id, .min_value = v};
     }
 
     // Stop condition

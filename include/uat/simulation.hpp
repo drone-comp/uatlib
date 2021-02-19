@@ -43,8 +43,11 @@ struct out_of_limits
 {};
 } // namespace permit_private_status
 
-using permit_private_status_t =
-  std::variant<permit_private_status::on_sale, permit_private_status::in_use, permit_private_status::out_of_limits>;
+struct permit_private_status_t
+{
+  std::variant<permit_private_status::on_sale, permit_private_status::in_use, permit_private_status::out_of_limits> current;
+  std::vector<std::array<value_t, 2>> history;
+};
 
 namespace agent_private_status
 {

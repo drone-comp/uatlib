@@ -21,6 +21,7 @@ struct unavailable
 struct available
 {
   value_t min_value;
+  std::function<const std::vector<std::array<value_t, 2>>&()> trades;
 };
 struct owned
 {};
