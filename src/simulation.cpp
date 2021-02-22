@@ -168,7 +168,13 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
           if (t < t0)
             return false;
           using namespace permit_private_status;
-          const auto visitor = cool::compose{[](out_of_limits) { return false; }, [](on_sale) { return false; },
+          const auto visitor = cool::compose{[](out_of_limits) { return false; },
+                                             [&](on_sale status) {
+                                               if (status.owner != id)
+                                                 return false;
+                                               asks.emplace_back(s, t, id, v);
+                                               return true;
+                                             },
                                              [&](in_use& status) {
                                                if (status.owner != id)
                                                  return false;
