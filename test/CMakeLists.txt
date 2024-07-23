@@ -15,6 +15,7 @@ endif()
 
 add_executable(simple simple.cpp)
 set_target_properties(simple PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+target_compile_options(simple PRIVATE -fvisibility=hidden)
 
 option(UAT_TEST_COVERAGE "whether or not add coverage instrumentation" OFF)
 if (UAT_TEST_COVERAGE)
@@ -28,7 +29,7 @@ else()
   set_target_properties(simple PROPERTIES LINK_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fsanitize=address,leak,undefined -fuse-ld=gold")
 endif()
 
-target_link_libraries(simple PRIVATE uat)
+target_link_libraries(simple PRIVATE uat pybind11::embed)
 target_compile_definitions(simple PRIVATE -DJULES_DEBUG_THROWS)
 
 if(MSVC)

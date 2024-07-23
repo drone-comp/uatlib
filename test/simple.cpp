@@ -1,6 +1,7 @@
 #include <limits>
 #include <stdexcept>
 #include <uat/simulation.hpp>
+#include <uat/py.hpp>
 
 #include <cool/indices.hpp>
 #include <jules/array/array.hpp>
@@ -95,7 +96,11 @@ int main()
   static constexpr auto n = 100u;
   static constexpr auto lambda = 10u;
 
-  auto factory = [](uint_t t, const airspace& airspace, int seed) -> std::vector<agent> {
+  py::scoped_interpreter guard;
+  auto agent_module = py::module::import("agent"); // from ./agent.py
+  auto Agent = agent_module.attr("MyAgent");
+
+  auto factory = [&Agent](uint_t t, const airspace& airspace, int seed) -> std::vector<agent> {
     if (t >= n)
       return {};
 
@@ -104,7 +109,10 @@ int main()
     std::vector<agent> result;
     result.reserve(lambda);
     for ([[maybe_unused]] const auto _ : cool::indices(lambda))
-      result.push_back(my_agent(airspace.random_mission(gen())));
+      if (jules::bernoulli_sample(0.5, gen))
+        result.push_back(my_agent(airspace.random_mission(gen())));
+      else
+        result.push_back(py_agent(Agent, airspace.random_mission(gen())));
 
     return result;
   };
