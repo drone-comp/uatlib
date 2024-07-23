@@ -9,6 +9,8 @@
 #include <deque>
 #include <functional>
 #include <vector>
+#include <optional>
+#include <variant>
 
 namespace uat
 {
