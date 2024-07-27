@@ -10,6 +10,11 @@
 
 using namespace uat;
 
+struct mission_t
+{
+  region from, to;
+};
+
 class my_agent
 {
 public:
@@ -65,24 +70,13 @@ private:
   std::size_t pos_;
 };
 
-class my_airspace
+static auto random_mission(int seed) -> mission_t
 {
-public:
-  auto random_mission(int seed) const -> mission_t
-  {
-    std::mt19937 gen(seed);
-    const auto from = jules::uniform_index_sample(9u, gen);
-    const auto to = from + 1;
-    return {my_region{from}, my_region{to}};
-  }
-
-  void iterate(region_fn callback) const
-  {
-    for (const auto i : cool::indices(std::size_t{10}))
-      if (!callback(my_region{i}))
-        return;
-  }
-};
+  std::mt19937 gen(seed);
+  const auto from = jules::uniform_index_sample(9u, gen);
+  const auto to = from + 1;
+  return {my_region{from}, my_region{to}};
+}
 
 using atraits = agent_traits<my_agent>;
 static_assert(atraits::has_mb_bid_phase);
@@ -95,7 +89,7 @@ int main()
   static constexpr auto n = 100u;
   static constexpr auto lambda = 10u;
 
-  auto factory = [](uint_t t, const airspace& airspace, int seed) -> std::vector<agent> {
+  auto factory = [](uint_t t, int seed) -> std::vector<agent> {
     if (t >= n)
       return {};
 
@@ -104,7 +98,7 @@ int main()
     std::vector<agent> result;
     result.reserve(lambda);
     for ([[maybe_unused]] const auto _ : cool::indices(lambda))
-      result.push_back(my_agent(airspace.random_mission(gen())));
+      result.push_back(my_agent(random_mission(gen())));
 
     return result;
   };
@@ -118,7 +112,7 @@ int main()
     cost[info.to] += info.value;
   };
 
-  simulate(factory, my_airspace{}, 17, opts);
+  simulate(factory, 17, opts);
 
   const auto [mean, sd] = jules::meansd(cost);
   fmt::print("Average cost: {} ± {}\n", mean, sd);

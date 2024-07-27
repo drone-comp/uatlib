@@ -53,7 +53,7 @@ struct agents_private_status_accessor
   }
 };
 
-auto simulate(factory_fn factory, airspace space, int seed, const simulation_opts_t& opts) -> void
+auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts) -> void
 {
   std::mt19937 rnd(seed);
 
@@ -108,11 +108,11 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
   do {
     if (opts.status_callback)
-      opts.status_callback(t0, std::as_const(agents), space, safe_book);
+      opts.status_callback(t0, std::as_const(agents), safe_book);
 
     // Generate new agents
     {
-      auto new_agents = factory(t0, space, rnd());
+      auto new_agents = factory(t0, rnd());
       for (auto& agent : new_agents)
         agents.insert(std::move(agent));
     }
