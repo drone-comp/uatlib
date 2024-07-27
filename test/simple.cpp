@@ -1,10 +1,10 @@
-#include <limits>
-#include <stdexcept>
 #include <uat/simulation.hpp>
 
 #include <cool/indices.hpp>
 #include <jules/array/array.hpp>
 #include <jules/base/random.hpp>
+
+#include <limits>
 #include <random>
 #include <variant>
 
