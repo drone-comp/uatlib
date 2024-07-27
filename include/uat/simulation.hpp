@@ -2,7 +2,6 @@
 #define UAT_SIMULATION_HPP
 
 #include <uat/agent.hpp>
-#include <uat/airspace.hpp>
 #include <uat/permit.hpp>
 #include <uat/type.hpp>
 
@@ -15,7 +14,7 @@
 namespace uat
 {
 
-using factory_fn = std::function<std::vector<agent>(uint_t, const airspace&, int)>;
+using factory_fn = std::function<std::vector<agent>(uint_t, int)>;
 
 struct trade_info_t
 {
@@ -88,7 +87,7 @@ private:
 // TODO: is it possible to use function_ref?
 using permit_private_status_fn = std::function<permit_private_status_t(const region&, uint_t)>;
 using trade_info_fn = std::function<void(trade_info_t)>;
-using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, const airspace&, permit_private_status_fn)>;
+using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, permit_private_status_fn)>;
 
 namespace stop_criteria
 {
@@ -111,7 +110,7 @@ struct simulation_opts_t
 };
 
 // (First-price sealed-bid auction)
-auto simulate(factory_fn, airspace, int seed, const simulation_opts_t& = {}) -> void;
+auto simulate(factory_fn, int seed, const simulation_opts_t& = {}) -> void;
 
 } // namespace uat
 
