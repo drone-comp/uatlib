@@ -1,10 +1,12 @@
+//! \file airspace.hpp
+//! \brief Defines the airspace class and related types.
+
 #ifndef UAT_AIRSPACE_HPP
 #define UAT_AIRSPACE_HPP
 
 #include <uat/permit.hpp>
 #include <uat/type.hpp>
 
-#include <cassert>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -73,11 +75,11 @@ public:
   //! The Airspace object should be copyable.
   template <typename Airspace> airspace(Airspace a) : interface_(new airspace_model<Airspace>(std::move(a)))
   {
+    // XXX: simulation never uses this function, should we remove this requirement?
     static_assert(is_detected_convertible_v<mission_t, mb_random_mission_t, Airspace>,
                   "missing member function Airspace::random_mission() -> mission_t");
+    // XXX: simulation never uses this function, should we remove this requirement?
     static_assert(is_detected_exact_v<void, mb_iterate_t, Airspace>, "missing member function Airspace::iterate(region_fn)");
-
-    assert(interface_);
   }
 
   airspace() = delete;

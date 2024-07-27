@@ -1,9 +1,11 @@
+//! \file permit.hpp
+//! \brief Defines the region and permit classes and related types.
+
 #ifndef UAT_PERMIT_HPP
 #define UAT_PERMIT_HPP
 
 #include <uat/type.hpp>
 
-#include <cassert>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -170,15 +172,15 @@ public:
   //! such as std::vector<Region>.
   template <typename Region> region(Region a) : interface_(new region_model<Region>(std::move(a)))
   {
+    // XXX: simulation never uses this function, should we remove this requirement?
     static_assert(is_detected_v<mb_adjacent_regions_t, Region>,
                   "missing member function Region::adjacent_regions() -> Container<Region>");
     static_assert(is_detected_convertible_v<std::size_t, mb_hash_t, Region>,
                   "missing member function Region::hash() -> convertible_to<size_t>");
     static_assert(is_detected_convertible_v<bool, equality_t, Region>, "Region does not satisfy equality comparable");
+    // XXX: simulation never uses this function, should we remove this requirement?
     static_assert(is_detected_convertible_v<uint_t, mb_distance_t, Region>,
                   "missing member function Region::distance(Region) -> convertible_to<uint_t>");
-
-    assert(interface_);
   }
 
   region() noexcept = delete;

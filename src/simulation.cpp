@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <uat/simulation.hpp>
 
+#include <cassert>
 #include <deque>
 #include <functional>
 #include <limits>
@@ -155,7 +156,7 @@ auto simulate(factory_fn factory, airspace space, int seed, const simulation_opt
 
           auto& pstatus = book(s, t);
           pstatus.current = permit_private_status::in_use{status.highest_bidder};
-          pstatus.history.push_back({{status.min_value, status.highest_bid}});
+          pstatus.history.push_back({status.min_value, status.highest_bid});
         }
       }
     }
