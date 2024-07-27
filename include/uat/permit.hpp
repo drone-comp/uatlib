@@ -18,26 +18,38 @@
 namespace uat
 {
 
+//! \private
 template <typename T> using mb_adjacent_regions_t = decltype(std::declval<const T&>().adjacent_regions());
 
+//! \private
 template <typename T> using mb_hash_t = decltype(std::declval<const T&>().hash());
 
+//! \private
 template <typename T> using mb_distance_t = decltype(std::declval<const T&>().distance(std::declval<const T&>()));
 
+//! \private
 template <typename T>
 using mb_heuristic_distance_t = decltype(std::declval<const T&>().heuristic_distance(std::declval<const T&>()));
 
+//! \private
 template <typename T> using mb_shortest_path_t = decltype(std::declval<const T&>().shortest_path(std::declval<const T&>()));
 
+//! \private
 template <typename T>
 using mb_print_t =
   decltype(std::declval<const T&>().print(std::declval<std::function<void(std::string_view, fmt::format_args)>>()));
 
+//! \private
 template <typename T> using mb_climb_t = decltype(std::declval<const T&>().climb(std::declval<const T&>()));
 
+//! \private
 template <typename T>
 using mb_turn_t = decltype(std::declval<const T&>().turn(std::declval<const T&>(), std::declval<const T&>()));
 
+//! \brief A type-erased class that represents an atomic region in the airspace.
+//!
+//! The region class is a type-erased class that represents an atomic region in the
+//! airspace. It is used to represent the subspaces that a permit refers to.
 class region
 {
   class region_interface

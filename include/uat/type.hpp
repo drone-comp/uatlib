@@ -8,8 +8,13 @@
 namespace uat
 {
 
+//! Default unsigned integer type
 using uint_t = std::size_t;
+
+//! Default type for identifier
 using id_t = std::size_t;
+
+//! Default type for price
 using value_t = double;
 
 class airspace;
@@ -17,15 +22,18 @@ class region;
 class permit;
 class agent;
 
+//! \private
 namespace detail
 {
 
+//! \private
 template <class Default, class AlwaysVoid, template <class...> class Op, class... Args> struct detector
 {
   using value_t = std::false_type;
   using type = Default;
 };
 
+//! \private
 template <class Default, template <class...> class Op, class... Args>
 struct detector<Default, std::void_t<Op<Args...>>, Op, Args...>
 {
