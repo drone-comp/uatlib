@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <stdexcept>
 #include <type_traits>
 
 namespace uat
@@ -21,6 +22,18 @@ class airspace;
 class region;
 class permit;
 class agent;
+
+class not_implemented : public std::exception
+{
+public:
+  not_implemented(const std::string& member_name)
+    : message("member function " + member_name + " not implemented")
+  {}
+
+  const char* what() const noexcept override { return message.c_str(); }
+private:
+  std::string message;
+};
 
 //! \private
 namespace detail
