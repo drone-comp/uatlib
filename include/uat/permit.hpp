@@ -52,6 +52,7 @@ using mb_turn_t = decltype(std::declval<const T&>().turn(std::declval<const T&>(
 //! airspace. It is used to represent the subspaces that a permit refers to.
 class region
 {
+  //! \private
   class region_interface
   {
   public:
@@ -69,6 +70,7 @@ class region
     virtual auto climb(const region_interface&) const -> bool = 0;
   };
 
+  //! \private
   template <typename Region> class region_model : public region_interface
   {
   public:
@@ -156,6 +158,16 @@ class region
   };
 
 public:
+  //! Constructs a type-erased region from an object of type Region that satisfy at least:
+  //!
+  //! - `Region::adjacent_regions() -> Container<Region>`
+  //! - `Region::hash() -> convertible_to<size_t>`
+  //! - `Region::distance(Region) -> convertible_to<uint_t>`
+  //!
+  //! Moreover, it should be equality comparable and copyable.
+  //!
+  //! Container is a type that satisfies the requirements of a container of Region,
+  //! such as std::vector<Region>.
   template <typename Region> region(Region a) : interface_(new region_model<Region>(std::move(a)))
   {
     static_assert(is_detected_v<mb_adjacent_regions_t, Region>,
@@ -169,15 +181,22 @@ public:
     assert(interface_);
   }
 
-  region() noexcept = default;
+  region() noexcept = delete;
 
+  //! Copy constructor.
   region(const region&);
+
+  //! Move constructor.
   region(region&&) noexcept = default;
 
+  //! Copy assignment operator.
   auto operator=(const region&) -> region&;
+
+  //! Move assignment operator.
   auto operator=(region&&) noexcept -> region& = default;
 
   auto adjacent_regions() const -> std::vector<region>;
+
   auto hash() const -> std::size_t;
 
   auto operator==(const region&) const -> bool;
@@ -195,8 +214,14 @@ public:
 
   auto climb(const region& to) const -> bool;
 
+  //!@{
+  //! Downcast the region to its original type.
+  //!
+  //! Type T must be the original type used to construct the region.
+  //! Otherwise, behavior is undefined.
   template <typename T> auto downcast() -> T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
   template <typename T> auto downcast() const -> const T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
+  //!@}
 
 private:
   std::unique_ptr<region_interface> interface_;
@@ -205,7 +230,7 @@ private:
 class permit
 {
 public:
-  permit() noexcept = default;
+  permit() noexcept = delete;
   permit(class region s, uint_t time) noexcept;
 
   auto time() const noexcept -> uint_t;
@@ -220,6 +245,7 @@ private:
   uint_t time_;
 };
 
+//! \private
 template <std::size_t I> decltype(auto) get(permit& ts)
 {
   if constexpr (I == 0)
@@ -228,6 +254,7 @@ template <std::size_t I> decltype(auto) get(permit& ts)
     return ts.time();
 }
 
+//! \private
 template <std::size_t I> decltype(auto) get(const permit& ts)
 {
   if constexpr (I == 0)
@@ -238,8 +265,11 @@ template <std::size_t I> decltype(auto) get(const permit& ts)
 
 } // namespace uat
 
+
+//! Class that enables the formatting (using fmtlib) of the region class.
 template <> struct fmt::formatter<uat::region>
 {
+  //! \private
   constexpr auto parse(format_parse_context& ctx)
   {
     if (ctx.begin() != ctx.end() && *ctx.begin() != '}')
@@ -247,6 +277,7 @@ template <> struct fmt::formatter<uat::region>
     return ctx.begin();
   }
 
+  //! \private
   template <typename FormatContext> auto format(const uat::region& p, FormatContext& ctx)
   {
     auto out = ctx.out();
@@ -257,34 +288,44 @@ template <> struct fmt::formatter<uat::region>
 
 namespace std
 {
+
+//! Class that enables the usage of std::unordered_* with the region class.
 template <> struct hash<uat::region>
 {
+  //! \private
   auto operator()(const uat::region&) const noexcept -> size_t;
 };
 
+//! Class that enables the usage of std::unordered_* with the permit class.
 template <> struct hash<uat::permit>
 {
+  //! \private
   auto operator()(const uat::permit&) const noexcept -> size_t;
 };
 
+//! Class that enables the usage of structured bindings with the permit class.
 template <> struct tuple_size<uat::permit> : public integral_constant<size_t, 2>
 {};
 
+//! \private
 template <> struct tuple_element<0, uat::permit>
 {
   using type = uat::region&;
 };
 
+//! \private
 template <> struct tuple_element<0, const uat::permit>
 {
   using type = const uat::region&;
 };
 
+//! \private
 template <> struct tuple_element<1, uat::permit>
 {
   using type = uat::uint_t;
 };
 
+//! \private
 template <> struct tuple_element<1, const uat::permit>
 {
   using type = uat::uint_t;

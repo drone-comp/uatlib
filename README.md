@@ -18,6 +18,9 @@ Then, clone this repository:
 
 ```bash
 git clone https://github.com/drone-comp/uatlib.git
+cd uatlib
+git submodule update --init --recursive
+cd ..
 ```
 
 And include the library in your `CMakeLists.txt`:
