@@ -13,37 +13,16 @@ auto region::operator=(const region& other) -> region&
   return *this;
 }
 
-auto region::adjacent_regions() const -> std::vector<region> { return interface_->adjacent_regions(); }
-
 auto region::hash() const -> std::size_t { return interface_->hash(); }
 
 auto region::operator==(const region& other) const -> bool { return interface_->equals(*other.interface_); }
 
 auto region::operator!=(const region& other) const -> bool { return !interface_->equals(*other.interface_); }
 
-auto region::distance(const region& other) const -> uint_t { return interface_->distance(*other.interface_); }
-
-auto region::heuristic_distance(const region& other) const -> value_t
-{
-  return interface_->heuristic_distance(*other.interface_);
-}
-
-auto region::shortest_path(const region& other, int seed) const -> std::vector<region>
-{
-  return interface_->shortest_path(*other.interface_, seed);
-}
-
 auto region::print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void
 {
   interface_->print_to(std::move(f));
 }
-
-auto region::turn(const region& before, const region& to) const -> bool
-{
-  return interface_->turn(*before.interface_, *to.interface_);
-}
-
-auto region::climb(const region& to) const -> bool { return interface_->climb(*to.interface_); }
 
 permit::permit(region s, uint_t time) noexcept : region_{std::move(s)}, time_{time} {}
 

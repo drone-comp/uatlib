@@ -53,18 +53,7 @@ public:
 
   auto hash() const -> std::size_t { return pos_; }
 
-  auto adjacent_regions() const -> std::vector<region>
-  {
-    if (pos_ == 0)
-      return {my_region{pos_ + 1}};
-    if (pos_ == 9)
-      return {my_region{pos_ - 1}};
-    return {my_region{pos_ - 1}, my_region{pos_ + 1}};
-  }
-
   auto operator==(const my_region& other) const { return pos_ == other.pos_; }
-
-  auto distance(const my_region& other) const { return pos_ > other.pos_ ? pos_ - other.pos_ : other.pos_ - pos_; }
 
 private:
   std::size_t pos_;

@@ -21,32 +21,12 @@ namespace uat
 {
 
 //! \private
-template <typename T> using mb_adjacent_regions_t = decltype(std::declval<const T&>().adjacent_regions());
-
-//! \private
 template <typename T> using mb_hash_t = decltype(std::declval<const T&>().hash());
-
-//! \private
-template <typename T> using mb_distance_t = decltype(std::declval<const T&>().distance(std::declval<const T&>()));
-
-//! \private
-template <typename T>
-using mb_heuristic_distance_t = decltype(std::declval<const T&>().heuristic_distance(std::declval<const T&>()));
-
-//! \private
-template <typename T> using mb_shortest_path_t = decltype(std::declval<const T&>().shortest_path(std::declval<const T&>()));
 
 //! \private
 template <typename T>
 using mb_print_t =
   decltype(std::declval<const T&>().print(std::declval<std::function<void(std::string_view, fmt::format_args)>>()));
-
-//! \private
-template <typename T> using mb_climb_t = decltype(std::declval<const T&>().climb(std::declval<const T&>()));
-
-//! \private
-template <typename T>
-using mb_turn_t = decltype(std::declval<const T&>().turn(std::declval<const T&>(), std::declval<const T&>()));
 
 //! \brief A type-erased class that represents an atomic region in the airspace.
 //!
@@ -61,15 +41,9 @@ class region
     virtual ~region_interface() = default;
     virtual auto clone() const -> std::unique_ptr<region_interface> = 0;
 
-    virtual auto adjacent_regions() const -> std::vector<region> = 0;
     virtual auto hash() const -> std::size_t = 0;
     virtual auto equals(const region_interface&) const -> bool = 0;
-    virtual auto distance(const region_interface&) const -> uint_t = 0;
-    virtual auto heuristic_distance(const region_interface&) const -> value_t = 0;
-    virtual auto shortest_path(const region_interface&, int) const -> std::vector<region> = 0;
     virtual auto print_to(std::function<void(std::string_view, fmt::format_args)>) const -> void = 0;
-    virtual auto turn(const region_interface&, const region_interface&) const -> bool = 0;
-    virtual auto climb(const region_interface&) const -> bool = 0;
   };
 
   //! \private
@@ -84,51 +58,11 @@ class region
       return std::unique_ptr<region_interface>{new region_model(region_)};
     }
 
-    auto adjacent_regions() const -> std::vector<region> override
-    {
-      if constexpr (is_detected_convertible_v<std::vector<region>, mb_adjacent_regions_t, Region>) {
-        return region_.adjacent_regions();
-      } else {
-        auto nei = region_.adjacent_regions();
-        static_assert(std::is_convertible_v<region, typename decltype(nei)::value_type>,
-                      "member function Region::adjacent_regions must return a container of Region");
-
-        std::vector<region> converted;
-        converted.reserve(nei.size());
-        std::move(nei.begin(), nei.end(), std::back_inserter(converted));
-        return converted;
-      }
-    }
-
     auto hash() const -> std::size_t override { return region_.hash(); }
 
     auto equals(const region_interface& other) const -> bool override
     {
       return region_ == dynamic_cast<const region_model&>(other).region_;
-    }
-
-    auto distance(const region_interface& other) const -> uint_t override
-    {
-      if constexpr (is_detected_convertible_v<uint_t, mb_distance_t, Region>)
-        return region_.distance(dynamic_cast<const region_model&>(other).region_);
-      else
-        throw not_implemented("Region::distance(Region) -> uint_t");
-    }
-
-    auto heuristic_distance(const region_interface& other) const -> value_t override
-    {
-      if constexpr (is_detected_convertible_v<value_t, mb_heuristic_distance_t, Region>)
-        return region_.heuristic_distance(dynamic_cast<const region_model&>(other).region_);
-      else
-        return region_.distance(dynamic_cast<const region_model&>(other).region_);
-    }
-
-    auto shortest_path(const region_interface& other, int seed) const -> std::vector<region> override
-    {
-      if constexpr (is_detected_exact_v<std::vector<region>, mb_shortest_path_t, Region>)
-        return region_.shortest_path(dynamic_cast<const region_model&>(other).region_, seed);
-      else // TODO: container conversion
-        return {};
     }
 
     auto print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void override
@@ -137,22 +71,6 @@ class region
         region_.print(std::move(f));
       else
         f("NA", {});
-    }
-
-    auto turn(const region_interface& before, const region_interface& to) const -> bool override
-    {
-      if constexpr (is_detected_convertible_v<bool, mb_turn_t, Region>)
-        return region_.turn(dynamic_cast<const region_model&>(before).region_, dynamic_cast<const region_model&>(to).region_);
-      else
-        return false;
-    }
-
-    auto climb(const region_interface& to) const -> bool override
-    {
-      if constexpr (is_detected_convertible_v<bool, mb_climb_t, Region>)
-        return region_.climb(dynamic_cast<const region_model&>(to).region_);
-      else
-        return false;
     }
 
     auto downcast() -> Region& { return region_; }
@@ -165,7 +83,6 @@ class region
 public:
   //! Constructs a type-erased region from an object of type Region that satisfy at least:
   //!
-  //! - `Region::adjacent_regions() -> Container<Region>`
   //! - `Region::hash() -> convertible_to<size_t>`
   //!
   //! Moreover, it should be equality comparable and copyable.
@@ -174,9 +91,6 @@ public:
   //! such as std::vector<Region>.
   template <typename Region> region(Region a) : interface_(new region_model<Region>(std::move(a)))
   {
-    // XXX: simulation never uses this function, should we remove this requirement?
-    static_assert(is_detected_v<mb_adjacent_regions_t, Region>,
-                  "missing member function Region::adjacent_regions() -> Container<Region>");
     static_assert(is_detected_convertible_v<std::size_t, mb_hash_t, Region>,
                   "missing member function Region::hash() -> convertible_to<size_t>");
     static_assert(is_detected_convertible_v<bool, equality_t, Region>, "Region does not satisfy equality comparable");
@@ -190,41 +104,11 @@ public:
   auto operator=(const region&) -> region&;
   auto operator=(region&&) noexcept -> region& = default;
 
-  //! Returns a vector containing all adjacent regions.
-  auto adjacent_regions() const -> std::vector<region>;
-
   //! \private
   auto hash() const -> std::size_t;
 
   auto operator==(const region&) const -> bool;
   auto operator!=(const region&) const -> bool;
-
-  //! Returns the shortest distance (in steps) to another region.
-  //!
-  //! If the distance is not defined in the original region, not_implemented is
-  //! thrown.
-  auto distance(const region&) const -> uint_t;
-
-  //! Returns the heuristic distance to another region.
-  //!
-  //! If the heuristic distance is not defined in the original region, the distance is
-  //! returned.
-  auto heuristic_distance(const region&) const -> value_t;
-
-  //! Returns the shortest path to another region.
-  //!
-  //! If the shortest path is not defined in the original region, an empty vector is
-  //! returned.
-  //!
-  //! @param to The destination region.
-  //! @param seed The seed used to break ties.
-  //!
-  //! @return A vector containing the regions in the shortest path, including the
-  //!         origin and destination regions.  It is also assumed that the origin
-  //!         region is the first element of the vector and the destination region
-  //!         is the last element.  All elements in between are the regions in the
-  //!         path.
-  auto shortest_path(const region& to, int seed) const -> std::vector<region>;
 
   //! Prints the region using fmt::format syntax.
   //!
@@ -235,16 +119,6 @@ public:
   //!          The string_view is the format string and the format_args object
   //!          contains the arguments to be formatted inside `fmt::make_format_args(...)`.
   auto print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void;
-
-  //! Returns true if the movement (\p before, `this`, \p to) is a turn.
-  //!
-  //! If the region does not define a turn function, false is returned.
-  auto turn(const region& before, const region& to) const -> bool;
-
-  //! Returns true if the movement (`this`, \p to) is a climb.
-  //!
-  //! If the region does not define a climb function, false is returned.
-  auto climb(const region& to) const -> bool;
 
   //! Downcast the region to its original type.
   //!
