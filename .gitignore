@@ -3,5 +3,4 @@ build-*
 compile_commands.json
 .clangd
 .cache
-html
-latex
+docs
