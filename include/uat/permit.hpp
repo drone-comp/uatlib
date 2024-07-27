@@ -183,50 +183,85 @@ public:
 
   region() noexcept = delete;
 
-  //! Copy constructor.
   region(const region&);
-
-  //! Move constructor.
   region(region&&) noexcept = default;
 
-  //! Copy assignment operator.
   auto operator=(const region&) -> region&;
-
-  //! Move assignment operator.
   auto operator=(region&&) noexcept -> region& = default;
 
+  //! Returns a vector containing all adjacent regions.
   auto adjacent_regions() const -> std::vector<region>;
 
+  //! \private
   auto hash() const -> std::size_t;
 
   auto operator==(const region&) const -> bool;
   auto operator!=(const region&) const -> bool;
 
-  auto distance(const region&) const -> uint_t; // real distance
+  //! Returns the shortest distance (in steps) to another region.
+  auto distance(const region&) const -> uint_t;
 
-  auto heuristic_distance(const region&) const -> value_t; // heuristic for A*
+  //! Returns the heuristic distance to another region.
+  //!
+  //! If the heuristic distance is not defined in the original region, the distance is
+  //! returned.
+  auto heuristic_distance(const region&) const -> value_t;
 
-  auto shortest_path(const region&, int) const -> std::vector<region>; // must be ordered
+  //! Returns the shortest path to another region.
+  //!
+  //! If the shortest path is not defined in the original region, an empty vector is
+  //! returned.
+  //!
+  //! @param to The destination region.
+  //! @param seed The seed used to break ties.
+  //!
+  //! @return A vector containing the regions in the shortest path, including the
+  //!         origin and destination regions.  It is also assumed that the origin
+  //!         region is the first element of the vector and the destination region
+  //!         is the last element.  All elements in between are the regions in the
+  //!         path.
+  auto shortest_path(const region& to, int seed) const -> std::vector<region>;
 
-  auto print_to(std::function<void(std::string_view, fmt::format_args)>) const -> void;
+  //! Prints the region using fmt::format syntax.
+  //!
+  //! If the region does not define a print function, the string "NA" is printed
+  //! effectively calling `f("NA", {})`
+  //!
+  //! @param f A function that takes a string_view and a format_args object.
+  //!          The string_view is the format string and the format_args object
+  //!          contains the arguments to be formatted inside `fmt::make_format_args(...)`.
+  auto print_to(std::function<void(std::string_view, fmt::format_args)> f) const -> void;
 
+  //! Returns true if the movement (\p before, `this`, \p to) is a turn.
+  //!
+  //! If the region does not define a turn function, false is returned.
   auto turn(const region& before, const region& to) const -> bool;
 
+  //! Returns true if the movement (`this`, \p to) is a climb.
+  //!
+  //! If the region does not define a climb function, false is returned.
   auto climb(const region& to) const -> bool;
 
-  //!@{
   //! Downcast the region to its original type.
   //!
   //! Type T must be the original type used to construct the region.
   //! Otherwise, behavior is undefined.
   template <typename T> auto downcast() -> T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
+
+  //! Downcast the region to its original type.
+  //!
+  //! Type T must be the original type used to construct the region.
+  //! Otherwise, behavior is undefined.
   template <typename T> auto downcast() const -> const T& { return dynamic_cast<region_model<T>&>(*interface_).downcast(); }
-  //!@}
 
 private:
   std::unique_ptr<region_interface> interface_;
 };
 
+//! \brief A permit is a class that represents a permission to fly in a region at a given time.
+//!
+//! The time interval is represented as a non-negative integer.  (Arbitrary time spans are
+//! not supported.)
 class permit
 {
 public:
