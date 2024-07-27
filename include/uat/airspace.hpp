@@ -12,20 +12,28 @@
 namespace uat
 {
 
+//! A callback type to traverse the regions of the airspace.
 using region_fn = std::function<bool(const region&)>;
 
+//! \private
 template <class T> using mb_random_mission_t = decltype(std::declval<const T&>().random_mission(int{}));
 
+//! \private
 template <class T> using mb_iterate_t = decltype(std::declval<const T&>().iterate(std::declval<region_fn>()));
 
+//! A mission is just a pair of regions.
 struct mission_t
 {
   region from, to;
+
+  //! Returns the distance between the starting (from) and ending (to) regions.
   auto length() const { return from.distance(to); }
 };
 
+//! \brief A type-erased class that represents the airspace.
 class airspace
 {
+  //! \private
   class airspace_interface
   {
   public:
@@ -36,6 +44,7 @@ class airspace
     virtual auto iterate(region_fn) const -> void = 0;
   };
 
+  //! \private
   template <typename Airspace> class airspace_model : public airspace_interface
   {
   public:
@@ -56,6 +65,12 @@ class airspace
   };
 
 public:
+  //! Constructs a type-erased airspace from an object of type Airspace that satisfy at least:
+  //!
+  //! - `Airspace::random_mission(int) -> mission_t`
+  //! - `Airspace::iterate(region_fn) -> void`
+  //!
+  //! The Airspace object should be copyable.
   template <typename Airspace> airspace(Airspace a) : interface_(new airspace_model<Airspace>(std::move(a)))
   {
     static_assert(is_detected_convertible_v<mission_t, mb_random_mission_t, Airspace>,
@@ -65,18 +80,28 @@ public:
     assert(interface_);
   }
 
+  airspace() = delete;
+
   airspace(const airspace&);
   airspace(airspace&&) noexcept = default;
 
   auto operator=(const airspace&) -> airspace&;
   auto operator=(airspace&&) noexcept -> airspace& = default;
 
-  auto random_mission(int) const -> mission_t;
+  //! Returns a random mission.
+  //!
+  //! \param seed A random seed.
+  auto random_mission(int seed) const -> mission_t;
 
-  auto iterate(region_fn) const -> void;
+  //! Iterates over the regions of the airspace.
+  //!
+  //! \param callback A callback function with signature `bool(const region&)` that will
+  //!                 be called for each region in the airspace.
+  //!                 Implementer should return false at the last region to stop the iteration.
+  auto iterate(region_fn callback) const -> void;
 
 private:
-  std::shared_ptr<airspace_interface> interface_;
+  std::unique_ptr<airspace_interface> interface_;
 };
 
 } // namespace uat
