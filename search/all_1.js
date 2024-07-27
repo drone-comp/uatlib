@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['formatter_3c_20uat_3a_3aregion_20_3e_6',['formatter&lt; uat::region &gt;',['../structfmt_1_1formatter_3_01uat_1_1region_01_4.html',1,'fmt']]]
+  ['bid_5fphase_9',['bid_phase',['../classuat_1_1agent.html#a35d86e11f95365fbffdab03a49306895',1,'uat::agent']]]
 ];

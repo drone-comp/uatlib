@@ -74,12 +74,16 @@ $(function() {
 <div class="title">uat::airspace Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A type-erased class that represents the airspace.  
+ <a href="classuat_1_1airspace.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="airspace_8hpp_source.html">airspace.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a46afb90cab295c737bfb966e4e6dbcf6"><td class="memTemplParams" colspan="2"><a id="a46afb90cab295c737bfb966e4e6dbcf6"></a>
-template&lt;typename Airspace &gt; </td></tr>
-<tr class="memitem:a46afb90cab295c737bfb966e4e6dbcf6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>airspace</b> (Airspace a)</td></tr>
+<tr class="memitem:a46afb90cab295c737bfb966e4e6dbcf6"><td class="memTemplParams" colspan="2">template&lt;typename Airspace &gt; </td></tr>
+<tr class="memitem:a46afb90cab295c737bfb966e4e6dbcf6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classuat_1_1airspace.html#a46afb90cab295c737bfb966e4e6dbcf6">airspace</a> (Airspace a)</td></tr>
 <tr class="separator:a46afb90cab295c737bfb966e4e6dbcf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abad4abc71ac2b174251b2b7058460e2e"><td class="memItemLeft" align="right" valign="top"><a id="abad4abc71ac2b174251b2b7058460e2e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>airspace</b> (const <a class="el" href="classuat_1_1airspace.html">airspace</a> &amp;)</td></tr>
@@ -93,13 +97,99 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const 
 <tr class="memitem:a8c9f291d4bebde33777a9db3820462de"><td class="memItemLeft" align="right" valign="top"><a id="a8c9f291d4bebde33777a9db3820462de"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classuat_1_1airspace.html">airspace</a> &amp;&amp;) noexcept -&gt; <a class="el" href="classuat_1_1airspace.html">airspace</a> &amp;=default</td></tr>
 <tr class="separator:a8c9f291d4bebde33777a9db3820462de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95c1f73e4e93c95f15133672cb1a6e2a"><td class="memItemLeft" align="right" valign="top"><a id="a95c1f73e4e93c95f15133672cb1a6e2a"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>random_mission</b> (int) const -&gt; <a class="el" href="structuat_1_1mission__t.html">mission_t</a></td></tr>
-<tr class="separator:a95c1f73e4e93c95f15133672cb1a6e2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8d5aa51ca10f238a430a0267392a61d"><td class="memItemLeft" align="right" valign="top"><a id="aa8d5aa51ca10f238a430a0267392a61d"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>iterate</b> (region_fn) const -&gt; void</td></tr>
-<tr class="separator:aa8d5aa51ca10f238a430a0267392a61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c5ed60cd01e04319ae7e7f3456fe9af"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classuat_1_1airspace.html#a3c5ed60cd01e04319ae7e7f3456fe9af">random_mission</a> (int seed) const -&gt; <a class="el" href="structuat_1_1mission__t.html">mission_t</a></td></tr>
+<tr class="separator:a3c5ed60cd01e04319ae7e7f3456fe9af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d56a42c66cf7e3c61a39cfeabe8ce94"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classuat_1_1airspace.html#a9d56a42c66cf7e3c61a39cfeabe8ce94">iterate</a> (<a class="el" href="airspace_8hpp.html#a20b53aa45a407b67cde811d5c73cc9a1">region_fn</a> callback) const -&gt; void</td></tr>
+<tr class="separator:a9d56a42c66cf7e3c61a39cfeabe8ce94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A type-erased class that represents the airspace. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a46afb90cab295c737bfb966e4e6dbcf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46afb90cab295c737bfb966e4e6dbcf6">&#9670;&nbsp;</a></span>airspace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Airspace &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uat::airspace::airspace </td>
+          <td>(</td>
+          <td class="paramtype">Airspace&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Constructs a type-erased airspace from an object of type Airspace that satisfy at least:</p>
+<ul>
+<li><code>Airspace::random_mission(int) -&gt; <a class="el" href="structuat_1_1mission__t.html" title="A mission is just a pair of regions.">mission_t</a></code></li>
+<li><code>Airspace::iterate(region_fn) -&gt; void</code></li>
+</ul>
+<p>The Airspace object should be copyable. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9d56a42c66cf7e3c61a39cfeabe8ce94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d56a42c66cf7e3c61a39cfeabe8ce94">&#9670;&nbsp;</a></span>iterate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto uat::airspace::iterate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="airspace_8hpp.html#a20b53aa45a407b67cde811d5c73cc9a1">region_fn</a>&#160;</td>
+          <td class="paramname"><em>callback</em></td><td>)</td>
+          <td> const -&gt;  void</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Iterates over the regions of the airspace.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>A callback function with signature <code>bool(const region&amp;)</code> that will be called for each region in the airspace. Implementer should return false at the last region to stop the iteration. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3c5ed60cd01e04319ae7e7f3456fe9af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c5ed60cd01e04319ae7e7f3456fe9af">&#9670;&nbsp;</a></span>random_mission()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto uat::airspace::random_mission </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>seed</em></td><td>)</td>
+          <td> const -&gt;  <a class="el" href="structuat_1_1mission__t.html">mission_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns a random mission.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seed</td><td>A random seed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="airspace_8hpp_source.html">airspace.hpp</a></li>
 </ul>

@@ -1,4 +1,4 @@
 <map id="uat::mission_t" name="uat::mission_t">
-<area shape="rect" id="node1" title=" " alt="" coords="5,109,120,136"/>
+<area shape="rect" id="node1" title="A mission is just a pair of regions." alt="" coords="5,109,120,136"/>
 <area shape="rect" id="node2" href="$classuat_1_1region.html" title="A type&#45;erased class that represents an atomic region in the airspace." alt="" coords="17,5,109,32"/>
 </map>

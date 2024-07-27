@@ -73,9 +73,9 @@ $(function() {
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef UAT_SIMULATION_HPP</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define UAT_SIMULATION_HPP</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;uat/agent.hpp&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;uat/airspace.hpp&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;uat/permit.hpp&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="agent_8hpp.html">uat/agent.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="airspace_8hpp.html">uat/airspace.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="permit_8hpp.html">uat/permit.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;uat/type.hpp&gt;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;deque&gt;</span></div>
@@ -120,7 +120,7 @@ $(function() {
 <div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structuat_1_1permit__private__status__t.html">   48</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structuat_1_1permit__private__status__t.html">permit_private_status_t</a></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::variant&lt;permit_private_status::on_sale, permit_private_status::in_use, permit_private_status::out_of_limits&gt; current;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  std::vector&lt;std::array&lt;value_t, 2&gt;&gt; history;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  std::vector&lt;trade_value_t&gt; history;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">namespace </span>agent_private_status</div>
@@ -188,10 +188,13 @@ $(function() {
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;} <span class="comment">// namespace uat</span></div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// UAT_SIMULATION_HPP</span></div>
-<div class="ttc" id="aclassuat_1_1agent_html"><div class="ttname"><a href="classuat_1_1agent.html">uat::agent</a></div><div class="ttdef"><b>Definition:</b> agent.hpp:55</div></div>
+<div class="ttc" id="aagent_8hpp_html"><div class="ttname"><a href="agent_8hpp.html">agent.hpp</a></div><div class="ttdoc">Defines the agent class and related types.</div></div>
+<div class="ttc" id="aairspace_8hpp_html"><div class="ttname"><a href="airspace_8hpp.html">airspace.hpp</a></div><div class="ttdoc">Defines the airspace class and related types.</div></div>
+<div class="ttc" id="aclassuat_1_1agent_html"><div class="ttname"><a href="classuat_1_1agent.html">uat::agent</a></div><div class="ttdoc">A type-erased class that represents an agent in the simulation.</div><div class="ttdef"><b>Definition:</b> agent.hpp:90</div></div>
 <div class="ttc" id="aclassuat_1_1agents__private__status__fn_html"><div class="ttname"><a href="classuat_1_1agents__private__status__fn.html">uat::agents_private_status_fn</a></div><div class="ttdef"><b>Definition:</b> simulation.hpp:72</div></div>
-<div class="ttc" id="aclassuat_1_1airspace_html"><div class="ttname"><a href="classuat_1_1airspace.html">uat::airspace</a></div><div class="ttdef"><b>Definition:</b> airspace.hpp:28</div></div>
-<div class="ttc" id="aclassuat_1_1region_html"><div class="ttname"><a href="classuat_1_1region.html">uat::region</a></div><div class="ttdoc">A type-erased class that represents an atomic region in the airspace.</div><div class="ttdef"><b>Definition:</b> permit.hpp:54</div></div>
+<div class="ttc" id="aclassuat_1_1airspace_html"><div class="ttname"><a href="classuat_1_1airspace.html">uat::airspace</a></div><div class="ttdoc">A type-erased class that represents the airspace.</div><div class="ttdef"><b>Definition:</b> airspace.hpp:37</div></div>
+<div class="ttc" id="aclassuat_1_1region_html"><div class="ttname"><a href="classuat_1_1region.html">uat::region</a></div><div class="ttdoc">A type-erased class that represents an atomic region in the airspace.</div><div class="ttdef"><b>Definition:</b> permit.hpp:56</div></div>
+<div class="ttc" id="apermit_8hpp_html"><div class="ttname"><a href="permit_8hpp.html">permit.hpp</a></div><div class="ttdoc">Defines the region and permit classes and related types.</div></div>
 <div class="ttc" id="astructuat_1_1agent__private__status_1_1active_html"><div class="ttname"><a href="structuat_1_1agent__private__status_1_1active.html">uat::agent_private_status::active</a></div><div class="ttdef"><b>Definition:</b> simulation.hpp:61</div></div>
 <div class="ttc" id="astructuat_1_1agent__private__status_1_1inactive_html"><div class="ttname"><a href="structuat_1_1agent__private__status_1_1inactive.html">uat::agent_private_status::inactive</a></div><div class="ttdef"><b>Definition:</b> simulation.hpp:57</div></div>
 <div class="ttc" id="astructuat_1_1agent__private__status_1_1out__of__limits_html"><div class="ttname"><a href="structuat_1_1agent__private__status_1_1out__of__limits.html">uat::agent_private_status::out_of_limits</a></div><div class="ttdef"><b>Definition:</b> simulation.hpp:66</div></div>

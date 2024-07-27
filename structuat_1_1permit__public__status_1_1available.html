@@ -73,17 +73,28 @@ $(function() {
 <div class="title">uat::permit_public_status::available Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents the public status of a permit that is available for trading.  
+ <a href="structuat_1_1permit__public__status_1_1available.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="agent_8hpp_source.html">agent.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ac6e421e654e692d789b34ee376bc2348"><td class="memItemLeft" align="right" valign="top"><a id="ac6e421e654e692d789b34ee376bc2348"></a>
 value_t&#160;</td><td class="memItemRight" valign="bottom"><b>min_value</b></td></tr>
 <tr class="separator:ac6e421e654e692d789b34ee376bc2348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a979502ecefd37d0f23745a92a036cf"><td class="memItemLeft" align="right" valign="top"><a id="a7a979502ecefd37d0f23745a92a036cf"></a>
-std::function&lt; const std::vector&lt; std::array&lt; value_t, 2 &gt; &gt; &amp;()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>trades</b></td></tr>
-<tr class="separator:a7a979502ecefd37d0f23745a92a036cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbbeac2e25325860113d96f95a054f28"><td class="memItemLeft" align="right" valign="top"><a id="afbbeac2e25325860113d96f95a054f28"></a>
+std::function&lt; const std::vector&lt; <a class="el" href="structuat_1_1trade__value__t.html">trade_value_t</a> &gt; &amp;()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>trades</b></td></tr>
+<tr class="separator:afbbeac2e25325860113d96f95a054f28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents the public status of a permit that is available for trading. </p>
+<ul>
+<li><code>min_value</code>: the minimum value that can be offered for the permit.</li>
+<li><code>trades</code>: a function that lazily returns the history of trades for the permit. Each element contains the minimum value and the highest bid. </li>
+</ul>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="agent_8hpp_source.html">agent.hpp</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['on_5fsale_14',['on_sale',['../structuat_1_1permit__private__status_1_1on__sale.html',1,'uat::permit_private_status']]],
-  ['out_5fof_5flimits_15',['out_of_limits',['../structuat_1_1agent__private__status_1_1out__of__limits.html',1,'uat::agent_private_status::out_of_limits'],['../structuat_1_1permit__private__status_1_1out__of__limits.html',1,'uat::permit_private_status::out_of_limits']]],
-  ['owned_16',['owned',['../structuat_1_1permit__public__status_1_1owned.html',1,'uat::permit_public_status']]]
+  ['in_5fuse_18',['in_use',['../structuat_1_1permit__private__status_1_1in__use.html',1,'uat::permit_private_status']]],
+  ['inactive_19',['inactive',['../structuat_1_1agent__private__status_1_1inactive.html',1,'uat::agent_private_status']]],
+  ['iterate_20',['iterate',['../classuat_1_1airspace.html#a9d56a42c66cf7e3c61a39cfeabe8ce94',1,'uat::airspace']]]
 ];
