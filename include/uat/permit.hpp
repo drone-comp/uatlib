@@ -109,7 +109,10 @@ class region
 
     auto distance(const region_interface& other) const -> uint_t override
     {
-      return region_.distance(dynamic_cast<const region_model&>(other).region_);
+      if constexpr (is_detected_convertible_v<uint_t, mb_distance_t, Region>)
+        return region_.distance(dynamic_cast<const region_model&>(other).region_);
+      else
+        throw not_implemented("Region::distance(Region) -> uint_t");
     }
 
     auto heuristic_distance(const region_interface& other) const -> value_t override
@@ -164,7 +167,6 @@ public:
   //!
   //! - `Region::adjacent_regions() -> Container<Region>`
   //! - `Region::hash() -> convertible_to<size_t>`
-  //! - `Region::distance(Region) -> convertible_to<uint_t>`
   //!
   //! Moreover, it should be equality comparable and copyable.
   //!
@@ -178,9 +180,6 @@ public:
     static_assert(is_detected_convertible_v<std::size_t, mb_hash_t, Region>,
                   "missing member function Region::hash() -> convertible_to<size_t>");
     static_assert(is_detected_convertible_v<bool, equality_t, Region>, "Region does not satisfy equality comparable");
-    // XXX: simulation never uses this function, should we remove this requirement?
-    static_assert(is_detected_convertible_v<uint_t, mb_distance_t, Region>,
-                  "missing member function Region::distance(Region) -> convertible_to<uint_t>");
   }
 
   region() noexcept = delete;
@@ -201,6 +200,9 @@ public:
   auto operator!=(const region&) const -> bool;
 
   //! Returns the shortest distance (in steps) to another region.
+  //!
+  //! If the distance is not defined in the original region, not_implemented is
+  //! thrown.
   auto distance(const region&) const -> uint_t;
 
   //! Returns the heuristic distance to another region.
