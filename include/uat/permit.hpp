@@ -142,7 +142,7 @@ class permit
 {
 public:
   permit() noexcept = delete;
-  permit(Region s, uint_t time) noexcept;
+  permit(Region s, uint_t time) noexcept : region_(std::move(s)), time_(time) {}
 
   auto time() const noexcept -> uint_t { return time_; }
   auto location() const noexcept -> const Region& { return region_; }
