@@ -252,13 +252,13 @@ template <typename R> struct tuple_size<uat::permit<R>> : public integral_consta
 //! \private
 template <typename R> struct tuple_element<0, uat::permit<R>>
 {
-  using type = uat::region&;
+  using type = std::conditional_t<std::is_same_v<R, void>, uat::region, R>&;
 };
 
 //! \private
 template <typename R> struct tuple_element<0, const uat::permit<R>>
 {
-  using type = const uat::region&;
+  using type = const std::conditional_t<std::is_same_v<R, void>, uat::region, R>&;
 };
 
 //! \private
