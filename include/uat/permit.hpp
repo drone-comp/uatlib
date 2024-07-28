@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <fmt/format.h>
+#include <boost/functional/hash.hpp>
 
 namespace uat
 {
@@ -136,19 +137,42 @@ private:
   std::unique_ptr<region_interface> interface_;
 };
 
-//! \brief A permit is a class that represents a permission to fly in a region at a given time.
-//!
-//! The time interval is represented as a non-negative integer.  (Arbitrary time spans are
-//! not supported.)
+template <typename Region = void>
 class permit
 {
 public:
   permit() noexcept = delete;
-  permit(class region s, uint_t time) noexcept;
+  permit(Region s, uint_t time) noexcept;
+
+  auto time() const noexcept -> uint_t { return time_; }
+  auto location() const noexcept -> const Region& { return region_; }
+  auto location() noexcept -> Region& { return region_; }
+
+  auto operator==(const permit& other) const -> bool { return region_ == other.region_ && time_ == other.time_; }
+  auto operator!=(const permit& other) const -> bool { return !(*this == other); }
+
+private:
+  Region region_;
+  uint_t time_;
+};
+
+//! \brief A permit is a class that represents a permission to fly in a region at a given time.
+//!
+//! The time interval is represented as a non-negative integer.  (Arbitrary time spans are
+//! not supported.)
+template <>
+class permit<void>
+{
+public:
+  permit() noexcept = delete;
+  permit(region s, uint_t time) noexcept;
+
+  template <typename Region>
+  permit(Region s, uint_t time) noexcept : region_(std::move(s)), time_(time) {}
 
   auto time() const noexcept -> uint_t;
-  auto location() const noexcept -> const class region&;
-  auto location() noexcept -> class region&;
+  auto location() const noexcept -> const region&;
+  auto location() noexcept -> region&;
 
   auto operator==(const permit& other) const -> bool;
   auto operator!=(const permit& other) const -> bool;
@@ -159,7 +183,7 @@ private:
 };
 
 //! \private
-template <std::size_t I> decltype(auto) get(permit& ts)
+template <std::size_t I, typename R> decltype(auto) get(permit<R>& ts)
 {
   if constexpr (I == 0)
     return ts.location();
@@ -168,7 +192,7 @@ template <std::size_t I> decltype(auto) get(permit& ts)
 }
 
 //! \private
-template <std::size_t I> decltype(auto) get(const permit& ts)
+template <std::size_t I, typename R> decltype(auto) get(const permit<R>& ts)
 {
   if constexpr (I == 0)
     return ts.location();
@@ -210,36 +234,41 @@ template <> struct hash<uat::region>
 };
 
 //! Class that enables the usage of std::unordered_* with the permit class.
-template <> struct hash<uat::permit>
+template <typename Region> struct hash<uat::permit<Region>>
 {
   //! \private
-  auto operator()(const uat::permit&) const noexcept -> size_t;
+  auto operator()(const uat::permit<Region>& p) const noexcept -> size_t {
+    size_t seed = 0;
+    boost::hash_combine(seed, p.location().hash());
+    boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));
+    return seed;
+  }
 };
 
 //! Class that enables the usage of structured bindings with the permit class.
-template <> struct tuple_size<uat::permit> : public integral_constant<size_t, 2>
+template <typename R> struct tuple_size<uat::permit<R>> : public integral_constant<size_t, 2>
 {};
 
 //! \private
-template <> struct tuple_element<0, uat::permit>
+template <typename R> struct tuple_element<0, uat::permit<R>>
 {
   using type = uat::region&;
 };
 
 //! \private
-template <> struct tuple_element<0, const uat::permit>
+template <typename R> struct tuple_element<0, const uat::permit<R>>
 {
   using type = const uat::region&;
 };
 
 //! \private
-template <> struct tuple_element<1, uat::permit>
+template <typename R> struct tuple_element<1, uat::permit<R>>
 {
   using type = uat::uint_t;
 };
 
 //! \private
-template <> struct tuple_element<1, const uat::permit>
+template <typename R> struct tuple_element<1, const uat::permit<R>>
 {
   using type = uat::uint_t;
 };

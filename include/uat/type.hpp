@@ -20,7 +20,7 @@ using value_t = double;
 
 class airspace;
 class region;
-class permit;
+template <typename> class permit;
 class agent;
 
 class not_implemented : public std::exception

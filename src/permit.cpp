@@ -1,7 +1,5 @@
 #include <uat/permit.hpp>
 
-#include <boost/functional/hash.hpp>
-
 namespace uat
 {
 
@@ -24,25 +22,18 @@ auto region::print_to(std::function<void(std::string_view, fmt::format_args)> f)
   interface_->print_to(std::move(f));
 }
 
-permit::permit(region s, uint_t time) noexcept : region_{std::move(s)}, time_{time} {}
+permit<void>::permit(region s, uint_t time) noexcept : region_{std::move(s)}, time_{time} {}
 
-auto permit::time() const noexcept -> uint_t { return time_; }
-auto permit::location() const noexcept -> const region& { return region_; }
-auto permit::location() noexcept -> region& { return region_; }
+auto permit<void>::time() const noexcept -> uint_t { return time_; }
+auto permit<void>::location() const noexcept -> const region& { return region_; }
+auto permit<void>::location() noexcept -> region& { return region_; }
 
-auto permit::operator==(const permit& other) const -> bool { return location() == other.location() && time() == other.time(); }
-auto permit::operator!=(const permit& other) const -> bool { return !(*this == other); }
+auto permit<void>::operator==(const permit& other) const -> bool { return location() == other.location() && time() == other.time(); }
+auto permit<void>::operator!=(const permit& other) const -> bool { return !(*this == other); }
 
 } // namespace uat
 
 namespace std
 {
 auto hash<uat::region>::operator()(const uat::region& s) const noexcept -> size_t { return s.hash(); }
-auto hash<uat::permit>::operator()(const uat::permit& p) const noexcept -> size_t
-{
-  size_t seed = 0;
-  boost::hash_combine(seed, p.location().hash());
-  boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));
-  return seed;
-}
 } // namespace std

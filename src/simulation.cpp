@@ -63,7 +63,7 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts) -> vo
 
   uint_t t0 = 0;
 
-  std::deque<std::unordered_map<permit, permit_private_status_t>> data;
+  std::deque<std::unordered_map<permit<>, permit_private_status_t>> data;
 
   permit_private_status_t ool = {permit_private_status::out_of_limits{}, {}};
   auto book = [&t0, &data, &ool, &opts](const region& loc, uint_t t) mutable -> permit_private_status_t& {
