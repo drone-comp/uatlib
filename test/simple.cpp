@@ -10,9 +10,33 @@
 
 using namespace uat;
 
+// unidimensional space with 10 regions
+class my_region
+{
+public:
+  explicit my_region(std::size_t pos) : pos_{pos} {}
+
+  auto hash() const -> std::size_t { return pos_; }
+
+  auto operator==(const my_region& other) const { return pos_ == other.pos_; }
+  auto operator!=(const my_region& other) const { return pos_ != other.pos_; }
+
+private:
+  std::size_t pos_;
+};
+
+namespace std {
+
+template <> struct hash<my_region>
+{
+  auto operator()(const my_region& r) const { return r.hash(); }
+};
+
+} // namespace std
+
 struct mission_t
 {
-  region from, to;
+  my_region from, to;
 };
 
 class my_agent
@@ -28,15 +52,15 @@ public:
     if (std::holds_alternative<available>(status(mission_.from, t + 1)) &&
         std::holds_alternative<available>(status(mission_.to, t + 2))) {
       // note: in a real simulation there would exist intermediate regions
-      std::mt19937 gen(seed);
-      const auto price = 1.0 + jules::canon_sample(gen);
+      jules::random_engine<> gen(seed);
+      const auto price = 1.0 + gen.canon_sample();
       bid(mission_.from, t + 1, price);
       bid(mission_.to, t + 2, price);
       remaining_ = 2;
     }
   }
 
-  auto on_bought(const region&, uint_t, value_t) { --remaining_; }
+  auto on_bought(region_view, uint_t, value_t) { --remaining_; }
 
   auto stop(uint_t, int) { return remaining_ == 0; }
 
@@ -45,24 +69,10 @@ private:
   uint_t remaining_ = std::numeric_limits<uint_t>::max();
 };
 
-// unidimensional space with 10 regions
-class my_region
-{
-public:
-  explicit my_region(std::size_t pos) : pos_{pos} {}
-
-  auto hash() const -> std::size_t { return pos_; }
-
-  auto operator==(const my_region& other) const { return pos_ == other.pos_; }
-
-private:
-  std::size_t pos_;
-};
-
 static auto random_mission(int seed) -> mission_t
 {
-  std::mt19937 gen(seed);
-  const auto from = jules::uniform_index_sample(9u, gen);
+  jules::random_engine<> gen(seed);
+  const auto from = gen.uniform_index_sample(9u);
   const auto to = from + 1;
   return {my_region{from}, my_region{to}};
 }
@@ -101,7 +111,7 @@ int main()
     cost[info.to] += info.value;
   };
 
-  simulate(factory, 17, opts);
+  simulate<my_region>(factory, 17, opts);
 
   const auto [mean, sd] = jules::meansd(cost);
   fmt::print("Average cost: {} ± {}\n", mean, sd);
