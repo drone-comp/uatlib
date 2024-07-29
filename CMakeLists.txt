@@ -15,7 +15,7 @@ add_library(uat
   include/uat/permit.hpp
   include/uat/type.hpp)
 
-target_compile_features(uat PRIVATE cxx_std_17)
+target_compile_features(uat PRIVATE cxx_std_20)
 
 target_include_directories(uat PUBLIC include)
 
