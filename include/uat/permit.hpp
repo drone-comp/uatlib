@@ -55,8 +55,7 @@ private:
   const void* region_;
 };
 
-template <region_compatible Region>
-class permit
+template <region_compatible Region> class permit
 {
 public:
   permit() noexcept = delete;
@@ -94,7 +93,6 @@ template <std::size_t I, typename R> decltype(auto) get(const permit<R>& ts)
 
 } // namespace uat
 
-
 namespace std
 {
 
@@ -102,7 +100,8 @@ namespace std
 template <typename Region> struct hash<uat::permit<Region>>
 {
   //! \private
-  auto operator()(const uat::permit<Region>& p) const noexcept -> size_t {
+  auto operator()(const uat::permit<Region>& p) const noexcept -> size_t
+  {
     size_t seed = 0;
     boost::hash_combine(seed, std::hash<Region>{}(p.location()));
     boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));

@@ -4,12 +4,12 @@
 #ifndef UAT_AGENT_HPP
 #define UAT_AGENT_HPP
 
-#include <uat/type.hpp>
 #include <uat/permit.hpp>
+#include <uat/type.hpp>
 
-#include <stdexcept>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -18,8 +18,9 @@ namespace uat
 {
 
 //! Represents the public values in a trade of a permit.
-struct trade_value_t {
-  value_t min_value; //!< The minimum value the owner asked for the permit.
+struct trade_value_t
+{
+  value_t min_value;   //!< The minimum value the owner asked for the permit.
   value_t highest_bid; //!< The highest bid for the permit.
 };
 
@@ -65,8 +66,7 @@ using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
 using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
 using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
 
-template <region_compatible R>
-struct agent_for
+template <region_compatible R> struct agent_for
 {
   using region_type = R;
 
@@ -80,8 +80,7 @@ struct agent_for
 };
 
 template <typename T>
-concept compatible_agent = std::movable<T> &&
-  std::derived_from<T, agent_for<typename T::region_type>>;
+concept compatible_agent = std::movable<T> && std::derived_from<T, agent_for<typename T::region_type>>;
 
 //! \brief A type-erased class that represents an agent in the simulation.
 class agent
@@ -113,8 +112,7 @@ class agent
       agent_.bid_phase(t, std::move(b), std::move(i), seed);
     }
 
-    auto ask_phase(uint_t t, ask_fn a, permit_public_status_fn i,
-                   int seed) -> void override
+    auto ask_phase(uint_t t, ask_fn a, permit_public_status_fn i, int seed) -> void override
     {
       agent_.ask_phase(t, std::move(a), std::move(i), seed);
     }
@@ -141,9 +139,7 @@ public:
   //! - `Agent::stop(uint_t, int) -> convertible_to<bool>`
   //!
   //! The Agent object should be copyable.
-  template <compatible_agent Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a)))
-  {
-  }
+  template <compatible_agent Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a))) {}
 
   agent() = delete;
 

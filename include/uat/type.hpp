@@ -4,9 +4,9 @@
 #ifndef UAT_TYPE_HPP
 #define UAT_TYPE_HPP
 
+#include <concepts>
 #include <cstddef>
 #include <cstdint>
-#include <concepts>
 #include <functional>
 
 namespace uat
@@ -14,8 +14,11 @@ namespace uat
 
 //! Concept for types that are hashable.
 template <typename T>
-concept hashable = requires(T a) {
-    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+concept hashable = requires(T a)
+{
+  {
+    std::hash<T>{}(a)
+    } -> std::convertible_to<std::size_t>;
 };
 
 //! Concept for types that are compatible as regions.
