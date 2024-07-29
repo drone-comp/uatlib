@@ -65,7 +65,7 @@ using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
 using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
 using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
 
-template <region R>
+template <region_compatible R>
 struct agent_for
 {
   using region_type = R;

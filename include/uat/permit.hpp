@@ -1,5 +1,5 @@
 //! \file permit.hpp
-//! \brief Defines the region and permit classes and related types.
+//! \brief Defines region utilities and the permit class.
 
 #ifndef UAT_PERMIT_HPP
 #define UAT_PERMIT_HPP
@@ -35,7 +35,7 @@ public:
   //!
   //! Container is a type that satisfies the requirements of a container of Region,
   //! such as std::vector<Region>.
-  template <region R> region_view(const R& a) : region_(std::addressof(a)) {}
+  template <region_compatible R> region_view(const R& a) : region_(std::addressof(a)) {}
 
   region_view() noexcept = delete;
 
@@ -49,13 +49,13 @@ public:
   //!
   //! Type R must be the original type used to construct the region.
   //! Otherwise, behavior is undefined.
-  template <region R> auto downcast() const -> const R& { return *reinterpret_cast<const R*>(region_); }
+  template <region_compatible R> auto downcast() const -> const R& { return *reinterpret_cast<const R*>(region_); }
 
 private:
   const void* region_;
 };
 
-template <region Region>
+template <region_compatible Region>
 class permit
 {
 public:
