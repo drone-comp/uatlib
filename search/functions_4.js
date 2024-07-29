@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['heuristic_5fdistance_82',['heuristic_distance',['../classuat_1_1region.html#a37fa610ff74202eab3a8e5d0b2b9d433',1,'uat::region']]]
+  ['region_5fview_89',['region_view',['../classuat_1_1region__view.html#a991284e35636a955d5a7d3035632261d',1,'uat::region_view']]]
 ];

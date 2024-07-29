@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['climb_10',['climb',['../classuat_1_1region.html#aa2489daf85e0a2af06295e128a8e8950',1,'uat::region']]]
+  ['current_12',['current',['../structuat_1_1permit__private__status__t.html#a91de13324c1a89bb9ea3691bca2ef3d6',1,'uat::permit_private_status_t']]]
 ];

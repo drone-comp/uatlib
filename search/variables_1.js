@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['min_5fvalue_94',['min_value',['../structuat_1_1trade__value__t.html#a9af560a8490c52290cadb2237ca5f1a9',1,'uat::trade_value_t']]]
+  ['current_93',['current',['../structuat_1_1permit__private__status__t.html#a91de13324c1a89bb9ea3691bca2ef3d6',1,'uat::permit_private_status_t']]]
 ];

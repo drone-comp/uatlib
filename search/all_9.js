@@ -1,4 +1,9 @@
 var searchData=
 [
-  ['no_5fagents_5ft_24',['no_agents_t',['../structuat_1_1stop__criteria_1_1no__agents__t.html',1,'uat::stop_criteria']]]
+  ['on_5fbought_26',['on_bought',['../structuat_1_1agent.html#a388a178aefaec5c7b6174f13ffa7b47d',1,'uat::agent']]],
+  ['on_5fsale_27',['on_sale',['../structuat_1_1permit__private__status_1_1on__sale.html',1,'uat::permit_private_status']]],
+  ['on_5fsold_28',['on_sold',['../structuat_1_1agent.html#ab4a729db8a0d78abe720c59ca9021263',1,'uat::agent']]],
+  ['out_5fof_5flimits_29',['out_of_limits',['../structuat_1_1permit__private__status_1_1out__of__limits.html',1,'uat::permit_private_status']]],
+  ['owned_30',['owned',['../structuat_1_1permit__public__status_1_1owned.html',1,'uat::permit_public_status']]],
+  ['owner_31',['owner',['../structuat_1_1permit__private__status_1_1on__sale.html#ae2c125a6af609dc87ce1d46661a7b403',1,'uat::permit_private_status::on_sale']]]
 ];

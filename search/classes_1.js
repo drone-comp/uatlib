@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['formatter_3c_20uat_3a_3aregion_20_3e_52',['formatter&lt; uat::region &gt;',['../structfmt_1_1formatter_3_01uat_1_1region_01_4.html',1,'fmt']]]
+  ['in_5fuse_65',['in_use',['../structuat_1_1permit__private__status_1_1in__use.html',1,'uat::permit_private_status']]],
+  ['inactive_66',['inactive',['../structuat_1_1agent__private__status_1_1inactive.html',1,'uat::agent_private_status']]]
 ];

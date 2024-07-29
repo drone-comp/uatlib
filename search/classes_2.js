@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['hash_3c_20uat_3a_3apermit_20_3e_53',['hash&lt; uat::permit &gt;',['../structstd_1_1hash_3_01uat_1_1permit_01_4.html',1,'std']]],
-  ['hash_3c_20uat_3a_3aregion_20_3e_54',['hash&lt; uat::region &gt;',['../structstd_1_1hash_3_01uat_1_1region_01_4.html',1,'std']]]
+  ['no_5fagents_5ft_67',['no_agents_t',['../structuat_1_1stop__criterion_1_1no__agents__t.html',1,'uat::stop_criterion']]]
 ];

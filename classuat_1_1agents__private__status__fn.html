@@ -74,21 +74,23 @@ $(function() {
 <div class="title">uat::agents_private_status_fn Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functor type that allows the simulation to access the private status of an agent.  
+ <a href="classuat_1_1agents__private__status__fn.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="simulation_8hpp_source.html">simulation.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae1fdfb93996dca4f854e009ae610c47b"><td class="memItemLeft" align="right" valign="top"><a id="ae1fdfb93996dca4f854e009ae610c47b"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (id_t) const -&gt; agent_private_status_t</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (<a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a>) const -&gt; <a class="el" href="simulation_8hpp.html#acc086f3b9a67bee4aa95c54f17b718fa">agent_private_status_t</a></td></tr>
 <tr class="separator:ae1fdfb93996dca4f854e009ae610c47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3190835d7ffb361282d51b57f9bf245c"><td class="memItemLeft" align="right" valign="top"><a id="a3190835d7ffb361282d51b57f9bf245c"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>active_count</b> () const -&gt; uint_t</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>active_count</b> () const -&gt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a></td></tr>
 <tr class="separator:a3190835d7ffb361282d51b57f9bf245c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d7376a16c656760bdbd3fadc0614259"><td class="memItemLeft" align="right" valign="top"><a id="a1d7376a16c656760bdbd3fadc0614259"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>insert</b> (<a class="el" href="classuat_1_1agent.html">agent</a>)</td></tr>
-<tr class="separator:a1d7376a16c656760bdbd3fadc0614259"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a426309ef36dc1ca0850ae4f4ecf385fa"><td class="memItemLeft" align="right" valign="top"><a id="a426309ef36dc1ca0850ae4f4ecf385fa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update_active</b> (std::vector&lt; id_t &gt;)</td></tr>
-<tr class="separator:a426309ef36dc1ca0850ae4f4ecf385fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2029451241b1f53348199c13456b7bb0"><td class="memItemLeft" align="right" valign="top"><a id="a2029451241b1f53348199c13456b7bb0"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>active</b> () const -&gt; const std::vector&lt; <a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a> &gt; &amp;</td></tr>
+<tr class="separator:a2029451241b1f53348199c13456b7bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -96,7 +98,9 @@ Friends</h2></td></tr>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>agents_private_status_accessor</b></td></tr>
 <tr class="separator:a844ac9b41727cfb679ec16c5400b1b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Functor type that allows the simulation to access the private status of an agent. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="simulation_8hpp_source.html">simulation.hpp</a></li>
 </ul>
 </div><!-- contents -->

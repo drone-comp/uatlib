@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['formatter_3c_20uat_3a_3aregion_20_3e_13',['formatter&lt; uat::region &gt;',['../structfmt_1_1formatter_3_01uat_1_1region_01_4.html',1,'fmt']]]
+  ['factory_14',['factory',['../structuat_1_1simulation__opts__t.html#a662f25b276e4717b6ee245460cb2e8a1',1,'uat::simulation_opts_t']]],
+  ['factory_5ffn_15',['factory_fn',['../simulation_8hpp.html#a3426caf776df376b5f2df5fc456ad7a1',1,'uat']]]
 ];

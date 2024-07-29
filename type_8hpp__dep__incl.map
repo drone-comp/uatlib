@@ -1,0 +1,6 @@
+<map id="include/uat/type.hpp" name="include/uat/type.hpp">
+<area shape="rect" id="node1" title="Basic types and utilities." alt="" coords="25,5,180,32"/>
+<area shape="rect" id="node2" href="$permit_8hpp.html" title="Defines region utilities and the permit class." alt="" coords="18,80,187,107"/>
+<area shape="rect" id="node3" href="$agent_8hpp.html" title="Defines the agent class and related types." alt="" coords="21,155,184,181"/>
+<area shape="rect" id="node4" href="$simulation_8hpp.html" title="Defines the simulation function and related types." alt="" coords="5,229,200,256"/>
+</map>

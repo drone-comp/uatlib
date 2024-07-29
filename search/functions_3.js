@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['distance_80',['distance',['../classuat_1_1region.html#a732e37ccd177d5d8a7da8e0445c44908',1,'uat::region']]],
-  ['downcast_81',['downcast',['../classuat_1_1region.html#ac363de31a5c4f70888d4495dca1dbe91',1,'uat::region::downcast() -&gt; T &amp;'],['../classuat_1_1region.html#aea514b08ae7af62fc5450eb5800e47e9',1,'uat::region::downcast() const -&gt; const T &amp;']]]
+  ['on_5fbought_87',['on_bought',['../structuat_1_1agent.html#a388a178aefaec5c7b6174f13ffa7b47d',1,'uat::agent']]],
+  ['on_5fsold_88',['on_sold',['../structuat_1_1agent.html#ab4a729db8a0d78abe720c59ca9021263',1,'uat::agent']]]
 ];

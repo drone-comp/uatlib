@@ -1,12 +1,13 @@
 var searchData=
 [
   ['active_0',['active',['../structuat_1_1agent__private__status_1_1active.html',1,'uat::agent_private_status']]],
-  ['adjacent_5fregions_1',['adjacent_regions',['../classuat_1_1region.html#a307c1f6c766fb8523f69c54de58ecf6a',1,'uat::region']]],
-  ['agent_2',['agent',['../classuat_1_1agent.html#a3afd7e187fab0da5b8229b37e9bc28ed',1,'uat::agent::agent()'],['../classuat_1_1agent.html',1,'uat::agent']]],
-  ['agent_2ehpp_3',['agent.hpp',['../agent_8hpp.html',1,'']]],
-  ['agents_5fprivate_5fstatus_5ffn_4',['agents_private_status_fn',['../classuat_1_1agents__private__status__fn.html',1,'uat']]],
-  ['airspace_5',['airspace',['../classuat_1_1airspace.html#a46afb90cab295c737bfb966e4e6dbcf6',1,'uat::airspace::airspace()'],['../classuat_1_1airspace.html',1,'uat::airspace']]],
-  ['airspace_2ehpp_6',['airspace.hpp',['../airspace_8hpp.html',1,'']]],
-  ['ask_5fphase_7',['ask_phase',['../classuat_1_1agent.html#a71d5f8ab26fef5d55617f29433233626',1,'uat::agent']]],
-  ['available_8',['available',['../structuat_1_1permit__public__status_1_1available.html',1,'uat::permit_public_status']]]
+  ['agent_1',['agent',['../structuat_1_1agent.html',1,'uat']]],
+  ['agent_2ehpp_2',['agent.hpp',['../agent_8hpp.html',1,'']]],
+  ['agent_5fcompatible_3',['agent_compatible',['../agent_8hpp.html#af6472ddb17c11482f4e5e363a8e63b27',1,'uat']]],
+  ['agent_5fprivate_5fstatus_5ft_4',['agent_private_status_t',['../simulation_8hpp.html#acc086f3b9a67bee4aa95c54f17b718fa',1,'uat']]],
+  ['agents_5fprivate_5fstatus_5ffn_5',['agents_private_status_fn',['../classuat_1_1agents__private__status__fn.html',1,'uat']]],
+  ['any_5fagent_6',['any_agent',['../classuat_1_1any__agent.html#a2186b9558d80dd6f35f7606efe7c50d9',1,'uat::any_agent::any_agent()'],['../classuat_1_1any__agent.html',1,'uat::any_agent']]],
+  ['ask_5ffn_7',['ask_fn',['../agent_8hpp.html#a936f1e5c470a7759770616787913cc10',1,'uat']]],
+  ['ask_5fphase_8',['ask_phase',['../structuat_1_1agent.html#a6e9cba48ce9e1e707b23fa75da2bfac0',1,'uat::agent']]],
+  ['available_9',['available',['../structuat_1_1permit__public__status_1_1available.html',1,'uat::permit_public_status']]]
 ];

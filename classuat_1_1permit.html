@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>uatlib: uat::permit Class Reference</title>
+<title>uatlib: uat::permit&lt; Region &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,39 +70,42 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classuat_1_1permit-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">uat::permit Class Reference</div>  </div>
+<div class="title">uat::permit&lt; Region &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>A permit is a class that represents a permission to fly in a region at a given time.  
+<p>A tuple containing a region and a time step.  
  <a href="classuat_1_1permit.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="permit_8hpp_source.html">permit.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af4a90d0191e73297237009fc30bc99ed"><td class="memItemLeft" align="right" valign="top"><a id="af4a90d0191e73297237009fc30bc99ed"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>permit</b> (class <a class="el" href="classuat_1_1region.html">region</a> s, uint_t time) noexcept</td></tr>
-<tr class="separator:af4a90d0191e73297237009fc30bc99ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8a8f9d464d4432773d0998ea17172fc"><td class="memItemLeft" align="right" valign="top"><a id="aa8a8f9d464d4432773d0998ea17172fc"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>time</b> () const noexcept -&gt; uint_t</td></tr>
-<tr class="separator:aa8a8f9d464d4432773d0998ea17172fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af123866223359d89750287865c07b416"><td class="memItemLeft" align="right" valign="top"><a id="af123866223359d89750287865c07b416"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>location</b> () const noexcept -&gt; const class <a class="el" href="classuat_1_1region.html">region</a> &amp;</td></tr>
-<tr class="separator:af123866223359d89750287865c07b416"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48456fe6ab2de04fe7ef1c48a719199c"><td class="memItemLeft" align="right" valign="top"><a id="a48456fe6ab2de04fe7ef1c48a719199c"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>location</b> () noexcept -&gt; class <a class="el" href="classuat_1_1region.html">region</a> &amp;</td></tr>
-<tr class="separator:a48456fe6ab2de04fe7ef1c48a719199c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a45be524f57a874f30655200ddb9f18"><td class="memItemLeft" align="right" valign="top"><a id="a2a45be524f57a874f30655200ddb9f18"></a>
+<tr class="memitem:a884fc889baef0befbb12e6f76a4a6c85"><td class="memItemLeft" align="right" valign="top"><a id="a884fc889baef0befbb12e6f76a4a6c85"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>permit</b> (Region s, <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> time) noexcept</td></tr>
+<tr class="separator:a884fc889baef0befbb12e6f76a4a6c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1742651cad54afd68fbad4ce6981d60"><td class="memItemLeft" align="right" valign="top"><a id="aa1742651cad54afd68fbad4ce6981d60"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>time</b> () const noexcept -&gt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a></td></tr>
+<tr class="separator:aa1742651cad54afd68fbad4ce6981d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afabedfbac6a2ee08ab7f2e1cf12a189d"><td class="memItemLeft" align="right" valign="top"><a id="afabedfbac6a2ee08ab7f2e1cf12a189d"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>location</b> () const noexcept -&gt; const Region &amp;</td></tr>
+<tr class="separator:afabedfbac6a2ee08ab7f2e1cf12a189d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22638861d162cf3dcaf8841f869d365e"><td class="memItemLeft" align="right" valign="top"><a id="a22638861d162cf3dcaf8841f869d365e"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>location</b> () noexcept -&gt; Region &amp;</td></tr>
+<tr class="separator:a22638861d162cf3dcaf8841f869d365e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af742dd2f98edd740535312ccf2e0d764"><td class="memItemLeft" align="right" valign="top"><a id="af742dd2f98edd740535312ccf2e0d764"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classuat_1_1permit.html">permit</a> &amp;other) const -&gt; bool</td></tr>
-<tr class="separator:a2a45be524f57a874f30655200ddb9f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a868641eaf65692ca305ad0b07ada0bd0"><td class="memItemLeft" align="right" valign="top"><a id="a868641eaf65692ca305ad0b07ada0bd0"></a>
+<tr class="separator:af742dd2f98edd740535312ccf2e0d764"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a767966185c7a215ce2f07484df07e8ae"><td class="memItemLeft" align="right" valign="top"><a id="a767966185c7a215ce2f07484df07e8ae"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classuat_1_1permit.html">permit</a> &amp;other) const -&gt; bool</td></tr>
-<tr class="separator:a868641eaf65692ca305ad0b07ada0bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a767966185c7a215ce2f07484df07e8ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A permit is a class that represents a permission to fly in a region at a given time. </p>
-<p>The time interval is represented as a non-negative integer. (Arbitrary time spans are not supported.) </p>
+<div class="textblock"><h3>template&lt;region_compatible Region&gt;<br />
+class uat::permit&lt; Region &gt;</h3>
+
+<p>A tuple containing a region and a time step. </p>
+<p>A permit refers to the assets agents can trade. This class is just a convenient way to group a region and a time step. Structured bindings and hashing are supported. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="permit_8hpp_source.html">permit.hpp</a></li>
 </ul>

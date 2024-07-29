@@ -1,4 +1,4 @@
 <map id="uat::agent_private_status::active" name="uat::agent_private_status::active">
-<area shape="rect" id="node1" title=" " alt="" coords="5,95,147,136"/>
-<area shape="rect" id="node2" href="$classuat_1_1agent.html" title="A type&#45;erased class that represents an agent in the simulation." alt="" coords="32,5,120,32"/>
+<area shape="rect" id="node1" title="Represents the private status of an agent that is active in the simulation." alt="" coords="5,95,147,136"/>
+<area shape="rect" id="node2" href="$classuat_1_1any__agent.html" title="A type&#45;erased class that represents an agent in the simulation." alt="" coords="17,5,135,32"/>
 </map>

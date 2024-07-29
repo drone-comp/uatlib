@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['region_64',['region',['../classuat_1_1region.html',1,'uat']]]
+  ['unavailable_78',['unavailable',['../structuat_1_1permit__public__status_1_1unavailable.html',1,'uat::permit_public_status']]]
 ];

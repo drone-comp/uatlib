@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['permit_5fpublic_5fstatus_5ft_95',['permit_public_status_t',['../agent_8hpp.html#a1a307b78f89a8d16bb5fb404ecc0c237',1,'agent.hpp']]]
+  ['agent_5fprivate_5fstatus_5ft_109',['agent_private_status_t',['../simulation_8hpp.html#acc086f3b9a67bee4aa95c54f17b718fa',1,'uat']]],
+  ['ask_5ffn_110',['ask_fn',['../agent_8hpp.html#a936f1e5c470a7759770616787913cc10',1,'uat']]]
 ];
