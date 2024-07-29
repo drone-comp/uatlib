@@ -1,13 +1,14 @@
+//! \file simulation.hpp
+//! \brief Defines the simulation function and related types.
+
 #ifndef UAT_SIMULATION_HPP
 #define UAT_SIMULATION_HPP
 
 #include <uat/agent.hpp>
 
 #include <deque>
-#include <functional>
 #include <optional>
 #include <random>
-#include <variant>
 #include <vector>
 
 #include <cool/compose.hpp>
@@ -15,8 +16,10 @@
 namespace uat
 {
 
+//! A function type that generates agents for each iteration.
 using factory_fn = std::function<std::vector<any_agent>(uint_t, int)>;
 
+//! Type to represent the information in a trade transaction.
 struct trade_info_t
 {
   uint_t transaction_time;
@@ -27,47 +30,65 @@ struct trade_info_t
   value_t value;
 };
 
+//! Unique value to represent the absence of an owner.
 constexpr auto no_owner = std::numeric_limits<uint_t>::max();
+
 namespace permit_private_status
 {
+
+//! Represents the private status of a permit that is available for trading.
 struct on_sale
 {
-  uint_t owner = no_owner;
-  value_t min_value = 0.0;
-  uint_t highest_bidder = no_owner;
-  value_t highest_bid = 0.0;
+  uint_t owner = no_owner;          //!< The owner of the permit.
+  value_t min_value = 0.0;          //!< The minimum value (exclusive) that the owner is willing to sell the permit.
+  uint_t highest_bidder = no_owner; //!< The current highest bidder.
+  value_t highest_bid = 0.0;        //!< The current highest bid.
 };
+
+//! Represents the private status of a permit that is not available for trading.
 struct in_use
 {
   uint_t owner;
 };
+
+//! Represents the private status of a permit that is out of limits (past and future).
 struct out_of_limits
 {};
+
 } // namespace permit_private_status
 
+//! Represents the private status of a permit.
 struct permit_private_status_t
 {
+  //! The current status of the permit.
   std::variant<permit_private_status::on_sale, permit_private_status::in_use, permit_private_status::out_of_limits> current;
+
+  //! The history of trades involving the permit.
   std::vector<trade_value_t> history;
 };
 
 namespace agent_private_status
 {
+
+//! Represents the private status of an agent that is inactive in the simulation.
 struct inactive
 {
   id_t id;
 };
+
+//! Represents the private status of an agent that is active in the simulation.
 struct active
 {
   id_t id;
   any_agent data;
 };
-struct out_of_limits
-{};
-} // namespace agent_private_status
-using agent_private_status_t =
-  std::variant<agent_private_status::out_of_limits, agent_private_status::inactive, agent_private_status::active>;
 
+} // namespace agent_private_status
+
+//! Variant that represents the private status of an agent.
+using agent_private_status_t = std::variant<agent_private_status::inactive, agent_private_status::active>;
+
+//! Functor type that allows the simulation to access the private status of an agent.
 class agents_private_status_fn
 {
   friend class agents_private_status_accessor;
@@ -75,11 +96,12 @@ class agents_private_status_fn
 public:
   auto operator()(id_t) const -> agent_private_status_t;
   auto active_count() const -> uint_t;
+  auto active() const -> const std::vector<id_t>&;
 
+private:
   void insert(any_agent);
   void update_active(std::vector<id_t>);
 
-private:
   uint_t first_id_ = 0u;
   std::deque<any_agent> agents_;
   std::vector<id_t> active_;
@@ -87,38 +109,55 @@ private:
 
 // TODO: is it possible to use function_ref?
 
+//! Function type that allows the simulation to access the private status of an agent.
 using permit_private_status_fn = std::function<permit_private_status_t(region_view, uint_t)>;
+
+//! Callback type that receives information about a trade transaction.
 using trade_info_fn = std::function<void(trade_info_t)>;
+
+//! Callback type that receives information about the status of the simulation.
 using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, permit_private_status_fn)>;
 
-namespace stop_criteria
+namespace stop_criterion
 {
+
+//! Stop criterion that stops the simulation when there are no agents.
 struct no_agents_t
 {};
+
+//! Stop criterion that stops the simulation when a time threshold is reached.
 struct time_threshold_t
 {
   uint_t t;
 };
-} // namespace stop_criteria
+} // namespace stop_criterion
 
-using stop_criteria_t = std::variant<stop_criteria::no_agents_t, stop_criteria::time_threshold_t>;
+//! Variant that represents the possible stop criteria for the simulation.
+using stop_criterion_t = std::variant<stop_criterion::no_agents_t, stop_criterion::time_threshold_t>;
 
+//! Options to configure the simulation.
 struct simulation_opts_t
 {
-  std::optional<uint_t> time_window;
-  stop_criteria_t stop_criteria;
-  trade_info_fn trade_callback;
-  status_info_fn status_callback;
+  std::optional<uint_t> time_window; //!< Maximum time ahead a permit can be traded.
+  stop_criterion_t stop_criterion;   //!< The criterion to stop the simulation.
+  trade_info_fn trade_callback;      //!< Callback to receive information about a trade transaction.
+  status_info_fn status_callback;    //!< Callback to receive information about the status of the simulation.
 };
 
 //! \private
 struct agents_private_status_accessor
 {
-  auto active(const agents_private_status_fn& self) const -> const std::vector<id_t>&;
-  auto at(agents_private_status_fn& self, id_t id) const -> any_agent&;
+  auto active(const agents_private_status_fn&) const -> const std::vector<id_t>&;
+  auto at(agents_private_status_fn&, id_t) const -> any_agent&;
+  void insert(agents_private_status_fn&, any_agent) const;
+  void update_active(agents_private_status_fn&, std::vector<id_t>) const;
 };
 
-// (First-price sealed-bid auction)
+//! A simulation of a first-price sealed-bid auction.
+//!
+//! \param factory A function that generates agents for each iteration.
+//! \param seed A random seed.
+//! \param opts Options to configure the simulation.
 template <region_compatible R> auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) -> void
 {
   std::mt19937 rnd(seed);
@@ -164,12 +203,12 @@ template <region_compatible R> auto simulate(factory_fn factory, int seed, const
   };
 
   const auto stop = [&] {
-    using namespace stop_criteria;
+    using namespace stop_criterion;
     return std::visit(cool::compose{
                         [&](no_agents_t) { return agents.active_count() == 0; },
                         [&](time_threshold_t th) { return t0 > th.t; },
                       },
-                      opts.stop_criteria);
+                      opts.stop_criterion);
   };
 
   do {
@@ -180,7 +219,7 @@ template <region_compatible R> auto simulate(factory_fn factory, int seed, const
     {
       auto new_agents = factory(t0, rnd());
       for (auto& agent : new_agents)
-        agents.insert(std::move(agent));
+        accessor.insert(agents, std::move(agent));
     }
 
     {
@@ -263,7 +302,7 @@ template <region_compatible R> auto simulate(factory_fn factory, int seed, const
     for (const auto id : accessor.active(agents))
       if (!accessor.at(agents, id).stop(t0, rnd()))
         keep_active.push_back(id);
-    agents.update_active(std::move(keep_active));
+    accessor.update_active(agents, std::move(keep_active));
 
     if (data.size() > 0)
       data.pop_front();

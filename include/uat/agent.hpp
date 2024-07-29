@@ -82,7 +82,9 @@ template <region_compatible R> struct agent
   //!
   //! \note The default behavior of this function is to do nothing.  We suggest
   //!       using `override` to ensure that no function signature mismatch occurs.
-  virtual auto bid_phase(uint_t time, bid_fn bid, permit_public_status_fn status, int seed) -> void {}
+  virtual auto bid_phase([[maybe_unused]] uint_t time, [[maybe_unused]] bid_fn bid,
+                         [[maybe_unused]] permit_public_status_fn status, [[maybe_unused]] int seed) -> void
+  {}
 
   //! Behavior of the agent during the ask phase.
   //!
@@ -99,7 +101,9 @@ template <region_compatible R> struct agent
   //!
   //! \note The default behavior of this function is to do nothing.  We suggest
   //!       using `override` to ensure that no function signature mismatch occurs.
-  virtual auto ask_phase(uint_t time, ask_fn ask, permit_public_status_fn status, int seed) -> void {}
+  virtual auto ask_phase([[maybe_unused]] uint_t time, [[maybe_unused]] ask_fn ask,
+                         [[maybe_unused]] permit_public_status_fn status, [[maybe_unused]] int seed) -> void
+  {}
 
   //! Callback function called when the agent successfully buys a permit.
   //!
@@ -109,7 +113,8 @@ template <region_compatible R> struct agent
   //!
   //! \note The default behavior of this function is to do nothing.  We suggest
   //!       using `override` to ensure that no function signature mismatch occurs.
-  virtual auto on_bought(const R& region, uint_t time, value_t value) -> void {}
+  virtual auto on_bought([[maybe_unused]] const R& region, [[maybe_unused]] uint_t time, [[maybe_unused]] value_t value) -> void
+  {}
 
   //! Callback function called when the agent successfully sells a permit.
   //!
@@ -119,7 +124,7 @@ template <region_compatible R> struct agent
   //!
   //! \note The default behavior of this function is to do nothing.  We suggest
   //!       using `override` to ensure that no function signature mismatch occurs.
-  virtual auto on_sold(const R& region, uint_t time, value_t value) -> void {}
+  virtual auto on_sold([[maybe_unused]] const R& region, [[maybe_unused]] uint_t time, [[maybe_unused]] value_t value) -> void {}
 
   //! Controls when the agent should stop.
   //!
