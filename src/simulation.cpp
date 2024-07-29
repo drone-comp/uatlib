@@ -28,8 +28,8 @@ void agents_private_status_fn::insert(any_agent a)
 
 void agents_private_status_fn::update_active(std::vector<id_t> new_agents)
 {
+  assert(std::is_sorted(new_agents.begin(), new_agents.end()));
   active_ = std::move(new_agents);
-  // TODO: assert it is sorted.
   if (active_.size() == 0)
     return;
 

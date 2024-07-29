@@ -138,10 +138,12 @@ using stop_criterion_t = std::variant<stop_criterion::no_agents_t, stop_criterio
 //! Options to configure the simulation.
 struct simulation_opts_t
 {
+  factory_fn factory;                //!< Function that generates agents for each iteration.
   std::optional<uint_t> time_window; //!< Maximum time ahead a permit can be traded.
   stop_criterion_t stop_criterion;   //!< The criterion to stop the simulation.
   trade_info_fn trade_callback;      //!< Callback to receive information about a trade transaction.
   status_info_fn status_callback;    //!< Callback to receive information about the status of the simulation.
+  std::optional<uint_t> seed;        //!< Random seed.
 };
 
 //! \private
@@ -158,9 +160,9 @@ struct agents_private_status_accessor
 //! \param factory A function that generates agents for each iteration.
 //! \param seed A random seed.
 //! \param opts Options to configure the simulation.
-template <region_compatible R> auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) -> void
+template <region_compatible R> auto simulate(const simulation_opts_t& opts = {}) -> void
 {
-  std::mt19937 rnd(seed);
+  std::mt19937 rnd(opts.seed ? *opts.seed : std::random_device{}());
 
   agents_private_status_fn agents;
   constexpr agents_private_status_accessor accessor;
@@ -216,8 +218,8 @@ template <region_compatible R> auto simulate(factory_fn factory, int seed, const
       opts.status_callback(t0, std::as_const(agents), safe_book);
 
     // Generate new agents
-    {
-      auto new_agents = factory(t0, rnd());
+    if (opts.factory) {
+      auto new_agents = opts.factory(t0, rnd());
       for (auto& agent : new_agents)
         accessor.insert(agents, std::move(agent));
     }
