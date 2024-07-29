@@ -6,35 +6,21 @@
 
 #include <uat/type.hpp>
 
-#include <functional>
-#include <iterator>
 #include <memory>
-#include <string_view>
-#include <tuple>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 #include <boost/functional/hash.hpp>
 
 namespace uat
 {
 
-//! \brief A type-erased class that references an atomic region in the airspace.
+//! \brief A non-owning wrapper to an atomic region in the airspace.
 //!
-//! The region class is a type-erased class that references an atomic region in the
-//! airspace. It is used to represent the subspaces that a permit refers to.
+//! Any object that satisfies \ref `region_compatible` can be used to construct a \ref region_view.
+//! No modifications are allowed to the region through the view (const semantics).
 class region_view
 {
 public:
-  //! Constructs a type-erased region from an object of type Region that satisfy at least:
-  //!
-  //! - `Region::hash() -> convertible_to<size_t>`
-  //!
-  //! Moreover, it should be equality comparable and copyable.
-  //!
-  //! Container is a type that satisfies the requirements of a container of Region,
-  //! such as std::vector<Region>.
+  //! Constructs a non-owning wrapper to a region that satisfies the \ref `region_compatible` concept.
   template <region_compatible R> region_view(const R& a) : region_(std::addressof(a)) {}
 
   region_view() noexcept = delete;
@@ -45,7 +31,7 @@ public:
   auto operator=(const region_view&) -> region_view& = default;
   auto operator=(region_view&&) noexcept -> region_view& = default;
 
-  //! Downcast the region to its original type.
+  //! Downcast the region view to its original type.
   //!
   //! Type R must be the original type used to construct the region.
   //! Otherwise, behavior is undefined.
@@ -55,6 +41,11 @@ private:
   const void* region_;
 };
 
+//! \brief A tuple containing a region and a time step.
+//!
+//! A permit refers to the assets agents can trade.
+//! This class is just a convenient way to group a region and a time step.
+//! Structured bindings and hashing are supported.
 template <region_compatible Region> class permit
 {
 public:
@@ -96,7 +87,7 @@ template <std::size_t I, typename R> decltype(auto) get(const permit<R>& ts)
 namespace std
 {
 
-//! Class that enables the usage of std::unordered_* with the permit class.
+//! \private
 template <typename Region> struct hash<uat::permit<Region>>
 {
   //! \private
@@ -109,7 +100,7 @@ template <typename Region> struct hash<uat::permit<Region>>
   }
 };
 
-//! Class that enables the usage of structured bindings with the permit class.
+//! \private
 template <typename R> struct tuple_size<uat::permit<R>> : public integral_constant<size_t, 2>
 {};
 

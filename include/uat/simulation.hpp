@@ -2,8 +2,6 @@
 #define UAT_SIMULATION_HPP
 
 #include <uat/agent.hpp>
-#include <uat/permit.hpp>
-#include <uat/type.hpp>
 
 #include <deque>
 #include <functional>

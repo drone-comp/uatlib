@@ -5,7 +5,6 @@
 #define UAT_AGENT_HPP
 
 #include <uat/permit.hpp>
-#include <uat/type.hpp>
 
 #include <functional>
 #include <memory>
