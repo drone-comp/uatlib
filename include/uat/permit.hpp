@@ -52,7 +52,7 @@ public:
   //!
   //! Type R must be the original type used to construct the region.
   //! Otherwise, behavior is undefined.
-  template <region R> auto downcast() -> const R& { return *reinterpret_cast<const R*>(region_); }
+  template <region R> auto downcast() const -> const R& { return *reinterpret_cast<const R*>(region_); }
 
 private:
   const void* region_;
@@ -70,7 +70,7 @@ public:
   auto location() noexcept -> Region& { return region_; }
 
   auto operator==(const permit& other) const -> bool { return region_ == other.region_ && time_ == other.time_; }
-  auto operator!=(const permit& other) const -> bool { return !(*this == other); }
+  auto operator!=(const permit& other) const -> bool { return region_ != other.region_ || time_ != other.time_; }
 
 private:
   Region region_;
@@ -107,7 +107,7 @@ template <typename Region> struct hash<uat::permit<Region>>
   //! \private
   auto operator()(const uat::permit<Region>& p) const noexcept -> size_t {
     size_t seed = 0;
-    boost::hash_combine(seed, p.location().hash());
+    boost::hash_combine(seed, std::hash<Region>{}(p.location()));
     boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));
     return seed;
   }

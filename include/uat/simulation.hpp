@@ -35,7 +35,7 @@ namespace permit_private_status
 struct on_sale
 {
   uint_t owner = no_owner;
-  value_t min_value = 1.0;
+  value_t min_value = 0.0;
   uint_t highest_bidder = no_owner;
   value_t highest_bid = 0.0;
 };
@@ -142,7 +142,7 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) 
       return ool;
     while (t - t0 >= data.size())
       data.emplace_back();
-    return data[t - t0][permit<R>{loc.downcast<R>(), t}];
+    return data[t - t0][{loc.downcast<R>(), t}];
   };
 
   const auto safe_book = [&book](region_view loc, uint_t t) -> permit_private_status_t { return book(loc, t); };
@@ -188,7 +188,7 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) 
 
     {
       // Bid phase
-      std::vector<std::tuple<region_view, uint_t>> bids;
+      std::vector<permit<R>> bids;
       for (const auto id : accessor.active(agents)) {
         auto bid = [&](region_view s, uint_t t, value_t v) -> bool {
           if (t < t0)
@@ -198,8 +198,7 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) 
                                              [&](on_sale& status) {
                                                if (v > status.min_value && v > status.highest_bid) {
                                                  if (status.highest_bidder == no_owner)
-                                                   bids.emplace_back(s, t);
-
+                                                   bids.emplace_back(s.downcast<R>(), t);
                                                  status.highest_bidder = id;
                                                  status.highest_bid = v;
                                                }
@@ -232,7 +231,7 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) 
 
     // Ask phase
     {
-      std::vector<std::tuple<region_view, uint_t, uint_t, value_t>> asks;
+      std::vector<std::tuple<R, uint_t, uint_t, value_t>> asks;
       for (const auto id : accessor.active(agents)) {
         auto ask = [&](region_view s, uint_t t, value_t v) -> bool {
           if (t < t0)
@@ -242,13 +241,13 @@ auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) 
                                              [&](on_sale status) {
                                                if (status.owner != id)
                                                  return false;
-                                               asks.emplace_back(s, t, id, v);
+                                               asks.emplace_back(s.downcast<R>(), t, id, v);
                                                return true;
                                              },
                                              [&](in_use& status) {
                                                if (status.owner != id)
                                                  return false;
-                                               asks.emplace_back(s, t, id, v);
+                                               asks.emplace_back(s.downcast<R>(), t, id, v);
                                                return true;
                                              }};
           return std::visit(visitor, book(s, t).current);
