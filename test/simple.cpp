@@ -102,14 +102,15 @@ int main()
 
   jules::vector<value_t> cost(n * lambda);
 
-  simulation_opts_t opts;
-  opts.trade_callback = [&](trade_info_t info) {
-    if (info.from != no_owner)
-      cost[info.from] -= info.value;
-    cost[info.to] += info.value;
-  };
-
-  simulate<my_region>(factory, 17, opts);
+  simulate<my_region>({
+    .factory = std::move(factory),
+    .trade_callback = [&](trade_info_t info) {
+      if (info.from != no_owner)
+        cost[info.from] -= info.value;
+      cost[info.to] += info.value;
+    },
+    .seed = 17,
+  });
 
   const auto [mean, sd] = jules::meansd(cost);
   fmt::print("Average cost: {} ± {}\n", mean, sd);
