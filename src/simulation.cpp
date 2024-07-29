@@ -38,7 +38,10 @@ void agents_private_status_fn::update_active(std::vector<id_t> new_agents)
   }
 }
 
-auto agents_private_status_accessor::active(const agents_private_status_fn& self) const -> const std::vector<id_t>& { return self.active_; }
+auto agents_private_status_accessor::active(const agents_private_status_fn& self) const -> const std::vector<id_t>&
+{
+  return self.active_;
+}
 
 auto agents_private_status_accessor::at(agents_private_status_fn& self, id_t id) const -> agent&
 {

@@ -1,9 +1,9 @@
 #include <uat/simulation.hpp>
 
 #include <cool/indices.hpp>
+#include <fmt/core.h>
 #include <jules/array/array.hpp>
 #include <jules/base/random.hpp>
-#include <fmt/core.h>
 
 #include <limits>
 #include <random>
@@ -26,7 +26,8 @@ private:
   std::size_t pos_;
 };
 
-namespace std {
+namespace std
+{
 
 template <> struct hash<my_region>
 {
