@@ -15,7 +15,6 @@
 #include <utility>
 #include <vector>
 
-#include <fmt/format.h>
 #include <boost/functional/hash.hpp>
 
 namespace uat
@@ -36,8 +35,6 @@ public:
   //!
   //! Container is a type that satisfies the requirements of a container of Region,
   //! such as std::vector<Region>.
-  template <region R> region_view(R& a) : region_(std::addressof(a)) {}
-
   template <region R> region_view(const R& a) : region_(std::addressof(a)) {}
 
   region_view() noexcept = delete;
