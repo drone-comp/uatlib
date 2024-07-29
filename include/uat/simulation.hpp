@@ -121,7 +121,7 @@ struct agents_private_status_accessor
 };
 
 // (First-price sealed-bid auction)
-template <region R>
+template <region_compatible R>
 auto simulate(factory_fn factory, int seed, const simulation_opts_t& opts = {}) -> void
 {
   std::mt19937 rnd(seed);
