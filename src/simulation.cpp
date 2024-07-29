@@ -18,7 +18,7 @@ auto agents_private_status_fn::operator()(id_t id) const -> agent_private_status
 
 auto agents_private_status_fn::active_count() const -> uint_t { return active_.size(); }
 
-void agents_private_status_fn::insert(agent a)
+void agents_private_status_fn::insert(any_agent a)
 {
   active_.push_back(first_id_ + agents_.size());
   agents_.push_back(std::move(a));
@@ -43,7 +43,7 @@ auto agents_private_status_accessor::active(const agents_private_status_fn& self
   return self.active_;
 }
 
-auto agents_private_status_accessor::at(agents_private_status_fn& self, id_t id) const -> agent&
+auto agents_private_status_accessor::at(agents_private_status_fn& self, id_t id) const -> any_agent&
 {
   assert(id >= self.first_id_);
   assert(id - self.first_id_ < self.agents_.size());

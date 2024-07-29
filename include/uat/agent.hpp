@@ -6,11 +6,6 @@
 
 #include <uat/permit.hpp>
 
-#include <functional>
-#include <memory>
-#include <stdexcept>
-#include <type_traits>
-#include <utility>
 #include <variant>
 
 namespace uat
@@ -31,58 +26,120 @@ struct unavailable
 {};
 
 //! \brief Represents the public status of a permit that is available for trading.
-//!
-//! - `min_value`: the minimum value that can be offered for the permit.
-//! - `trades`: a function that lazily returns the history of trades for the permit.
-//!             Each element contains the minimum value and the highest bid.
 struct available
 {
-  value_t min_value;
+  value_t min_value; //!< The minimum value that can be offered for the permit.
+
+  //! A function that lazily returns the history of trades for the permit.
+  //! Each element contains the minimum value and the highest bid.
   std::function<const std::vector<trade_value_t>&()> trades;
 };
 
 //! Represents the public status of a permit that is owned by the agent.
 struct owned
 {};
+
 } // namespace permit_public_status
 
 //! \brief Variant that represents the possible public status of a permit.
-//!
-//! - `unavailable`: the permit is not available for trading.
-//! - `available`: the permit is available for trading. The `min_value` field
-//!                represents the minimum value that can be offered for the permit.
-//!                The `trades` field is a function that lazily returns the history
-//!                of trades for the permit, where each elements contains the minimum
-//!                value and the highest bid.
-//! - `owned`: the permit is owned by the agent.
-//!
-//! \relates uat::permit_public_status_t
 using permit_public_status_t =
   std::variant<permit_public_status::unavailable, permit_public_status::available, permit_public_status::owned>;
 
 // TODO: is it possible to use function_ref?
+
+//! Function type that allows the agent to bid for a permit.
 using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
+
+//! Function type that allows the agent to ask for a permit.
 using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
+
+//! Function type that returns the public status of a permit.
 using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
 
-template <region_compatible R> struct agent_for
+//! \brief Class to define the default behavior of an agent.
+//!
+//! All agent implementations should inherit from this class for a given
+//! region type.  The region type should be a region_compatible type.
+//! Functions that are not implemented by the agent will have no effect.
+//! We suggest using `override` to ensure that no function signature mismatch
+//! occurs.
+template <region_compatible R> struct agent
 {
   using region_type = R;
 
-  virtual auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void {}
-  virtual auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void {}
+  //! Behavior of the agent during the bid phase.
+  //!
+  //! \param time The current time step.
+  //! \param bid A function that allows the agent to bid for a permit.
+  //! \param status A function that returns the public status of a permit.
+  //! \param seed A random seed.
+  //!
+  //! The function `bid` and `status` receive a `region_compatible` and a `uint_t` as arguments
+  //! representing the location and time of the permit.  The third argument of `bid`
+  //! is the value the agent is willing to bid for the permit. The function `bid` returns
+  //! true if the bidding was successful, and false otherwise.  The function `status`
+  //! returns the public status of the permit with type `permit_public_status_t`.
+  //!
+  //! \note The default behavior of this function is to do nothing.  We suggest
+  //!       using `override` to ensure that no function signature mismatch occurs.
+  virtual auto bid_phase(uint_t time, bid_fn bid, permit_public_status_fn status, int seed) -> void {}
 
-  virtual auto on_bought(const R&, uint_t, value_t) -> void {}
-  virtual auto on_sold(const R&, uint_t, value_t) -> void {}
+  //! Behavior of the agent during the ask phase.
+  //!
+  //! \param time The current time step.
+  //! \param ask A function that allows the agent to ask for a permit.
+  //! \param status A function that returns the public status of a permit.
+  //! \param seed A random seed.
+  //!
+  //! The function `ask` and `status` receive a `region` and a `uint_t` as arguments
+  //! representing the location and time of the permit.  The third argument of `ask`
+  //! is the value the agent is willing to ask for the permit. The function `ask` returns
+  //! true if the asking was successful, and false otherwise.  The function `status`
+  //! returns the public status of the permit with type `permit_public_status_t`.
+  //!
+  //! \note The default behavior of this function is to do nothing.  We suggest
+  //!       using `override` to ensure that no function signature mismatch occurs.
+  virtual auto ask_phase(uint_t time, ask_fn ask, permit_public_status_fn status, int seed) -> void {}
 
-  virtual auto stop(uint_t, int) -> bool = 0;
+  //! Callback function called when the agent successfully buys a permit.
+  //!
+  //! \param region The region of the permit.
+  //! \param time The time of the permit.
+  //! \param value The value paid for the permit.
+  //!
+  //! \note The default behavior of this function is to do nothing.  We suggest
+  //!       using `override` to ensure that no function signature mismatch occurs.
+  virtual auto on_bought(const R& region, uint_t time, value_t value) -> void {}
+
+  //! Callback function called when the agent successfully sells a permit.
+  //!
+  //! \param region The region of the permit.
+  //! \param time The time of the permit.
+  //! \param value The value received for the permit.
+  //!
+  //! \note The default behavior of this function is to do nothing.  We suggest
+  //!       using `override` to ensure that no function signature mismatch occurs.
+  virtual auto on_sold(const R& region, uint_t time, value_t value) -> void {}
+
+  //! Controls when the agent should stop.
+  //!
+  //! Once this function returns true, the agent will be removed from the simulation.
+  //!
+  //! \param time The current time step.
+  //! \param seed A random seed.
+  //!
+  //! \note This function must be implemented by the agent.
+  virtual auto stop(uint_t time, int seed) -> bool = 0;
 };
 
+//! \brief Concept that defines the requirements for an agent.
 template <typename T>
-concept compatible_agent = std::movable<T> && std::derived_from<T, agent_for<typename T::region_type>>;
+concept agent_compatible = std::movable<T> && std::derived_from<T, agent<typename T::region_type>>;
 
 //! \brief A type-erased class that represents an agent in the simulation.
-class agent
+//!
+//! Any type that inherits from `agent` can be converted to an `any_agent`.
+class any_agent
 {
   //! \private
   class agent_interface
@@ -100,10 +157,10 @@ class agent
   };
 
   //! \private
-  template <compatible_agent Agent> class agent_model : public agent_interface
+  template <agent_compatible Agent> class agent_model : public agent_interface
   {
   public:
-    agent_model(Agent agent) : agent_(std::move(agent)) {}
+    agent_model(Agent any_agent) : agent_(std::move(any_agent)) {}
     virtual ~agent_model() = default;
 
     auto bid_phase(uint_t t, bid_fn b, permit_public_status_fn i, int seed) -> void override
@@ -133,93 +190,24 @@ class agent
   };
 
 public:
-  //! Constructs a type-erased agent from an object of type Agent that satisfy at least:
-  //!
-  //! - `Agent::stop(uint_t, int) -> convertible_to<bool>`
-  //!
-  //! The Agent object should be copyable.
-  template <compatible_agent Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a))) {}
+  //! Constructs a type-erased any_agent from an object of type that inherits from `agent`
+  //! and is movable.
+  template <agent_compatible Agent> any_agent(Agent a) : interface_(new agent_model<Agent>(std::move(a))) {}
 
-  agent() = delete;
+  any_agent() = delete;
 
-  agent(const agent& other) = delete;
-  agent(agent&& other) noexcept = default;
+  any_agent(const any_agent&) = delete;
+  any_agent(any_agent&&) noexcept = default;
 
-  auto operator=(const agent& other) -> agent& = delete;
-  auto operator=(agent&& other) noexcept -> agent& = default;
+  auto operator=(const any_agent&) -> any_agent& = delete;
+  auto operator=(any_agent&&) noexcept -> any_agent& = default;
 
-  //! Behavior of the agent during the bid phase.
-  //!
-  //! \param t The current time step.
-  //! \param bid A function that allows the agent to bid for a permit.
-  //! \param status A function that returns the public status of a permit.
-  //! \param seed A random seed.
-  //!
-  //! The function `bid` and `status` receive a `region` and a `uint_t` as arguments
-  //! representing the location and time of the permit.  The third argument of `bid`
-  //! is the value the agent is willing to bid for the permit. The function `bid` returns
-  //! true if the bidding was successful, and false otherwise.  The function `status`
-  //! returns the public status of the permit with type `permit_public_status_t`.
-  //!
-  //! \note This function is only called if the agent has a `bid_phase` member function
-  //!       with **compatible signature**.  Differently from direct inheritance, the
-  //!       compiler will not check if the function signature is compatible. Use
-  //!       `static_assert(is_detected_exact_v<void, mb_bid_phase_t, Agent>, "message")`
-  //!       to ensure the function signature is correct.
-  auto bid_phase(uint_t t, bid_fn bid, permit_public_status_fn status, int seed) -> void;
+  auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void;
+  auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void;
 
-  //! Behavior of the agent during the ask phase.
-  //!
-  //! \param t The current time step.
-  //! \param ask A function that allows the agent to ask for a permit.
-  //! \param status A function that returns the public status of a permit.
-  //! \param seed A random seed.
-  //!
-  //! The function `ask` and `status` receive a `region` and a `uint_t` as arguments
-  //! representing the location and time of the permit.  The third argument of `ask`
-  //! is the value the agent is willing to ask for the permit. The function `ask` returns
-  //! true if the asking was successful, and false otherwise.  The function `status`
-  //! returns the public status of the permit with type `permit_public_status_t`.
-  //!
-  //! \note This function is only called if the agent has a `ask_phase` member function
-  //!       with **compatible signature**.  Differently from direct inheritance, the
-  //!       compiler will not check if the function signature is compatible. Use
-  //!       `static_assert(is_detected_exact_v<void, mb_ask_phase_t, Agent>, "message")`
-  //!       to ensure the function signature is correct.
-  auto ask_phase(uint_t t, ask_fn ask, permit_public_status_fn status, int seed) -> void;
+  auto on_bought(region_view, uint_t, value_t) -> void;
+  auto on_sold(region_view, uint_t, value_t) -> void;
 
-  //! Callback function called when the agent successfully buys a permit.
-  //!
-  //! \param region The region of the permit.
-  //! \param time The time of the permit.
-  //! \param value The value paid for the permit.
-  //!
-  //! \note This function is only called if the agent has a `on_bought` member function
-  //!       with **compatible signature**.  Differently from direct inheritance, the
-  //!       compiler will not check if the function signature is compatible. Use
-  //!       `static_assert(is_detected_exact_v<void, mb_on_bought_t, Agent>, "message")`
-  //!       to ensure the function signature is correct.
-  auto on_bought(region_view region, uint_t time, value_t value) -> void;
-
-  //! Callback function called when the agent successfully sells a permit.
-  //!
-  //! \param region The region of the permit.
-  //! \param time The time of the permit.
-  //! \param value The value received for the permit.
-  //!
-  //! \note This function is only called if the agent has a `on_sold` member function
-  //!       with **compatible signature**.  Differently from direct inheritance, the
-  //!       compiler will not check if the function signature is compatible. Use
-  //!       `static_assert(is_detected_exact_v<void, mb_on_sold_t, Agent>, "message")`
-  //!       to ensure the function signature is correct.
-  auto on_sold(region_view region, uint_t time, value_t value) -> void;
-
-  //! Controls when the agent should stop.
-  //!
-  //! Once this function returns true, the agent will be removed from the simulation.
-  //!
-  //! \param time The current time step.
-  //! \param seed A random seed.
   auto stop(uint_t time, int seed) -> bool;
 
 private:

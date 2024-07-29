@@ -41,7 +41,7 @@ struct mission_t
   my_region from, to;
 };
 
-class my_agent : public agent_for<my_region>
+class my_agent : public agent<my_region>
 {
 public:
   explicit my_agent(mission_t mission) : mission_{std::move(mission)} {}
@@ -71,7 +71,7 @@ private:
   uint_t remaining_ = std::numeric_limits<uint_t>::max();
 };
 
-static_assert(compatible_agent<my_agent>);
+static_assert(agent_compatible<my_agent>);
 
 static auto random_mission(int seed) -> mission_t
 {
@@ -86,13 +86,13 @@ int main()
   static constexpr auto n = 100u;
   static constexpr auto lambda = 10u;
 
-  auto factory = [](uint_t t, int seed) -> std::vector<agent> {
+  auto factory = [](uint_t t, int seed) -> std::vector<any_agent> {
     if (t >= n)
       return {};
 
     std::mt19937 gen(seed);
 
-    std::vector<agent> result;
+    std::vector<any_agent> result;
     result.reserve(lambda);
     for ([[maybe_unused]] const auto _ : cool::indices(lambda))
       result.push_back(my_agent(random_mission(gen())));

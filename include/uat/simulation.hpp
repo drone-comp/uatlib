@@ -15,7 +15,7 @@
 namespace uat
 {
 
-using factory_fn = std::function<std::vector<agent>(uint_t, int)>;
+using factory_fn = std::function<std::vector<any_agent>(uint_t, int)>;
 
 struct trade_info_t
 {
@@ -60,7 +60,7 @@ struct inactive
 struct active
 {
   id_t id;
-  agent data;
+  any_agent data;
 };
 struct out_of_limits
 {};
@@ -76,12 +76,12 @@ public:
   auto operator()(id_t) const -> agent_private_status_t;
   auto active_count() const -> uint_t;
 
-  void insert(agent);
+  void insert(any_agent);
   void update_active(std::vector<id_t>);
 
 private:
   uint_t first_id_ = 0u;
-  std::deque<agent> agents_;
+  std::deque<any_agent> agents_;
   std::vector<id_t> active_;
 };
 
@@ -115,7 +115,7 @@ struct simulation_opts_t
 struct agents_private_status_accessor
 {
   auto active(const agents_private_status_fn& self) const -> const std::vector<id_t>&;
-  auto at(agents_private_status_fn& self, id_t id) const -> agent&;
+  auto at(agents_private_status_fn& self, id_t id) const -> any_agent&;
 };
 
 // (First-price sealed-bid auction)
