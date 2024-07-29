@@ -9,7 +9,6 @@ add_subdirectory(external/jules)
 add_library(uat
   src/agent.cpp
   src/simulation.cpp
-  src/permit.cpp
   include/uat/agent.hpp
   include/uat/simulation.hpp
   include/uat/permit.hpp

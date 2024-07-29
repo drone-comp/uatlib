@@ -3,11 +3,20 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <stdexcept>
 #include <type_traits>
+#include <functional>
 
 namespace uat
 {
+
+template <typename T>
+concept hashable = requires(T a) {
+    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+};
+
+template <typename R>
+concept region = hashable<R> && std::equality_comparable<R> && std::copyable<R>;
+// TODO: region should be copyable or movable? It seems that movable is enough.
 
 //! Default unsigned integer type
 using uint_t = std::size_t;
@@ -18,22 +27,8 @@ using id_t = std::size_t;
 //! Default type for price
 using value_t = double;
 
-class airspace;
-class region;
-template <typename> class permit;
+template <region> class permit;
 class agent;
-
-class not_implemented : public std::exception
-{
-public:
-  not_implemented(const std::string& member_name)
-    : message("member function " + member_name + " not implemented")
-  {}
-
-  const char* what() const noexcept override { return message.c_str(); }
-private:
-  std::string message;
-};
 
 //! \private
 namespace detail

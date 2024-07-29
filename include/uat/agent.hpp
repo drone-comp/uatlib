@@ -5,6 +5,7 @@
 #define UAT_AGENT_HPP
 
 #include <uat/type.hpp>
+#include <uat/permit.hpp>
 
 #include <stdexcept>
 #include <functional>
@@ -60,9 +61,9 @@ using permit_public_status_t =
   std::variant<permit_public_status::unavailable, permit_public_status::available, permit_public_status::owned>;
 
 // TODO: is it possible to use function_ref?
-using bid_fn = std::function<bool(const region&, uint_t, value_t)>;
-using ask_fn = std::function<bool(const region&, uint_t, value_t)>;
-using permit_public_status_fn = std::function<permit_public_status_t(const region&, uint_t)>;
+using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
+using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
+using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
 
 //! \private
 template <typename T>
@@ -76,11 +77,11 @@ using mb_ask_phase_t =
 
 //! \private
 template <typename T>
-using mb_on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<const region&>(), uint_t{}, value_t{}));
+using mb_on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<region_view>(), uint_t{}, value_t{}));
 
 //! \private
 template <typename T>
-using mb_on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<const region&>(), uint_t{}, value_t{}));
+using mb_on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<region_view>(), uint_t{}, value_t{}));
 
 //! \private
 template <typename T> using mb_stop_t = decltype(std::declval<T&>().stop(uint_t{}, int{}));
@@ -98,8 +99,8 @@ class agent
     virtual auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void = 0;
     virtual auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void = 0;
 
-    virtual auto on_bought(const region&, uint_t, value_t) -> void = 0;
-    virtual auto on_sold(const region&, uint_t, value_t) -> void = 0;
+    virtual auto on_bought(region_view, uint_t, value_t) -> void = 0;
+    virtual auto on_sold(region_view, uint_t, value_t) -> void = 0;
 
     virtual auto stop(uint_t, int) -> bool = 0;
   };
@@ -130,13 +131,13 @@ class agent
         agent_.ask_phase(t, std::move(a), std::move(i), seed);
     }
 
-    auto on_bought([[maybe_unused]] const region& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
+    auto on_bought([[maybe_unused]] region_view s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
     {
       if constexpr (is_detected_exact_v<void, mb_on_bought_t, Agent>)
         agent_.on_bought(s, t, v);
     }
 
-    auto on_sold([[maybe_unused]] const region& s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
+    auto on_sold([[maybe_unused]] region_view s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
     {
       if constexpr (is_detected_exact_v<void, mb_on_sold_t, Agent>)
         agent_.on_sold(s, t, v);
@@ -219,7 +220,7 @@ public:
   //!       compiler will not check if the function signature is compatible. Use
   //!       `static_assert(is_detected_exact_v<void, mb_on_bought_t, Agent>, "message")`
   //!       to ensure the function signature is correct.
-  auto on_bought(const region& region, uint_t time, value_t value) -> void;
+  auto on_bought(region_view region, uint_t time, value_t value) -> void;
 
   //! Callback function called when the agent successfully sells a permit.
   //!
@@ -232,7 +233,7 @@ public:
   //!       compiler will not check if the function signature is compatible. Use
   //!       `static_assert(is_detected_exact_v<void, mb_on_sold_t, Agent>, "message")`
   //!       to ensure the function signature is correct.
-  auto on_sold(const region& region, uint_t time, value_t value) -> void;
+  auto on_sold(region_view region, uint_t time, value_t value) -> void;
 
   //! Controls when the agent should stop.
   //!

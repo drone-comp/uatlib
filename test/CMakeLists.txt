@@ -15,6 +15,7 @@ endif()
 
 add_executable(simple simple.cpp)
 set_target_properties(simple PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+target_compile_features(simple PRIVATE cxx_std_20)
 
 option(UAT_TEST_COVERAGE "whether or not add coverage instrumentation" OFF)
 if (UAT_TEST_COVERAGE)
