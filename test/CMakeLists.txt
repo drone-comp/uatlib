@@ -29,7 +29,7 @@ else()
   set_target_properties(simple PROPERTIES LINK_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fsanitize=address,leak,undefined -fuse-ld=gold")
 endif()
 
-target_link_libraries(simple PRIVATE uat)
+target_link_libraries(simple PRIVATE uat jules fmt)
 target_compile_definitions(simple PRIVATE -DJULES_DEBUG_THROWS)
 
 if(MSVC)

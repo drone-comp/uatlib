@@ -3,6 +3,7 @@
 #include <cool/indices.hpp>
 #include <jules/array/array.hpp>
 #include <jules/base/random.hpp>
+#include <fmt/core.h>
 
 #include <limits>
 #include <random>
