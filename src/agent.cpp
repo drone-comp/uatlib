@@ -3,14 +3,6 @@
 namespace uat
 {
 
-agent::agent(const agent& other) : interface_(other.interface_->clone()) {}
-
-auto agent::operator=(const agent& other) -> agent&
-{
-  interface_ = other.interface_->clone();
-  return *this;
-}
-
 auto agent::bid_phase(uint_t t, bid_fn b, permit_public_status_fn s, int seed) -> void
 {
   interface_->bid_phase(t, std::move(b), std::move(s), seed);

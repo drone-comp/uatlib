@@ -65,26 +65,23 @@ using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
 using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
 using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
 
-//! \private
-template <typename T>
-using mb_bid_phase_t =
-  decltype(std::declval<T&>().bid_phase(uint_t{}, std::declval<bid_fn>(), std::declval<permit_public_status_fn>(), int{}));
+template <region R>
+struct agent_for
+{
+  using region_type = R;
 
-//! \private
-template <typename T>
-using mb_ask_phase_t =
-  decltype(std::declval<T&>().ask_phase(uint_t{}, std::declval<ask_fn>(), std::declval<permit_public_status_fn>(), int{}));
+  virtual auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void {}
+  virtual auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void {}
 
-//! \private
-template <typename T>
-using mb_on_bought_t = decltype(std::declval<T&>().on_bought(std::declval<region_view>(), uint_t{}, value_t{}));
+  virtual auto on_bought(const R&, uint_t, value_t) -> void {}
+  virtual auto on_sold(const R&, uint_t, value_t) -> void {}
 
-//! \private
-template <typename T>
-using mb_on_sold_t = decltype(std::declval<T&>().on_sold(std::declval<region_view>(), uint_t{}, value_t{}));
+  virtual auto stop(uint_t, int) -> bool = 0;
+};
 
-//! \private
-template <typename T> using mb_stop_t = decltype(std::declval<T&>().stop(uint_t{}, int{}));
+template <typename T>
+concept compatible_agent = std::movable<T> &&
+  std::derived_from<T, agent_for<typename T::region_type>>;
 
 //! \brief A type-erased class that represents an agent in the simulation.
 class agent
@@ -94,7 +91,6 @@ class agent
   {
   public:
     virtual ~agent_interface() = default;
-    virtual auto clone() const -> std::unique_ptr<agent_interface> = 0;
 
     virtual auto bid_phase(uint_t, bid_fn, permit_public_status_fn, int) -> void = 0;
     virtual auto ask_phase(uint_t, ask_fn, permit_public_status_fn, int) -> void = 0;
@@ -106,44 +102,34 @@ class agent
   };
 
   //! \private
-  template <typename Agent> class agent_model : public agent_interface
+  template <compatible_agent Agent> class agent_model : public agent_interface
   {
   public:
     agent_model(Agent agent) : agent_(std::move(agent)) {}
     virtual ~agent_model() = default;
 
-    auto clone() const -> std::unique_ptr<agent_interface> override
+    auto bid_phase(uint_t t, bid_fn b, permit_public_status_fn i, int seed) -> void override
     {
-      return std::unique_ptr<agent_interface>{new agent_model(agent_)};
+      agent_.bid_phase(t, std::move(b), std::move(i), seed);
     }
 
-    auto bid_phase([[maybe_unused]] uint_t t, [[maybe_unused]] bid_fn b, [[maybe_unused]] permit_public_status_fn i,
-                   [[maybe_unused]] int seed) -> void override
+    auto ask_phase(uint_t t, ask_fn a, permit_public_status_fn i,
+                   int seed) -> void override
     {
-      if constexpr (is_detected_exact_v<void, mb_bid_phase_t, Agent>)
-        agent_.bid_phase(t, std::move(b), std::move(i), seed);
+      agent_.ask_phase(t, std::move(a), std::move(i), seed);
     }
 
-    auto ask_phase([[maybe_unused]] uint_t t, [[maybe_unused]] ask_fn a, [[maybe_unused]] permit_public_status_fn i,
-                   [[maybe_unused]] int seed) -> void override
+    auto on_bought(region_view s, uint_t t, value_t v) -> void override
     {
-      if constexpr (is_detected_exact_v<void, mb_ask_phase_t, Agent>)
-        agent_.ask_phase(t, std::move(a), std::move(i), seed);
+      agent_.on_bought(s.downcast<typename Agent::region_type>(), t, v);
     }
 
-    auto on_bought([[maybe_unused]] region_view s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
+    auto on_sold(region_view s, uint_t t, value_t v) -> void override
     {
-      if constexpr (is_detected_exact_v<void, mb_on_bought_t, Agent>)
-        agent_.on_bought(s, t, v);
+      agent_.on_sold(s.downcast<typename Agent::region_type>(), t, v);
     }
 
-    auto on_sold([[maybe_unused]] region_view s, [[maybe_unused]] uint_t t, [[maybe_unused]] value_t v) -> void override
-    {
-      if constexpr (is_detected_exact_v<void, mb_on_sold_t, Agent>)
-        agent_.on_sold(s, t, v);
-    }
-
-    auto stop([[maybe_unused]] uint_t t, [[maybe_unused]] int seed) -> bool override { return agent_.stop(t, seed); }
+    auto stop(uint_t t, int seed) -> bool override { return agent_.stop(t, seed); }
 
   private:
     Agent agent_;
@@ -155,18 +141,16 @@ public:
   //! - `Agent::stop(uint_t, int) -> convertible_to<bool>`
   //!
   //! The Agent object should be copyable.
-  template <typename Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a)))
+  template <compatible_agent Agent> agent(Agent a) : interface_(new agent_model<Agent>(std::move(a)))
   {
-    static_assert(is_detected_convertible_v<bool, mb_stop_t, Agent>,
-                  "missing function member Agent::stop(uint_t, int) -> convertible_to<bool>");
   }
 
   agent() = delete;
 
-  agent(const agent& other);
+  agent(const agent& other) = delete;
   agent(agent&& other) noexcept = default;
 
-  auto operator=(const agent& other) -> agent&;
+  auto operator=(const agent& other) -> agent& = delete;
   auto operator=(agent&& other) noexcept -> agent& = default;
 
   //! Behavior of the agent during the bid phase.
@@ -245,16 +229,6 @@ public:
 
 private:
   std::unique_ptr<agent_interface> interface_;
-};
-
-//! \private
-template <typename Agent> struct agent_traits
-{
-  static constexpr bool is_valid = is_detected_convertible_v<bool, mb_stop_t, Agent>;
-  static constexpr bool has_mb_bid_phase = is_detected_exact_v<void, mb_bid_phase_t, Agent>;
-  static constexpr bool has_mb_ask_phase = is_detected_exact_v<void, mb_ask_phase_t, Agent>;
-  static constexpr bool has_mb_on_bought = is_detected_exact_v<void, mb_on_bought_t, Agent>;
-  static constexpr bool has_mb_on_sold = is_detected_exact_v<void, mb_on_sold_t, Agent>;
 };
 
 } // namespace uat

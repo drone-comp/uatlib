@@ -39,12 +39,12 @@ struct mission_t
   my_region from, to;
 };
 
-class my_agent
+class my_agent : public agent_for<my_region>
 {
 public:
   explicit my_agent(mission_t mission) : mission_{std::move(mission)} {}
 
-  auto bid_phase(uint_t t, bid_fn bid, permit_public_status_fn status, int seed)
+  void bid_phase(uint_t t, bid_fn bid, permit_public_status_fn status, int seed) override
   {
     using namespace permit_public_status;
 
@@ -60,14 +60,16 @@ public:
     }
   }
 
-  auto on_bought(region_view, uint_t, value_t) { --remaining_; }
+  void on_bought(const my_region&, uint_t, value_t) override { --remaining_; }
 
-  auto stop(uint_t, int) { return remaining_ == 0; }
+  bool stop(uint_t, int) override { return remaining_ == 0; }
 
 private:
   mission_t mission_;
   uint_t remaining_ = std::numeric_limits<uint_t>::max();
 };
+
+static_assert(compatible_agent<my_agent>);
 
 static auto random_mission(int seed) -> mission_t
 {
@@ -76,12 +78,6 @@ static auto random_mission(int seed) -> mission_t
   const auto to = from + 1;
   return {my_region{from}, my_region{to}};
 }
-
-using atraits = agent_traits<my_agent>;
-static_assert(atraits::has_mb_bid_phase);
-static_assert(!atraits::has_mb_ask_phase);
-static_assert(atraits::has_mb_on_bought);
-static_assert(!atraits::has_mb_on_sold);
 
 int main()
 {
