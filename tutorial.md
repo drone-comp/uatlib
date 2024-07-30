@@ -46,7 +46,7 @@ contents:
 struct Point {
   std::size_t x, y;
   auto operator==(const Point& other) const noexcept -> bool {
-    return x == other.x && y == other.y;
+    return x == other.x and y == other.y;
   }
   auto operator!=(const Point& other) const noexcept -> bool {
     return !(*this == other);
@@ -66,3 +66,52 @@ int main() {
   uat::simulate<Point>();
 }
 ```
+
+To describe our simulation, we first need to describe the type
+that represents the locations in the airspace.  In the example above,
+we use a simple `Point` structure with `x` and `y` coordinates.
+
+The library requires that your custom type satisfies `uat::region_compatible`,
+which is a concept that requires the type to be hashable, equality comparable,
+and copyable.
+
+The `std::hash` specialization and the operators `==` and `!=` are required to
+use `Point` as a key in a `std::unordered_map` implicitly created by the
+library.
+
+The `main` function calls the `simulate` function with `Point` as the template
+argument.  This function runs the simulation with the given type representing
+the locations in the airspace.
+
+As you should have noticed, this simulation does not do anything yet.  In the
+next sections, we will describe how to create agents to participate in the
+auction.
+
+Before we continue, let's create a `CMakeLists.txt` file in the `uatlib-tutorial`
+directory:
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+
+project(uatlib-tutorial)
+
+add_subdirectory(uatlib)
+
+add_executable(uatlib-tutorial main.cpp)
+target_link_libraries(uatlib-tutorial PRIVATE uatlib)
+target_compile_features(uatlib-tutorial PRIVATE cxx_std_20)
+```
+
+This file tells CMake to build the `uatlib-tutorial` executable from the
+`main.cpp` file and link it with the `uatlib` library.  The library
+requires C++20 features, so we set the compile features accordingly.
+
+Now, we can build the project:
+
+```bash
+cmake -H. -Bbuild
+cmake --build build
+```
+
+If everything goes well, you should see the `uatlib-tutorial` executable in the
+`build` directory.  Running this executable should not produce any output yet.
