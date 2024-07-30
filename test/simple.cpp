@@ -1,20 +1,19 @@
+#include <fmt/core.h>
+#include <jules/base/random.hpp>
 #include <uat/simulation.hpp>
 #include <unordered_set>
-#include <jules/base/random.hpp>
-#include <fmt/core.h>
 
-struct Point {
+struct Point
+{
   std::size_t x, y;
-  auto operator==(const Point& other) const noexcept -> bool {
-    return x == other.x and y == other.y;
-  }
-  auto operator!=(const Point& other) const noexcept -> bool {
-    return !(*this == other);
-  }
+  auto operator==(const Point& other) const noexcept -> bool { return x == other.x and y == other.y; }
+  auto operator!=(const Point& other) const noexcept -> bool { return !(*this == other); }
 };
 
-template <> struct std::hash<Point> {
-  auto operator()(const Point& p) const noexcept -> std::size_t {
+template <> struct std::hash<Point>
+{
+  auto operator()(const Point& p) const noexcept -> std::size_t
+  {
     size_t seed = 0;
     boost::hash_combine(seed, p.x);
     boost::hash_combine(seed, p.y);
@@ -22,9 +21,11 @@ template <> struct std::hash<Point> {
   }
 };
 
-class Agent : public uat::agent<Point> {
+class Agent : public uat::agent<Point>
+{
 public:
-  Agent(int seed) {
+  Agent(int seed)
+  {
     // Let's consider the airspace as a 3x3 grid.
     jules::random_engine rng(seed);
 
@@ -35,11 +36,10 @@ public:
     }
   }
 
-  auto stop(uat::uint_t, int) -> bool override {
-    return goals_.size() == owned_.size();
-  }
+  auto stop(uat::uint_t, int) -> bool override { return goals_.size() == owned_.size(); }
 
-  auto bid_phase(uat::uint_t time, uat::bid_fn bid, uat::permit_public_status_fn status, int seed) -> void override {
+  auto bid_phase(uat::uint_t time, uat::bid_fn bid, uat::permit_public_status_fn status, int seed) -> void override
+  {
     // Check at which time all goals are available.
     uat::uint_t target_time = time + 1;
     jules::random_engine rng(seed);
@@ -62,7 +62,8 @@ public:
       bid(goal, target_time, rng.canon_sample());
   }
 
-  auto ask_phase(uat::uint_t, uat::ask_fn ask, uat::permit_public_status_fn, int) -> void override {
+  auto ask_phase(uat::uint_t, uat::ask_fn ask, uat::permit_public_status_fn, int) -> void override
+  {
     if (owned_.size() == goals_.size())
       return; // Do not sell permits if all goals are achieved.
 
@@ -71,12 +72,14 @@ public:
     owned_.clear();
   }
 
-  auto on_bought(const Point& location, uat::uint_t time, uat::value_t cost) -> void override {
+  auto on_bought(const Point& location, uat::uint_t time, uat::value_t cost) -> void override
+  {
     owned_.insert({location, time});
     cost_ += cost;
   }
 
-  auto on_sold(const Point&, uat::uint_t, uat::value_t revenue) -> void override {
+  auto on_sold(const Point&, uat::uint_t, uat::value_t revenue) -> void override
+  {
     // We have already cleared the owned_ set in the ask_phase method.
     // No need to remove the permit from the set here.
     cost_ -= revenue;
@@ -88,30 +91,27 @@ private:
   uat::value_t cost_ = 0;
 };
 
-int main() {
-  uat::simulate<Point>({
-    .factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
-      // Create 10 agents at time 0.
-      if (time > 0)
-        return {};
+int main()
+{
+  uat::simulate<Point>({.factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
+                          // Create 10 agents at time 0.
+                          if (time > 0)
+                            return {};
 
-      std::vector<uat::any_agent> agents;
-      std::mt19937 rng(seed);
+                          std::vector<uat::any_agent> agents;
+                          std::mt19937 rng(seed);
 
-      while (agents.size() < 10)
-        agents.push_back(Agent(rng()));
+                          while (agents.size() < 10)
+                            agents.push_back(Agent(rng()));
 
-      return agents;
-    },
-    .trade_callback = [](uat::trade_info_t trade) -> void {
-      const auto& location = trade.location.downcast<Point>();
-      fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}",
-                 trade.transaction_time, trade.to,
-                 location.x, location.y, trade.time, trade.value);
-      if (trade.from == uat::no_owner)
-        fmt::print("\n");
-      else
-        fmt::print(" from agent {}\n", trade.from);
-    }
-  });
+                          return agents;
+                        },
+                        .trade_callback = [](uat::trade_info_t<Point> trade) -> void {
+                          fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}", trade.transaction_time, trade.to,
+                                     trade.location.x, trade.location.y, trade.time, trade.value);
+                          if (trade.from == uat::no_owner)
+                            fmt::print("\n");
+                          else
+                            fmt::print(" from agent {}\n", trade.from);
+                        }});
 }
