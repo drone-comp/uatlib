@@ -1,118 +1,117 @@
 #include <uat/simulation.hpp>
-
-#include <cool/indices.hpp>
-#include <fmt/core.h>
-#include <jules/array/array.hpp>
+#include <unordered_set>
 #include <jules/base/random.hpp>
+#include <fmt/core.h>
 
-#include <limits>
-#include <random>
-#include <variant>
+struct Point {
+  std::size_t x, y;
+  auto operator==(const Point& other) const noexcept -> bool {
+    return x == other.x and y == other.y;
+  }
+  auto operator!=(const Point& other) const noexcept -> bool {
+    return !(*this == other);
+  }
+};
 
-using namespace uat;
+template <> struct std::hash<Point> {
+  auto operator()(const Point& p) const noexcept -> std::size_t {
+    size_t seed = 0;
+    boost::hash_combine(seed, p.x);
+    boost::hash_combine(seed, p.y);
+    return seed;
+  }
+};
 
-// unidimensional space with 10 regions
-class my_region
-{
+class Agent : public uat::agent<Point> {
 public:
-  explicit my_region(std::size_t pos) : pos_{pos} {}
+  Agent(int seed) {
+    // Let's consider the airspace as a 3x3 grid.
+    jules::random_engine rng(seed);
 
-  auto hash() const -> std::size_t { return pos_; }
-
-  auto operator==(const my_region& other) const { return pos_ == other.pos_; }
-  auto operator!=(const my_region& other) const { return pos_ != other.pos_; }
-
-private:
-  std::size_t pos_;
-};
-
-namespace std
-{
-
-template <> struct hash<my_region>
-{
-  auto operator()(const my_region& r) const { return r.hash(); }
-};
-
-} // namespace std
-
-struct mission_t
-{
-  my_region from, to;
-};
-
-class my_agent : public agent<my_region>
-{
-public:
-  explicit my_agent(mission_t mission) : mission_{std::move(mission)} {}
-
-  void bid_phase(uint_t t, bid_fn bid, permit_public_status_fn status, int seed) override
-  {
-    using namespace permit_public_status;
-
-    // otherwise, it tries to buy in the next time
-    if (std::holds_alternative<available>(status(mission_.from, t + 1)) &&
-        std::holds_alternative<available>(status(mission_.to, t + 2))) {
-      // note: in a real simulation there would exist intermediate regions
-      jules::random_engine<> gen(seed);
-      const auto price = 1.0 + gen.canon_sample();
-      bid(mission_.from, t + 1, price);
-      bid(mission_.to, t + 2, price);
-      remaining_ = 2;
+    while (goals_.size() < 3) {
+      const auto x = rng.uniform_index_sample(3u);
+      const auto y = rng.uniform_index_sample(3u);
+      goals_.insert({x, y});
     }
   }
 
-  void on_bought(const my_region&, uint_t, value_t) override { --remaining_; }
+  auto stop(uat::uint_t, int) -> bool override {
+    return goals_.size() == owned_.size();
+  }
 
-  bool stop(uint_t, int) override { return remaining_ == 0; }
+  auto bid_phase(uat::uint_t time, uat::bid_fn bid, uat::permit_public_status_fn status, int seed) -> void override {
+    // Check at which time all goals are available.
+    uat::uint_t target_time = time + 1;
+    jules::random_engine rng(seed);
+    std::uniform_int_distribution<uat::uint_t> dist(1, 5);
+
+    while (true) {
+      bool all_goals_available = true;
+      for (const auto& goal : goals_) {
+        if (not std::holds_alternative<uat::permit_public_status::available>(status(goal, target_time))) {
+          all_goals_available = false;
+          break;
+        }
+      }
+      if (all_goals_available)
+        break;
+      target_time += rng.sample(dist);
+    }
+
+    for (const auto& goal : goals_)
+      bid(goal, target_time, rng.canon_sample());
+  }
+
+  auto ask_phase(uat::uint_t, uat::ask_fn ask, uat::permit_public_status_fn, int) -> void override {
+    if (owned_.size() == goals_.size())
+      return; // Do not sell permits if all goals are achieved.
+
+    for (const auto& [location, time] : owned_)
+      ask(location, time, 0);
+    owned_.clear();
+  }
+
+  auto on_bought(const Point& location, uat::uint_t time, uat::value_t cost) -> void override {
+    owned_.insert({location, time});
+    cost_ += cost;
+  }
+
+  auto on_sold(const Point&, uat::uint_t, uat::value_t revenue) -> void override {
+    // We have already cleared the owned_ set in the ask_phase method.
+    // No need to remove the permit from the set here.
+    cost_ -= revenue;
+  }
 
 private:
-  mission_t mission_;
-  uint_t remaining_ = std::numeric_limits<uint_t>::max();
+  std::unordered_set<Point> goals_;
+  std::unordered_set<uat::permit<Point>> owned_;
+  uat::value_t cost_ = 0;
 };
 
-static_assert(agent_compatible<my_agent>);
+int main() {
+  uat::simulate<Point>({
+    .factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
+      // Create 10 agents at time 0.
+      if (time > 0)
+        return {};
 
-static auto random_mission(int seed) -> mission_t
-{
-  jules::random_engine<> gen(seed);
-  const auto from = gen.uniform_index_sample(9u);
-  const auto to = from + 1;
-  return {my_region{from}, my_region{to}};
-}
+      std::vector<uat::any_agent> agents;
+      std::mt19937 rng(seed);
 
-int main()
-{
-  static constexpr auto n = 100u;
-  static constexpr auto lambda = 10u;
+      while (agents.size() < 10)
+        agents.push_back(Agent(rng()));
 
-  auto factory = [](uint_t t, int seed) -> std::vector<any_agent> {
-    if (t >= n)
-      return {};
-
-    std::mt19937 gen(seed);
-
-    std::vector<any_agent> result;
-    result.reserve(lambda);
-    for ([[maybe_unused]] const auto _ : cool::indices(lambda))
-      result.push_back(my_agent(random_mission(gen())));
-
-    return result;
-  };
-
-  jules::vector<value_t> cost(n * lambda);
-
-  simulate<my_region>({
-    .factory = std::move(factory),
-    .trade_callback = [&](trade_info_t info) {
-      if (info.from != no_owner)
-        cost[info.from] -= info.value;
-      cost[info.to] += info.value;
+      return agents;
     },
-    .seed = 17,
+    .trade_callback = [](uat::trade_info_t trade) -> void {
+      const auto& location = trade.location.downcast<Point>();
+      fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}",
+                 trade.transaction_time, trade.to,
+                 location.x, location.y, trade.time, trade.value);
+      if (trade.from == uat::no_owner)
+        fmt::print("\n");
+      else
+        fmt::print(" from agent {}\n", trade.from);
+    }
   });
-
-  const auto [mean, sd] = jules::meansd(cost);
-  fmt::print("Average cost: {} ± {}\n", mean, sd);
-  fmt::print("Cost range: {}, {}\n", jules::min(cost), jules::max(cost));
 }
