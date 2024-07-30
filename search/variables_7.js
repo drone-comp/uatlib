@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['region_5fcompatible_102',['region_compatible',['../type_8hpp.html#a725bbf42dd19ed176e4844b1fa97ddf0',1,'uat']]]
+  ['owner_105',['owner',['../structuat_1_1permit__private__status_1_1on__sale.html#ae2c125a6af609dc87ce1d46661a7b403',1,'uat::permit_private_status::on_sale']]]
 ];

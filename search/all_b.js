@@ -1,5 +1,9 @@
 var searchData=
 [
-  ['region_5fcompatible_38',['region_compatible',['../type_8hpp.html#a725bbf42dd19ed176e4844b1fa97ddf0',1,'uat']]],
-  ['region_5fview_39',['region_view',['../classuat_1_1region__view.html#a991284e35636a955d5a7d3035632261d',1,'uat::region_view::region_view()'],['../classuat_1_1region__view.html',1,'uat::region_view']]]
+  ['permit_33',['permit',['../structuat_1_1permit.html',1,'uat']]],
+  ['permit_2ehpp_34',['permit.hpp',['../permit_8hpp.html',1,'']]],
+  ['permit_5fprivate_5fstatus_5ffn_35',['permit_private_status_fn',['../simulation_8hpp.html#afffe45029d7ec4ea534b96e8ef32cd1a',1,'uat']]],
+  ['permit_5fprivate_5fstatus_5ft_36',['permit_private_status_t',['../structuat_1_1permit__private__status__t.html',1,'uat']]],
+  ['permit_5fpublic_5fstatus_5ffn_37',['permit_public_status_fn',['../agent_8hpp.html#a6d6d92b91508d0212656ac48f2bc90d3',1,'uat']]],
+  ['permit_5fpublic_5fstatus_5ft_38',['permit_public_status_t',['../agent_8hpp.html#a9b1ab2ee3178b5246a36fd53a8d231f1',1,'uat']]]
 ];

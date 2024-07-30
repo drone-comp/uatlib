@@ -102,86 +102,82 @@ $(function() {
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">void</span>* region_;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;};</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classuat_1_1permit.html">   49</a></span>&#160;<span class="keyword">template</span> &lt;region_compatible Region&gt; <span class="keyword">class </span><a class="code" href="classuat_1_1permit.html">permit</a></div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="structuat_1_1permit.html">   49</a></span>&#160;<span class="keyword">template</span> &lt;region_compatible Region&gt; <span class="keyword">struct </span><a class="code" href="structuat_1_1permit.html">permit</a></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <a class="code" href="classuat_1_1permit.html">permit</a>() noexcept = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="classuat_1_1permit.html">permit</a>(Region s, <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> time) noexcept : region_(std::move(s)), time_(time) {}</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">auto</span> time() <span class="keyword">const</span> noexcept -&gt; <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> { <span class="keywordflow">return</span> time_; }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">auto</span> location() <span class="keyword">const</span> noexcept -&gt; <span class="keyword">const</span> Region&amp; { <span class="keywordflow">return</span> region_; }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">auto</span> location() noexcept -&gt; Region&amp; { <span class="keywordflow">return</span> region_; }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">auto</span> operator==(<span class="keyword">const</span> <a class="code" href="classuat_1_1permit.html">permit</a>&amp; other) <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> region_ == other.region_ &amp;&amp; time_ == other.time_; }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">auto</span> operator!=(<span class="keyword">const</span> <a class="code" href="classuat_1_1permit.html">permit</a>&amp; other) <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> region_ != other.region_ || time_ != other.time_; }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  Region region_;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> time_;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;};</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> I, <span class="keyword">typename</span> R&gt; decltype(<span class="keyword">auto</span>) get(<a class="code" href="classuat_1_1permit.html">permit</a>&lt;R&gt;&amp; ts)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;{</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordflow">if</span> constexpr (I == 0)</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    return ts.location();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  else</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    return ts.time();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;template &lt;std::<span class="keywordtype">size_t</span> I, typename R&gt; decltype(auto) get(const <a class="code" href="classuat_1_1permit.html">permit</a>&lt;R&gt;&amp; ts)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordflow">if</span> constexpr (I == 0)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    return ts.location();</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  else</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    return ts.time();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;} <span class="comment">// namespace uat</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;namespace std</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;{</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Region&gt; <span class="keyword">struct </span>hash&lt;uat::<a class="code" href="classuat_1_1permit.html">permit</a>&lt;Region&gt;&gt;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">auto</span> operator()(<span class="keyword">const</span> <a class="code" href="classuat_1_1permit.html">uat::permit&lt;Region&gt;</a>&amp; p) <span class="keyword">const</span> noexcept -&gt; <span class="keywordtype">size_t</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">size_t</span> seed = 0;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    boost::hash_combine(seed, std::hash&lt;Region&gt;{}(p.location()));</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    boost::hash_combine(seed, std::hash&lt;std::size_t&gt;{}(p.time()));</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">return</span> seed;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;};</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_size&lt;uat::permit&lt;R&gt;&gt; : <span class="keyword">public</span> integral_constant&lt;size_t, 2&gt;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{};</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <a class="code" href="structuat_1_1permit.html">permit</a>() noexcept = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <a class="code" href="structuat_1_1permit.html">permit</a>(Region s, <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> <a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>) noexcept : <a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a>(std::move(s)), <a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>(<a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>) {}</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">auto</span> operator==(<span class="keyword">const</span> <a class="code" href="structuat_1_1permit.html">permit</a>&amp; other) <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> <a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a> == other.<a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a> &amp;&amp; <a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a> == other.<a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>; }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">auto</span> operator!=(<span class="keyword">const</span> <a class="code" href="structuat_1_1permit.html">permit</a>&amp; other) <span class="keyword">const</span> -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> <a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a> != other.<a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a> || <a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a> != other.<a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>; }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">   57</a></span>&#160;  Region <a class="code" href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">location</a>; </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">   58</a></span>&#160;  <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> <a class="code" href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">time</a>;     </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> I, <span class="keyword">typename</span> R&gt; decltype(<span class="keyword">auto</span>) get(<a class="code" href="structuat_1_1permit.html">permit</a>&lt;R&gt;&amp; ts)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordflow">if</span> constexpr (I == 0)</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">return</span> ts.location;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">return</span> ts.time;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> I, <span class="keyword">typename</span> R&gt; decltype(<span class="keyword">auto</span>) get(const permit&lt;R&gt;&amp; ts)</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">if</span> constexpr (I == 0)</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    return ts.location;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  else</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    return ts.time;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;} <span class="comment">// namespace uat</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;namespace std</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;{</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> Region&gt; <span class="keyword">struct </span>hash&lt;uat::permit&lt;Region&gt;&gt;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;{</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">auto</span> operator()(<span class="keyword">const</span> <a class="code" href="structuat_1_1permit.html">uat::permit&lt;Region&gt;</a>&amp; p) <span class="keyword">const</span> noexcept -&gt; <span class="keywordtype">size_t</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">size_t</span> seed = 0;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    boost::hash_combine(seed, std::hash&lt;Region&gt;{}(p.location));</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    boost::hash_combine(seed, std::hash&lt;std::size_t&gt;{}(p.time));</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">return</span> seed;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;};</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_size&lt;uat::permit&lt;R&gt;&gt; : <span class="keyword">public</span> integral_constant&lt;size_t, 2&gt;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;{};</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;0, uat::permit&lt;R&gt;&gt;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;{</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">using</span> type = R&amp;;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;};</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;0, uat::permit&lt;R&gt;&gt;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;0, const uat::permit&lt;R&gt;&gt;</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;{</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">using</span> type = R&amp;;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">using</span> type = <span class="keyword">const</span> R&amp;;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;};</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;0, const uat::permit&lt;R&gt;&gt;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;1, uat::permit&lt;R&gt;&gt;</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;{</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">using</span> type = <span class="keyword">const</span> R&amp;;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">using</span> type = <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a>;</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;};</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;1, uat::permit&lt;R&gt;&gt;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;1, const uat::permit&lt;R&gt;&gt;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;{</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keyword">using</span> type = <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a>;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;};</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> R&gt; <span class="keyword">struct </span>tuple_element&lt;1, const uat::permit&lt;R&gt;&gt;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;{</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">using</span> type = <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;};</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;} <span class="comment">// namespace std</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// UAT_PERMIT_HPP</span></div>
-<div class="ttc" id="aclassuat_1_1permit_html"><div class="ttname"><a href="classuat_1_1permit.html">uat::permit</a></div><div class="ttdoc">A tuple containing a region and a time step.</div><div class="ttdef"><b>Definition:</b> permit.hpp:50</div></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;} <span class="comment">// namespace std</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// UAT_PERMIT_HPP</span></div>
 <div class="ttc" id="aclassuat_1_1region__view_html"><div class="ttname"><a href="classuat_1_1region__view.html">uat::region_view</a></div><div class="ttdoc">A non-owning wrapper to an atomic region in the airspace.</div><div class="ttdef"><b>Definition:</b> permit.hpp:21</div></div>
 <div class="ttc" id="aclassuat_1_1region__view_html_a991284e35636a955d5a7d3035632261d"><div class="ttname"><a href="classuat_1_1region__view.html#a991284e35636a955d5a7d3035632261d">uat::region_view::region_view</a></div><div class="ttdeci">region_view(const R &amp;a)</div><div class="ttdoc">Constructs a non-owning wrapper to a region that satisfies the region_compatible concept.</div><div class="ttdef"><b>Definition:</b> permit.hpp:24</div></div>
 <div class="ttc" id="aclassuat_1_1region__view_html_af2e447a9d13c7ad15014683663408c45"><div class="ttname"><a href="classuat_1_1region__view.html#af2e447a9d13c7ad15014683663408c45">uat::region_view::downcast</a></div><div class="ttdeci">auto downcast() const -&gt; const R &amp;</div><div class="ttdef"><b>Definition:</b> permit.hpp:38</div></div>
+<div class="ttc" id="astructuat_1_1permit_html"><div class="ttname"><a href="structuat_1_1permit.html">uat::permit</a></div><div class="ttdoc">A tuple containing a region and a time step.</div><div class="ttdef"><b>Definition:</b> permit.hpp:50</div></div>
+<div class="ttc" id="astructuat_1_1permit_html_a58367b07d8ddc4ed7ba44724f25b37ac"><div class="ttname"><a href="structuat_1_1permit.html#a58367b07d8ddc4ed7ba44724f25b37ac">uat::permit::location</a></div><div class="ttdeci">Region location</div><div class="ttdoc">The region.</div><div class="ttdef"><b>Definition:</b> permit.hpp:57</div></div>
+<div class="ttc" id="astructuat_1_1permit_html_a942bc0e17aa66bade38b8951457d7358"><div class="ttname"><a href="structuat_1_1permit.html#a942bc0e17aa66bade38b8951457d7358">uat::permit::time</a></div><div class="ttdeci">uint_t time</div><div class="ttdoc">The time step.</div><div class="ttdef"><b>Definition:</b> permit.hpp:58</div></div>
 <div class="ttc" id="atype_8hpp_html"><div class="ttname"><a href="type_8hpp.html">type.hpp</a></div><div class="ttdoc">Basic types and utilities.</div></div>
 <div class="ttc" id="atype_8hpp_html_a598a59e264c02aabe15cf4917348a005"><div class="ttname"><a href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a></div><div class="ttdeci">std::size_t uint_t</div><div class="ttdoc">Default unsigned integer type.</div><div class="ttdef"><b>Definition:</b> type.hpp:29</div></div>
 </div><!-- fragment --></div><!-- contents -->

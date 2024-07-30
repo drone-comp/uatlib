@@ -1,4 +1,4 @@
-<map id="uat::trade_info_t" name="uat::trade_info_t">
-<area shape="rect" id="node1" title="Type to represent the information in a trade transaction." alt="" coords="6,95,135,121"/>
-<area shape="rect" id="node2" href="$classuat_1_1region__view.html" title="A non&#45;owning wrapper to an atomic region in the airspace." alt="" coords="5,5,136,32"/>
+<map id="uat::trade_info_t&lt; R &gt;" name="uat::trade_info_t&lt; R &gt;">
+<area shape="rect" id="node1" title="Type to represent the information in a trade transaction." alt="" coords="5,95,173,121"/>
+<area shape="rect" id="node2" title=" " alt="" coords="70,5,109,32"/>
 </map>

@@ -1,11 +1,12 @@
 var searchData=
 [
-  ['time_5fthreshold_5ft_49',['time_threshold_t',['../structuat_1_1stop__criterion_1_1time__threshold__t.html',1,'uat::stop_criterion']]],
-  ['time_5fwindow_50',['time_window',['../structuat_1_1simulation__opts__t.html#a615eee61be75a162312aaae8bbf78c87',1,'uat::simulation_opts_t']]],
-  ['trade_5fcallback_51',['trade_callback',['../structuat_1_1simulation__opts__t.html#a9fbbfd9a84ebd2ece5994347cec0611d',1,'uat::simulation_opts_t']]],
-  ['trade_5finfo_5ffn_52',['trade_info_fn',['../simulation_8hpp.html#a89f5ddc56d79f8c0a8649351f34f7f17',1,'uat']]],
-  ['trade_5finfo_5ft_53',['trade_info_t',['../structuat_1_1trade__info__t.html',1,'uat']]],
-  ['trade_5fvalue_5ft_54',['trade_value_t',['../structuat_1_1trade__value__t.html',1,'uat']]],
-  ['trades_55',['trades',['../structuat_1_1permit__public__status_1_1available.html#afbbeac2e25325860113d96f95a054f28',1,'uat::permit_public_status::available']]],
-  ['type_2ehpp_56',['type.hpp',['../type_8hpp.html',1,'']]]
+  ['seed_41',['seed',['../structuat_1_1simulation__opts__t.html#a9f497745b9d4a5aa144ab8a93670b1de',1,'uat::simulation_opts_t']]],
+  ['simulate_42',['simulate',['../simulation_8hpp.html#a1bc4f52c177c4a5c3b4279e68cb6aee5',1,'uat']]],
+  ['simulation_2ehpp_43',['simulation.hpp',['../simulation_8hpp.html',1,'']]],
+  ['simulation_5fopts_5ft_44',['simulation_opts_t',['../structuat_1_1simulation__opts__t.html',1,'uat']]],
+  ['status_5fcallback_45',['status_callback',['../structuat_1_1simulation__opts__t.html#af9cb542c0af031f01bd349cd4e607b61',1,'uat::simulation_opts_t']]],
+  ['status_5finfo_5ffn_46',['status_info_fn',['../simulation_8hpp.html#a1fc654ddacde056c600800d4e6c8c8ee',1,'uat']]],
+  ['stop_47',['stop',['../structuat_1_1agent.html#a322c990fe9ce829a749c2cc521e4eab1',1,'uat::agent']]],
+  ['stop_5fcriterion_48',['stop_criterion',['../structuat_1_1simulation__opts__t.html#a35e7970b37b87d2751689b985f19e016',1,'uat::simulation_opts_t']]],
+  ['stop_5fcriterion_5ft_49',['stop_criterion_t',['../simulation_8hpp.html#a1557e810e147ef58de32bc3bdee0f858',1,'uat']]]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>uatlib: uat::simulation_opts_t Struct Reference</title>
+<title>uatlib: uat::simulation_opts_t&lt; R &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,7 +70,7 @@ $(function() {
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structuat_1_1simulation__opts__t-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">uat::simulation_opts_t Struct Reference</div>  </div>
+<div class="title">uat::simulation_opts_t&lt; R &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -81,33 +81,36 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a662f25b276e4717b6ee245460cb2e8a1"><td class="memItemLeft" align="right" valign="top"><a id="a662f25b276e4717b6ee245460cb2e8a1"></a>
-<a class="el" href="simulation_8hpp.html#a3426caf776df376b5f2df5fc456ad7a1">factory_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a662f25b276e4717b6ee245460cb2e8a1">factory</a></td></tr>
-<tr class="memdesc:a662f25b276e4717b6ee245460cb2e8a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that generates agents for each iteration. <br /></td></tr>
-<tr class="separator:a662f25b276e4717b6ee245460cb2e8a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a615eee61be75a162312aaae8bbf78c87"><td class="memItemLeft" align="right" valign="top"><a id="a615eee61be75a162312aaae8bbf78c87"></a>
-std::optional&lt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a615eee61be75a162312aaae8bbf78c87">time_window</a></td></tr>
-<tr class="memdesc:a615eee61be75a162312aaae8bbf78c87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum time ahead a permit can be traded. <br /></td></tr>
-<tr class="separator:a615eee61be75a162312aaae8bbf78c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d7693f10fb76fb78758aabfbf3e1292"><td class="memItemLeft" align="right" valign="top"><a id="a2d7693f10fb76fb78758aabfbf3e1292"></a>
-<a class="el" href="simulation_8hpp.html#a1557e810e147ef58de32bc3bdee0f858">stop_criterion_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a2d7693f10fb76fb78758aabfbf3e1292">stop_criterion</a></td></tr>
-<tr class="memdesc:a2d7693f10fb76fb78758aabfbf3e1292"><td class="mdescLeft">&#160;</td><td class="mdescRight">The criterion to stop the simulation. <br /></td></tr>
-<tr class="separator:a2d7693f10fb76fb78758aabfbf3e1292"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fbbfd9a84ebd2ece5994347cec0611d"><td class="memItemLeft" align="right" valign="top"><a id="a9fbbfd9a84ebd2ece5994347cec0611d"></a>
-<a class="el" href="simulation_8hpp.html#a89f5ddc56d79f8c0a8649351f34f7f17">trade_info_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a9fbbfd9a84ebd2ece5994347cec0611d">trade_callback</a></td></tr>
-<tr class="memdesc:a9fbbfd9a84ebd2ece5994347cec0611d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to receive information about a trade transaction. <br /></td></tr>
-<tr class="separator:a9fbbfd9a84ebd2ece5994347cec0611d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ba6a9416e65a118c119dd694329440"><td class="memItemLeft" align="right" valign="top"><a id="a51ba6a9416e65a118c119dd694329440"></a>
-<a class="el" href="simulation_8hpp.html#a1fc654ddacde056c600800d4e6c8c8ee">status_info_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a51ba6a9416e65a118c119dd694329440">status_callback</a></td></tr>
-<tr class="memdesc:a51ba6a9416e65a118c119dd694329440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to receive information about the status of the simulation. <br /></td></tr>
-<tr class="separator:a51ba6a9416e65a118c119dd694329440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c66ea17826579eac884245d95c07017"><td class="memItemLeft" align="right" valign="top"><a id="a7c66ea17826579eac884245d95c07017"></a>
-std::optional&lt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a7c66ea17826579eac884245d95c07017">seed</a></td></tr>
-<tr class="memdesc:a7c66ea17826579eac884245d95c07017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random seed. <br /></td></tr>
-<tr class="separator:a7c66ea17826579eac884245d95c07017"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3fd15930bd00bb0e4d5874d569af9db"><td class="memItemLeft" align="right" valign="top"><a id="aa3fd15930bd00bb0e4d5874d569af9db"></a>
+<a class="el" href="simulation_8hpp.html#a3426caf776df376b5f2df5fc456ad7a1">factory_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#aa3fd15930bd00bb0e4d5874d569af9db">factory</a></td></tr>
+<tr class="memdesc:aa3fd15930bd00bb0e4d5874d569af9db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that generates agents for each iteration. <br /></td></tr>
+<tr class="separator:aa3fd15930bd00bb0e4d5874d569af9db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84ec1fb508d85e7b635b8a668ba925f5"><td class="memItemLeft" align="right" valign="top"><a id="a84ec1fb508d85e7b635b8a668ba925f5"></a>
+std::optional&lt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a84ec1fb508d85e7b635b8a668ba925f5">time_window</a></td></tr>
+<tr class="memdesc:a84ec1fb508d85e7b635b8a668ba925f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum time ahead a permit can be traded. <br /></td></tr>
+<tr class="separator:a84ec1fb508d85e7b635b8a668ba925f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35e7970b37b87d2751689b985f19e016"><td class="memItemLeft" align="right" valign="top"><a id="a35e7970b37b87d2751689b985f19e016"></a>
+<a class="el" href="simulation_8hpp.html#a1557e810e147ef58de32bc3bdee0f858">stop_criterion_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a35e7970b37b87d2751689b985f19e016">stop_criterion</a></td></tr>
+<tr class="memdesc:a35e7970b37b87d2751689b985f19e016"><td class="mdescLeft">&#160;</td><td class="mdescRight">The criterion to stop the simulation. <br /></td></tr>
+<tr class="separator:a35e7970b37b87d2751689b985f19e016"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21f839fd115ce08f0b3dc215437b6a36"><td class="memItemLeft" align="right" valign="top"><a id="a21f839fd115ce08f0b3dc215437b6a36"></a>
+<a class="el" href="simulation_8hpp.html#ae4081fe1f1943c1ec6bd02e343a6154e">trade_info_fn</a>&lt; R &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a21f839fd115ce08f0b3dc215437b6a36">trade_callback</a></td></tr>
+<tr class="memdesc:a21f839fd115ce08f0b3dc215437b6a36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to receive information about a trade transaction. <br /></td></tr>
+<tr class="separator:a21f839fd115ce08f0b3dc215437b6a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9cb542c0af031f01bd349cd4e607b61"><td class="memItemLeft" align="right" valign="top"><a id="af9cb542c0af031f01bd349cd4e607b61"></a>
+<a class="el" href="simulation_8hpp.html#a1fc654ddacde056c600800d4e6c8c8ee">status_info_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#af9cb542c0af031f01bd349cd4e607b61">status_callback</a></td></tr>
+<tr class="memdesc:af9cb542c0af031f01bd349cd4e607b61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to receive information about the status of the simulation. <br /></td></tr>
+<tr class="separator:af9cb542c0af031f01bd349cd4e607b61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f497745b9d4a5aa144ab8a93670b1de"><td class="memItemLeft" align="right" valign="top"><a id="a9f497745b9d4a5aa144ab8a93670b1de"></a>
+std::optional&lt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuat_1_1simulation__opts__t.html#a9f497745b9d4a5aa144ab8a93670b1de">seed</a></td></tr>
+<tr class="memdesc:a9f497745b9d4a5aa144ab8a93670b1de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random seed. <br /></td></tr>
+<tr class="separator:a9f497745b9d4a5aa144ab8a93670b1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Options to configure the simulation. </p>
+<div class="textblock"><h3>template&lt;region_compatible R&gt;<br />
+struct uat::simulation_opts_t&lt; R &gt;</h3>
+
+<p>Options to configure the simulation. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="simulation_8hpp_source.html">simulation.hpp</a></li>
 </ul>
