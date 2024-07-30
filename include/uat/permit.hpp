@@ -46,40 +46,34 @@ private:
 //! A permit refers to the assets agents can trade.
 //! This class is just a convenient way to group a region and a time step.
 //! Structured bindings and hashing are supported.
-template <region_compatible Region> class permit
+template <region_compatible Region> struct permit
 {
-public:
   permit() noexcept = delete;
-  permit(Region s, uint_t time) noexcept : region_(std::move(s)), time_(time) {}
+  permit(Region s, uint_t time) noexcept : location(std::move(s)), time(time) {}
 
-  auto time() const noexcept -> uint_t { return time_; }
-  auto location() const noexcept -> const Region& { return region_; }
-  auto location() noexcept -> Region& { return region_; }
+  auto operator==(const permit& other) const -> bool { return location == other.location && time == other.time; }
+  auto operator!=(const permit& other) const -> bool { return location != other.location || time != other.time; }
 
-  auto operator==(const permit& other) const -> bool { return region_ == other.region_ && time_ == other.time_; }
-  auto operator!=(const permit& other) const -> bool { return region_ != other.region_ || time_ != other.time_; }
-
-private:
-  Region region_;
-  uint_t time_;
+  Region location; //!< The region.
+  uint_t time;     //!< The time step.
 };
 
 //! \private
 template <std::size_t I, typename R> decltype(auto) get(permit<R>& ts)
 {
   if constexpr (I == 0)
-    return ts.location();
+    return ts.location;
   else
-    return ts.time();
+    return ts.time;
 }
 
 //! \private
 template <std::size_t I, typename R> decltype(auto) get(const permit<R>& ts)
 {
   if constexpr (I == 0)
-    return ts.location();
+    return ts.location;
   else
-    return ts.time();
+    return ts.time;
 }
 
 } // namespace uat
@@ -94,8 +88,8 @@ template <typename Region> struct hash<uat::permit<Region>>
   auto operator()(const uat::permit<Region>& p) const noexcept -> size_t
   {
     size_t seed = 0;
-    boost::hash_combine(seed, std::hash<Region>{}(p.location()));
-    boost::hash_combine(seed, std::hash<std::size_t>{}(p.time()));
+    boost::hash_combine(seed, std::hash<Region>{}(p.location));
+    boost::hash_combine(seed, std::hash<std::size_t>{}(p.time));
     return seed;
   }
 };
