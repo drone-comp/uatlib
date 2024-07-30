@@ -370,7 +370,7 @@ int main() {
     .factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
       // ...
     },
-    .trade_callback = [](uat::trade_info_t trade) -> void {
+    .trade_callback = [](uat::trade_info_t<Point> trade) -> void {
       if (trade.from == uat::no_owner)
         fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}\n",
                    trade.transaction_time, trade.to,

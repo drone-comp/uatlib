@@ -20,12 +20,12 @@ namespace uat
 using factory_fn = std::function<std::vector<any_agent>(uint_t, int)>;
 
 //! Type to represent the information in a trade transaction.
-struct trade_info_t
+template <region_compatible R> struct trade_info_t
 {
   uint_t transaction_time;
   uint_t from;
   uint_t to;
-  region_view location;
+  R location;
   uint_t time;
   value_t value;
 };
@@ -113,7 +113,7 @@ private:
 using permit_private_status_fn = std::function<permit_private_status_t(region_view, uint_t)>;
 
 //! Callback type that receives information about a trade transaction.
-using trade_info_fn = std::function<void(trade_info_t)>;
+template <region_compatible R> using trade_info_fn = std::function<void(trade_info_t<R>)>;
 
 //! Callback type that receives information about the status of the simulation.
 using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, permit_private_status_fn)>;
@@ -136,12 +136,12 @@ struct time_threshold_t
 using stop_criterion_t = std::variant<stop_criterion::no_agents_t, stop_criterion::time_threshold_t>;
 
 //! Options to configure the simulation.
-struct simulation_opts_t
+template <region_compatible R> struct simulation_opts_t
 {
   factory_fn factory;                //!< Function that generates agents for each iteration.
   std::optional<uint_t> time_window; //!< Maximum time ahead a permit can be traded.
   stop_criterion_t stop_criterion;   //!< The criterion to stop the simulation.
-  trade_info_fn trade_callback;      //!< Callback to receive information about a trade transaction.
+  trade_info_fn<R> trade_callback;   //!< Callback to receive information about a trade transaction.
   status_info_fn status_callback;    //!< Callback to receive information about the status of the simulation.
   std::optional<uint_t> seed;        //!< Random seed.
 };
@@ -160,7 +160,7 @@ struct agents_private_status_accessor
 //! \param factory A function that generates agents for each iteration.
 //! \param seed A random seed.
 //! \param opts Options to configure the simulation.
-template <region_compatible R> auto simulate(const simulation_opts_t& opts = {}) -> void
+template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = {}) -> void
 {
   std::mt19937 rnd(opts.seed ? *opts.seed : std::random_device{}());
 
