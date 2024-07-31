@@ -6,6 +6,7 @@
 
 #include <uat/permit.hpp>
 
+#include <span>
 #include <variant>
 
 #include <type_safe/reference.hpp>
@@ -34,7 +35,7 @@ struct available
 
   //! A function that lazily returns the history of trades for the permit.
   //! Each element contains the minimum value and the highest bid.
-  std::function<const std::vector<trade_value_t>&()> trades; // XXX is it the better approach? maybe a span?
+  std::span<const trade_value_t> trades;
 };
 
 //! Represents the public status of a permit that is owned by the agent.

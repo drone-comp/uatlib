@@ -177,17 +177,16 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
       using namespace permit_private_status;
       using namespace permit_public_status;
       const auto& pstatus = book(s, t);
-      using history_t = std::add_const_t<decltype(pstatus.history)>&;
-      return std::visit(cool::compose{[](out_of_limits) -> permit_public_status_t { return unavailable{}; },
-                                      [&](in_use status) -> permit_public_status_t {
-                                        return status.owner == id ? permit_public_status_t{owned{}} : unavailable{};
-                                      },
-                                      [&](on_sale status) -> permit_public_status_t {
-                                        return status.owner == id
-                                                 ? permit_public_status_t{unavailable{}}
-                                                 : available{status.min_value, [&]() -> history_t { return pstatus.history; }};
-                                      }},
-                        pstatus.current);
+      return std::visit(
+        cool::compose{
+          [](out_of_limits) -> permit_public_status_t { return unavailable{}; },
+          [&](in_use status) -> permit_public_status_t {
+            return status.owner == id ? permit_public_status_t{owned{}} : unavailable{};
+          },
+          [&](on_sale status) -> permit_public_status_t {
+            return status.owner == id ? permit_public_status_t{unavailable{}} : available{status.min_value, pstatus.history};
+          }},
+        pstatus.current);
     };
   };
 
