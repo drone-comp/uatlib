@@ -17,7 +17,7 @@ namespace uat
 {
 
 //! A function type that generates agents for each iteration.
-using factory_fn = std::function<std::vector<any_agent>(uint_t, int)>;
+using factory_t = std::function<std::vector<any_agent>(uint_t, int)>;
 
 //! Type to represent the information in a trade transaction.
 template <region_compatible R> struct trade_info_t
@@ -88,20 +88,19 @@ struct active
 //! Variant that represents the private status of an agent.
 using agent_private_status_t = std::variant<agent_private_status::inactive, agent_private_status::active>;
 
-//! Functor type that allows the simulation to access the private status of an agent.
-class agents_private_status_fn
+//! Private status of the collection of agents in the simulation.
+class agents_private_status_t
 {
-  friend class agents_private_status_accessor;
-
 public:
-  auto operator()(id_t) const -> agent_private_status_t;
+  auto status(id_t) const -> agent_private_status_t;
   auto active_count() const -> uint_t;
   auto active() const -> const std::vector<id_t>&;
 
-private:
   void insert(any_agent);
   void update_active(std::vector<id_t>);
+  auto at(id_t) -> any_agent&;
 
+private:
   uint_t first_id_ = 0u;
   std::deque<any_agent> agents_;
   std::vector<id_t> active_;
@@ -111,10 +110,10 @@ private:
 using permit_private_status_fn = type_safe::function_ref<permit_private_status_t(region_view, uint_t)>;
 
 //! Callback type that receives information about a trade transaction.
-template <region_compatible R> using trade_info_fn = std::function<void(trade_info_t<R>)>;
+template <region_compatible R> using trade_callback_t = std::function<void(trade_info_t<R>)>;
 
 //! Callback type that receives information about the status of the simulation.
-using status_info_fn = std::function<void(uint_t, const agents_private_status_fn&, permit_private_status_fn)>;
+using simulation_callback_t = std::function<void(uint_t, const agents_private_status_t&, permit_private_status_fn)>;
 
 namespace stop_criterion
 {
@@ -136,21 +135,12 @@ using stop_criterion_t = std::variant<stop_criterion::no_agents_t, stop_criterio
 //! Options to configure the simulation.
 template <region_compatible R> struct simulation_opts_t
 {
-  factory_fn factory;                //!< Function that generates agents for each iteration.
-  std::optional<uint_t> time_window; //!< Maximum time ahead a permit can be traded.
-  stop_criterion_t stop_criterion;   //!< The criterion to stop the simulation.
-  trade_info_fn<R> trade_callback;   //!< Callback to receive information about a trade transaction.
-  status_info_fn status_callback;    //!< Callback to receive information about the status of the simulation.
-  std::optional<uint_t> seed;        //!< Random seed.
-};
-
-//! \private
-struct agents_private_status_accessor
-{
-  auto active(const agents_private_status_fn&) const -> const std::vector<id_t>&;
-  auto at(agents_private_status_fn&, id_t) const -> any_agent&;
-  void insert(agents_private_status_fn&, any_agent) const;
-  void update_active(agents_private_status_fn&, std::vector<id_t>) const;
+  factory_t factory;                         //!< Generator of agents for each iteration.
+  std::optional<uint_t> time_window;         //!< Maximum time ahead a permit can be traded.
+  stop_criterion_t stop_criterion;           //!< The criterion to stop the simulation.
+  trade_callback_t<R> trade_callback;        //!< Callback to receive information about a trade transaction.
+  simulation_callback_t simulation_callback; //!< Callback to receive information about the status of the simulation.
+  std::optional<uint_t> seed;                //!< Random seed.
 };
 
 //! A simulation of a first-price sealed-bid auction.
@@ -162,8 +152,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
 {
   std::mt19937 rnd(opts.seed ? *opts.seed : std::random_device{}());
 
-  agents_private_status_fn agents;
-  constexpr agents_private_status_accessor accessor;
+  agents_private_status_t agents;
   std::vector<id_t> keep_active;
 
   uint_t t0 = 0;
@@ -212,20 +201,20 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
   };
 
   do {
-    if (opts.status_callback)
-      opts.status_callback(t0, std::as_const(agents), permit_private_status_fn(safe_book));
+    if (opts.simulation_callback)
+      opts.simulation_callback(t0, std::as_const(agents), permit_private_status_fn(safe_book));
 
     // Generate new agents
     if (opts.factory) {
       auto new_agents = opts.factory(t0, rnd());
       for (auto& agent : new_agents)
-        accessor.insert(agents, std::move(agent));
+        agents.insert(std::move(agent));
     }
 
     {
       // Bid phase
       std::vector<permit<R>> bids;
-      for (const auto id : accessor.active(agents)) {
+      for (const auto id : agents.active()) {
         auto bid = [&](region_view s, uint_t t, value_t v) -> bool {
           if (t < t0)
             return false;
@@ -244,20 +233,20 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
         };
 
         auto access = public_access(id);
-        accessor.at(agents, id).bid_phase(t0, bid_fn(bid), permit_public_status_fn(access), rnd());
+        agents.at(id).bid_phase(t0, bid_fn(bid), permit_public_status_fn(access), rnd());
       }
 
       // Trading
       if (bids.size() > 0) {
-        const auto first_active = accessor.active(agents).front();
+        const auto first_active = agents.active().front();
         for (const auto& [s, t] : bids) {
           const auto status = std::get<permit_private_status::on_sale>(book(s, t).current);
           if (opts.trade_callback)
             opts.trade_callback({t0, status.owner, status.highest_bidder, s, t, status.highest_bid});
 
-          accessor.at(agents, status.highest_bidder).on_bought(s, t, status.highest_bid);
+          agents.at(status.highest_bidder).on_bought(s, t, status.highest_bid);
           if (status.owner != no_owner && status.owner >= first_active)
-            accessor.at(agents, status.owner).on_sold(s, t, status.highest_bid);
+            agents.at(status.owner).on_sold(s, t, status.highest_bid);
 
           auto& pstatus = book(s, t);
           pstatus.current = permit_private_status::in_use{status.highest_bidder};
@@ -269,7 +258,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
     // Ask phase
     {
       std::vector<std::tuple<R, uint_t, uint_t, value_t>> asks;
-      for (const auto id : accessor.active(agents)) {
+      for (const auto id : agents.active()) {
         auto ask = [&](region_view s, uint_t t, value_t v) -> bool {
           if (t < t0)
             return false;
@@ -291,7 +280,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
         };
 
         auto access = public_access(id);
-        accessor.at(agents, id).ask_phase(t0, ask_fn(ask), permit_public_status_fn(access), rnd());
+        agents.at(id).ask_phase(t0, ask_fn(ask), permit_public_status_fn(access), rnd());
       }
 
       for (const auto& [s, t, id, v] : asks)
@@ -301,10 +290,10 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
     // Stop condition
     keep_active.clear();
     keep_active.reserve(agents.active_count());
-    for (const auto id : accessor.active(agents))
-      if (!accessor.at(agents, id).stop(t0, rnd()))
+    for (const auto id : agents.active())
+      if (!agents.at(id).stop(t0, rnd()))
         keep_active.push_back(id);
-    accessor.update_active(agents, std::move(keep_active));
+    agents.update_active(std::move(keep_active));
 
     if (data.size() > 0)
       data.pop_front();
