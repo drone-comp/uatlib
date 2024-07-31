@@ -107,10 +107,8 @@ private:
   std::vector<id_t> active_;
 };
 
-// TODO: is it possible to use function_ref?
-
 //! Function type that allows the simulation to access the private status of an agent.
-using permit_private_status_fn = std::function<permit_private_status_t(region_view, uint_t)>;
+using permit_private_status_fn = type_safe::function_ref<permit_private_status_t(region_view, uint_t)>;
 
 //! Callback type that receives information about a trade transaction.
 template <region_compatible R> using trade_info_fn = std::function<void(trade_info_t<R>)>;
@@ -183,7 +181,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
     return data[t - t0][{loc.downcast<R>(), t}];
   };
 
-  const auto safe_book = [&book](region_view loc, uint_t t) -> permit_private_status_t { return book(loc, t); };
+  auto safe_book = [&book](region_view loc, uint_t t) -> permit_private_status_t { return book(loc, t); };
 
   auto public_access = [&book](auto id) {
     return [id = id, &book](region_view s, uint_t t) -> permit_public_status_t {
@@ -215,7 +213,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
 
   do {
     if (opts.status_callback)
-      opts.status_callback(t0, std::as_const(agents), safe_book);
+      opts.status_callback(t0, std::as_const(agents), permit_private_status_fn(safe_book));
 
     // Generate new agents
     if (opts.factory) {
@@ -245,7 +243,8 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
           return std::visit(visitor, book(s, t).current);
         };
 
-        accessor.at(agents, id).bid_phase(t0, std::move(bid), public_access(id), rnd());
+        auto access = public_access(id);
+        accessor.at(agents, id).bid_phase(t0, bid_fn(bid), permit_public_status_fn(access), rnd());
       }
 
       // Trading
@@ -291,7 +290,8 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
           return std::visit(visitor, book(s, t).current);
         };
 
-        accessor.at(agents, id).ask_phase(t0, std::move(ask), public_access(id), rnd());
+        auto access = public_access(id);
+        accessor.at(agents, id).ask_phase(t0, ask_fn(ask), permit_public_status_fn(access), rnd());
       }
 
       for (const auto& [s, t, id, v] : asks)

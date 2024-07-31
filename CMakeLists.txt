@@ -4,7 +4,7 @@ project(UAT VERSION 0.5.0)
 add_subdirectory(external/fmt)
 add_subdirectory(external/cool)
 add_subdirectory(external/jules)
-# XXX: add_subdirectory(external/type_safe)
+add_subdirectory(external/type_safe)
 
 add_library(uat
   src/agent.cpp
@@ -19,7 +19,7 @@ target_compile_features(uat PRIVATE cxx_std_20)
 target_include_directories(uat PUBLIC include)
 
 find_package(Boost 1.56 REQUIRED)
-target_link_libraries(uat PUBLIC cool)
+target_link_libraries(uat PUBLIC cool type_safe)
 # target_link_libraries(uat PUBLIC jules fmt type_safe)
 
 option(UAT_BUILD_TEST "whether or not to build the test" OFF)

@@ -8,6 +8,8 @@
 
 #include <variant>
 
+#include <type_safe/reference.hpp>
+
 namespace uat
 {
 
@@ -32,7 +34,7 @@ struct available
 
   //! A function that lazily returns the history of trades for the permit.
   //! Each element contains the minimum value and the highest bid.
-  std::function<const std::vector<trade_value_t>&()> trades;
+  std::function<const std::vector<trade_value_t>&()> trades; // XXX is it the better approach? maybe a span?
 };
 
 //! Represents the public status of a permit that is owned by the agent.
@@ -45,16 +47,14 @@ struct owned
 using permit_public_status_t =
   std::variant<permit_public_status::unavailable, permit_public_status::available, permit_public_status::owned>;
 
-// TODO: is it possible to use function_ref?
-
 //! Function type that allows the agent to bid for a permit.
-using bid_fn = std::function<bool(region_view, uint_t, value_t)>;
+using bid_fn = type_safe::function_ref<bool(region_view, uint_t, value_t)>;
 
 //! Function type that allows the agent to ask for a permit.
-using ask_fn = std::function<bool(region_view, uint_t, value_t)>;
+using ask_fn = type_safe::function_ref<bool(region_view, uint_t, value_t)>;
 
 //! Function type that returns the public status of a permit.
-using permit_public_status_fn = std::function<permit_public_status_t(region_view, uint_t)>;
+using permit_public_status_fn = type_safe::function_ref<permit_public_status_t(region_view, uint_t)>;
 
 //! \brief Class to define the default behavior of an agent.
 //!
