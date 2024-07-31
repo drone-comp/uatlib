@@ -402,3 +402,20 @@ Let's run:
 cmake --build build
 ./build/uatlib-tutorial
 ```
+
+Do you want to guarantee that the simulation is deterministic?  You can set the
+seed of the random seed in the `simulate` function:
+
+```cpp
+int main() {
+  uat::simulate<Point>({
+    .factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
+      // ...
+    },
+    .trade_callback = [](uat::trade_info_t<Point> trade) -> void {
+      // ...
+    },
+    .seed = 42,
+  });
+}
+```

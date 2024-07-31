@@ -15,7 +15,7 @@ auto agents_private_status_t::status(id_t id) const -> agent_private_status_t { 
 
 auto agents_private_status_t::active_count() const -> uint_t { return active_.size(); }
 
-auto agents_private_status_t::active() const -> const std::vector<id_t>& { return active_; }
+auto agents_private_status_t::active() const -> std::span<const id_t> { return active_; }
 
 void agents_private_status_t::insert(any_agent a)
 {

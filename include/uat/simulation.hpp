@@ -92,13 +92,13 @@ using agent_private_status_t = std::variant<agent_private_status::inactive, agen
 class agents_private_status_t
 {
 public:
-  auto status(id_t) const -> agent_private_status_t;
-  auto active_count() const -> uint_t;
-  auto active() const -> const std::vector<id_t>&;
+  auto status(id_t) const -> agent_private_status_t; //!< Get the private status of an agent with the given id.
+  auto active_count() const -> uint_t;               //!< Get the number of active agents.
+  auto active() const -> std::span<const id_t>;      //!< Get the ids of the active agents.
 
-  void insert(any_agent);
-  void update_active(std::vector<id_t>);
-  auto at(id_t) -> any_agent&;
+  void insert(any_agent);                //!< \private
+  void update_active(std::vector<id_t>); //!< \private
+  auto at(id_t) -> any_agent&;           //!< \private
 
 private:
   uint_t first_id_ = 0u;
@@ -106,7 +106,7 @@ private:
   std::vector<id_t> active_;
 };
 
-//! Function type that allows the simulation to access the private status of an agent.
+//! Function reference that allows the simulation to access the private status of an agent.
 using permit_private_status_fn = type_safe::function_ref<permit_private_status_t(region_view, uint_t)>;
 
 //! Callback type that receives information about a trade transaction.
