@@ -93,25 +93,28 @@ private:
 
 int main()
 {
-  uat::simulate<Point>({.factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
-                          // Create 10 agents at time 0.
-                          if (time > 0)
-                            return {};
+  uat::simulate<Point>({
+    .factory = [](uat::uint_t time, int seed) -> std::vector<uat::any_agent> {
+      // Create 10 agents at time 0.
+      if (time > 0)
+        return {};
 
-                          std::vector<uat::any_agent> agents;
-                          std::mt19937 rng(seed);
+      std::vector<uat::any_agent> agents;
+      std::mt19937 rng(seed);
 
-                          while (agents.size() < 10)
-                            agents.push_back(Agent(rng()));
+      while (agents.size() < 10)
+        agents.push_back(Agent(rng()));
 
-                          return agents;
-                        },
-                        .trade_callback = [](uat::trade_info_t<Point> trade) -> void {
-                          fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}", trade.transaction_time, trade.to,
-                                     trade.location.x, trade.location.y, trade.time, trade.value);
-                          if (trade.from == uat::no_owner)
-                            fmt::print("\n");
-                          else
-                            fmt::print(" from agent {}\n", trade.from);
-                        }});
+      return agents;
+    },
+    .trade_callback = [](uat::trade_info_t<Point> trade) -> void {
+      fmt::print("@{}: agent {} bought permit at ({}, {}, {}) for {}", trade.transaction_time, trade.to, trade.location.x,
+                 trade.location.y, trade.time, trade.value);
+      if (trade.from == uat::no_owner)
+        fmt::print("\n");
+      else
+        fmt::print(" from agent {}\n", trade.from);
+    },
+    .seed = 42,
+  });
 }
