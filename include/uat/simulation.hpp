@@ -199,16 +199,19 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
                       opts.stop_criterion);
   };
 
-  do {
-    if (opts.simulation_callback)
-      opts.simulation_callback(t0, std::as_const(agents), permit_private_status_fn(safe_book));
-
+  while (true) {
     // Generate new agents
     if (opts.factory) {
       auto new_agents = opts.factory(t0, rnd());
       for (auto& agent : new_agents)
         agents.insert(std::move(agent));
     }
+
+    if (opts.simulation_callback)
+      opts.simulation_callback(t0, std::as_const(agents), permit_private_status_fn(safe_book));
+
+    if (stop())
+      break;
 
     {
       // Bid phase
@@ -297,7 +300,7 @@ template <region_compatible R> auto simulate(const simulation_opts_t<R>& opts = 
     if (data.size() > 0)
       data.pop_front();
     ++t0;
-  } while (!stop());
+  }
 }
 
 } // namespace uat
