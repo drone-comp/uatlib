@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['trade_5finfo_5ffn_124',['trade_info_fn',['../simulation_8hpp.html#ae4081fe1f1943c1ec6bd02e343a6154e',1,'uat']]]
+  ['trade_5fcallback_5ft_129',['trade_callback_t',['../simulation_8hpp.html#a28d8c65aa80e340a115eb5ee60aa74f9',1,'uat']]]
 ];

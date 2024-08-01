@@ -78,15 +78,19 @@ $(function() {
 <p>Defines the agent class and related types.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="permit_8hpp_source.html">uat/permit.hpp</a>&gt;</code><br />
+<code>#include &lt;span&gt;</code><br />
 <code>#include &lt;variant&gt;</code><br />
+<code>#include &lt;type_safe/reference.hpp&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for agent.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="agent_8hpp__incl.png" border="0" usemap="#ainclude_2uat_2agent_8hpp" alt=""/></div>
 <map name="ainclude_2uat_2agent_8hpp" id="ainclude_2uat_2agent_8hpp">
-<area shape="rect" title="Defines the agent class and related types." alt="" coords="284,5,447,32"/>
+<area shape="rect" title="Defines the agent class and related types." alt="" coords="379,5,541,32"/>
 <area shape="rect" href="permit_8hpp.html" title="Defines region utilities and the permit class." alt="" coords="247,80,366,107"/>
-<area shape="rect" title=" " alt="" coords="390,80,458,107"/>
+<area shape="rect" title=" " alt="" coords="391,80,444,107"/>
+<area shape="rect" title=" " alt="" coords="469,80,537,107"/>
+<area shape="rect" title=" " alt="" coords="561,80,741,107"/>
 <area shape="rect" href="type_8hpp.html" title="Basic types and utilities." alt="" coords="140,155,244,181"/>
 <area shape="rect" title=" " alt="" coords="268,155,345,181"/>
 <area shape="rect" title=" " alt="" coords="370,155,561,181"/>
@@ -135,18 +139,18 @@ Typedefs</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a9b1ab2ee3178b5246a36fd53a8d231f1">uat::permit_public_status_t</a> = std::variant&lt; permit_public_status::unavailable, permit_public_status::available, permit_public_status::owned &gt;</td></tr>
 <tr class="memdesc:a9b1ab2ee3178b5246a36fd53a8d231f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variant that represents the possible public status of a permit. <br /></td></tr>
 <tr class="separator:a9b1ab2ee3178b5246a36fd53a8d231f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6cc312381ee9681e69b305bc27f095f"><td class="memItemLeft" align="right" valign="top"><a id="aa6cc312381ee9681e69b305bc27f095f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#aa6cc312381ee9681e69b305bc27f095f">uat::bid_fn</a> = std::function&lt; bool(region_view, uint_t, value_t)&gt;</td></tr>
-<tr class="memdesc:aa6cc312381ee9681e69b305bc27f095f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function type that allows the agent to bid for a permit. <br /></td></tr>
-<tr class="separator:aa6cc312381ee9681e69b305bc27f095f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a936f1e5c470a7759770616787913cc10"><td class="memItemLeft" align="right" valign="top"><a id="a936f1e5c470a7759770616787913cc10"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a936f1e5c470a7759770616787913cc10">uat::ask_fn</a> = std::function&lt; bool(region_view, uint_t, value_t)&gt;</td></tr>
-<tr class="memdesc:a936f1e5c470a7759770616787913cc10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function type that allows the agent to ask for a permit. <br /></td></tr>
-<tr class="separator:a936f1e5c470a7759770616787913cc10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d6d92b91508d0212656ac48f2bc90d3"><td class="memItemLeft" align="right" valign="top"><a id="a6d6d92b91508d0212656ac48f2bc90d3"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a6d6d92b91508d0212656ac48f2bc90d3">uat::permit_public_status_fn</a> = std::function&lt; permit_public_status_t(region_view, uint_t)&gt;</td></tr>
-<tr class="memdesc:a6d6d92b91508d0212656ac48f2bc90d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function type that returns the public status of a permit. <br /></td></tr>
-<tr class="separator:a6d6d92b91508d0212656ac48f2bc90d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b9133472a5b441098c658194f6e3831"><td class="memItemLeft" align="right" valign="top"><a id="a1b9133472a5b441098c658194f6e3831"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a1b9133472a5b441098c658194f6e3831">uat::bid_fn</a> = type_safe::function_ref&lt; bool(region_view, uint_t, value_t)&gt;</td></tr>
+<tr class="memdesc:a1b9133472a5b441098c658194f6e3831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function reference that allows the agent to bid for a permit. <br /></td></tr>
+<tr class="separator:a1b9133472a5b441098c658194f6e3831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a352655b7f9f1a2e8186155c7deb62f84"><td class="memItemLeft" align="right" valign="top"><a id="a352655b7f9f1a2e8186155c7deb62f84"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a352655b7f9f1a2e8186155c7deb62f84">uat::ask_fn</a> = type_safe::function_ref&lt; bool(region_view, uint_t, value_t)&gt;</td></tr>
+<tr class="memdesc:a352655b7f9f1a2e8186155c7deb62f84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function reference that allows the agent to ask for a permit. <br /></td></tr>
+<tr class="separator:a352655b7f9f1a2e8186155c7deb62f84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a8ba84d9de95793a348c0c5db43ba5b"><td class="memItemLeft" align="right" valign="top"><a id="a7a8ba84d9de95793a348c0c5db43ba5b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="agent_8hpp.html#a7a8ba84d9de95793a348c0c5db43ba5b">uat::permit_public_status_fn</a> = type_safe::function_ref&lt; permit_public_status_t(region_view, uint_t)&gt;</td></tr>
+<tr class="memdesc:a7a8ba84d9de95793a348c0c5db43ba5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function reference that returns the public status of a permit. <br /></td></tr>
+<tr class="separator:a7a8ba84d9de95793a348c0c5db43ba5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>

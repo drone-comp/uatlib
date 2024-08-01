@@ -149,7 +149,7 @@ Creating agents</h1>
 <div class="line">  std::unordered_set&lt;uat::permit&lt;Point&gt;&gt; owned_;</div>
 <div class="line">  <a class="code" href="type_8hpp.html#addcf59e929a27563458b64c94da0b620">uat::value_t</a> cost_ = 0;</div>
 <div class="line">};</div>
-<div class="ttc" id="astructuat_1_1agent_html"><div class="ttname"><a href="structuat_1_1agent.html">uat::agent</a></div><div class="ttdoc">Class to define the default behavior of an agent.</div><div class="ttdef"><b>Definition:</b> agent.hpp:67</div></div>
+<div class="ttc" id="astructuat_1_1agent_html"><div class="ttname"><a href="structuat_1_1agent.html">uat::agent</a></div><div class="ttdoc">Class to define the default behavior of an agent.</div><div class="ttdef"><b>Definition:</b> agent.hpp:68</div></div>
 <div class="ttc" id="astructuat_1_1agent_html_a322c990fe9ce829a749c2cc521e4eab1"><div class="ttname"><a href="structuat_1_1agent.html#a322c990fe9ce829a749c2cc521e4eab1">uat::agent::stop</a></div><div class="ttdeci">virtual auto stop(uint_t time, int seed) -&gt; bool=0</div></div>
 <div class="ttc" id="atype_8hpp_html_a598a59e264c02aabe15cf4917348a005"><div class="ttname"><a href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a></div><div class="ttdeci">std::size_t uint_t</div><div class="ttdoc">Default unsigned integer type.</div><div class="ttdef"><b>Definition:</b> type.hpp:29</div></div>
 <div class="ttc" id="atype_8hpp_html_addcf59e929a27563458b64c94da0b620"><div class="ttname"><a href="type_8hpp.html#addcf59e929a27563458b64c94da0b620">uat::value_t</a></div><div class="ttdeci">double value_t</div><div class="ttdoc">Default type for price.</div><div class="ttdef"><b>Definition:</b> type.hpp:35</div></div>
@@ -182,7 +182,7 @@ Creating agents</h1>
 <p>But how an agent can acquire permits? The library provides a method two methods to control the actions of the agents: <code>agent::bid_phase</code> and <code>agent::ask_phase</code>. These methods are optional. If the user does not implement them, the agent won't do anything at that phase.</p>
 <p>The <code>bid_phase</code> method is called in the beginning of each time step. In this method, the agent can bid for permits to use the regions of the airspace at certain time that it is interested in. All bids are processed using a first-price sealed-bid auction. Then, the agent can decide to sell permits that it owns using the <code>ask_phase</code> method.</p>
 <p>Let's implement the <code>bid_phase</code> method:</p>
-<div class="fragment"><div class="line"><span class="keyword">auto</span> bid_phase(<a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> time, <a class="code" href="agent_8hpp.html#aa6cc312381ee9681e69b305bc27f095f">uat::bid_fn</a> bid, <a class="code" href="agent_8hpp.html#a6d6d92b91508d0212656ac48f2bc90d3">uat::permit_public_status_fn</a> status, <span class="keywordtype">int</span> seed) -&gt; <span class="keywordtype">void</span> <span class="keyword">override</span> {</div>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> bid_phase(<a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> time, <a class="code" href="agent_8hpp.html#a1b9133472a5b441098c658194f6e3831">uat::bid_fn</a> bid, <a class="code" href="agent_8hpp.html#a7a8ba84d9de95793a348c0c5db43ba5b">uat::permit_public_status_fn</a> status, <span class="keywordtype">int</span> seed) -&gt; <span class="keywordtype">void</span> <span class="keyword">override</span> {</div>
 <div class="line">  <span class="comment">// Check at which time all goals are available.</span></div>
 <div class="line">  <a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> target_time = time + 1;</div>
 <div class="line">  <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
@@ -202,12 +202,12 @@ Creating agents</h1>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; goal : goals_)</div>
 <div class="line">    bid(goal, target_time, rng.canon_sample());</div>
 <div class="line">}</div>
-<div class="ttc" id="aagent_8hpp_html_a6d6d92b91508d0212656ac48f2bc90d3"><div class="ttname"><a href="agent_8hpp.html#a6d6d92b91508d0212656ac48f2bc90d3">uat::permit_public_status_fn</a></div><div class="ttdeci">std::function&lt; permit_public_status_t(region_view, uint_t)&gt; permit_public_status_fn</div><div class="ttdoc">Function type that returns the public status of a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:57</div></div>
-<div class="ttc" id="aagent_8hpp_html_aa6cc312381ee9681e69b305bc27f095f"><div class="ttname"><a href="agent_8hpp.html#aa6cc312381ee9681e69b305bc27f095f">uat::bid_fn</a></div><div class="ttdeci">std::function&lt; bool(region_view, uint_t, value_t)&gt; bid_fn</div><div class="ttdoc">Function type that allows the agent to bid for a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:51</div></div>
+<div class="ttc" id="aagent_8hpp_html_a1b9133472a5b441098c658194f6e3831"><div class="ttname"><a href="agent_8hpp.html#a1b9133472a5b441098c658194f6e3831">uat::bid_fn</a></div><div class="ttdeci">type_safe::function_ref&lt; bool(region_view, uint_t, value_t)&gt; bid_fn</div><div class="ttdoc">Function reference that allows the agent to bid for a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:52</div></div>
+<div class="ttc" id="aagent_8hpp_html_a7a8ba84d9de95793a348c0c5db43ba5b"><div class="ttname"><a href="agent_8hpp.html#a7a8ba84d9de95793a348c0c5db43ba5b">uat::permit_public_status_fn</a></div><div class="ttdeci">type_safe::function_ref&lt; permit_public_status_t(region_view, uint_t)&gt; permit_public_status_fn</div><div class="ttdoc">Function reference that returns the public status of a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:58</div></div>
 </div><!-- fragment --><p>In this function, we first find the time at which all goals are available. Then, we bid for permits to use the regions of the airspace at that time. The bid amount is a random number between 0 and 1 generated by the <code>jules::random_engine</code> object.</p>
 <p>The <code>bid</code> function (with type <code>uat::bid_fn</code>) is called with the region, the time, and the bid amount. The <code>status</code> function (with type <code>uat::permit_public_status_fn</code>) return the status of the permit at the given region and time (check the <code>permit_public_status_t</code> variant for the possible values).</p>
 <p>Now, let's implement the <code>ask_phase</code> method:</p>
-<div class="fragment"><div class="line"><span class="keyword">auto</span> ask_phase(<a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> time, <a class="code" href="agent_8hpp.html#a936f1e5c470a7759770616787913cc10">uat::ask_fn</a> ask, <a class="code" href="agent_8hpp.html#a6d6d92b91508d0212656ac48f2bc90d3">uat::permit_public_status_fn</a> status, <span class="keywordtype">int</span>) -&gt; <span class="keywordtype">void</span> <span class="keyword">override</span> {</div>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> ask_phase(<a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> time, <a class="code" href="agent_8hpp.html#a352655b7f9f1a2e8186155c7deb62f84">uat::ask_fn</a> ask, <a class="code" href="agent_8hpp.html#a7a8ba84d9de95793a348c0c5db43ba5b">uat::permit_public_status_fn</a> status, <span class="keywordtype">int</span>) -&gt; <span class="keywordtype">void</span> <span class="keyword">override</span> {</div>
 <div class="line">  <span class="keywordflow">if</span> (owned_.size() == goals_.size())</div>
 <div class="line">    <span class="keywordflow">return</span>; <span class="comment">// Do not sell permits if all goals are achieved.</span></div>
 <div class="line"> </div>
@@ -215,7 +215,7 @@ Creating agents</h1>
 <div class="line">    ask(location, time, 0);</div>
 <div class="line">  owned_.clear();</div>
 <div class="line">}</div>
-<div class="ttc" id="aagent_8hpp_html_a936f1e5c470a7759770616787913cc10"><div class="ttname"><a href="agent_8hpp.html#a936f1e5c470a7759770616787913cc10">uat::ask_fn</a></div><div class="ttdeci">std::function&lt; bool(region_view, uint_t, value_t)&gt; ask_fn</div><div class="ttdoc">Function type that allows the agent to ask for a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:54</div></div>
+<div class="ttc" id="aagent_8hpp_html_a352655b7f9f1a2e8186155c7deb62f84"><div class="ttname"><a href="agent_8hpp.html#a352655b7f9f1a2e8186155c7deb62f84">uat::ask_fn</a></div><div class="ttdeci">type_safe::function_ref&lt; bool(region_view, uint_t, value_t)&gt; ask_fn</div><div class="ttdoc">Function reference that allows the agent to ask for a permit.</div><div class="ttdef"><b>Definition:</b> agent.hpp:55</div></div>
 </div><!-- fragment --><p>In this function, we sell permits that we own. We do not sell permits if all goals are achieved. Otherwise, we put the permits on sale with a minimum price of 0.</p>
 <p>Note that we clear the <code>owned_</code> set after selling the permits. We do not actually stop owning the permits, but we have not any interest in them anymore. The reason for this is that once we reach the ask phase and we have not achieved all goals, it means that our bids were not successful.</p>
 <p>How do we know if the agent has acquired a permit? The library provides two callbacks that are called when a permit is acquired or sold: <code>agent::on_bought</code> and <code>agent::on_sold</code>. These methods are optional. If the user does not implement them, the agent react when a permit is acquired or sold but the book in the simulation will still consider the permits as owned by the agent.</p>
@@ -289,6 +289,18 @@ Tracking trades</h1>
 <p>Let's run:</p>
 <div class="fragment"><div class="line">cmake --build build</div>
 <div class="line">./build/uatlib-tutorial</div>
+</div><!-- fragment --><p>Do you want to guarantee that the simulation is deterministic? You can set the seed of the random seed in the <code>simulate</code> function:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">  uat::simulate&lt;Point&gt;({</div>
+<div class="line">    .factory = [](<a class="code" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uat::uint_t</a> time, <span class="keywordtype">int</span> seed) -&gt; std::vector&lt;uat::any_agent&gt; {</div>
+<div class="line">      <span class="comment">// ...</span></div>
+<div class="line">    },</div>
+<div class="line">    .trade_callback = [](<a class="code" href="structuat_1_1trade__info__t.html">uat::trade_info_t&lt;Point&gt;</a> trade) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line">      <span class="comment">// ...</span></div>
+<div class="line">    },</div>
+<div class="line">    .seed = 42,</div>
+<div class="line">  });</div>
+<div class="line">}</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

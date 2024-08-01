@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>uatlib: uat::agents_private_status_fn Class Reference</title>
+<title>uatlib: uat::agents_private_status_t Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,44 +62,40 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>uat</b></li><li class="navelem"><a class="el" href="classuat_1_1agents__private__status__fn.html">agents_private_status_fn</a></li>  </ul>
+<li class="navelem"><b>uat</b></li><li class="navelem"><a class="el" href="classuat_1_1agents__private__status__t.html">agents_private_status_t</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classuat_1_1agents__private__status__fn-members.html">List of all members</a>  </div>
+<a href="classuat_1_1agents__private__status__t-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">uat::agents_private_status_fn Class Reference</div>  </div>
+<div class="title">uat::agents_private_status_t Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Functor type that allows the simulation to access the private status of an agent.  
- <a href="classuat_1_1agents__private__status__fn.html#details">More...</a></p>
+<p>Private status of the collection of agents in the simulation.  
+ <a href="classuat_1_1agents__private__status__t.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="simulation_8hpp_source.html">simulation.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae1fdfb93996dca4f854e009ae610c47b"><td class="memItemLeft" align="right" valign="top"><a id="ae1fdfb93996dca4f854e009ae610c47b"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (<a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a>) const -&gt; <a class="el" href="simulation_8hpp.html#acc086f3b9a67bee4aa95c54f17b718fa">agent_private_status_t</a></td></tr>
-<tr class="separator:ae1fdfb93996dca4f854e009ae610c47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3190835d7ffb361282d51b57f9bf245c"><td class="memItemLeft" align="right" valign="top"><a id="a3190835d7ffb361282d51b57f9bf245c"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>active_count</b> () const -&gt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a></td></tr>
-<tr class="separator:a3190835d7ffb361282d51b57f9bf245c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2029451241b1f53348199c13456b7bb0"><td class="memItemLeft" align="right" valign="top"><a id="a2029451241b1f53348199c13456b7bb0"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>active</b> () const -&gt; const std::vector&lt; <a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a> &gt; &amp;</td></tr>
-<tr class="separator:a2029451241b1f53348199c13456b7bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a844ac9b41727cfb679ec16c5400b1b58"><td class="memItemLeft" align="right" valign="top"><a id="a844ac9b41727cfb679ec16c5400b1b58"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>agents_private_status_accessor</b></td></tr>
-<tr class="separator:a844ac9b41727cfb679ec16c5400b1b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b7dbd28ddf7a4bc0b92f2b684fa1bfa"><td class="memItemLeft" align="right" valign="top"><a id="a1b7dbd28ddf7a4bc0b92f2b684fa1bfa"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classuat_1_1agents__private__status__t.html#a1b7dbd28ddf7a4bc0b92f2b684fa1bfa">status</a> (<a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a>) const -&gt; <a class="el" href="simulation_8hpp.html#acc086f3b9a67bee4aa95c54f17b718fa">agent_private_status_t</a></td></tr>
+<tr class="memdesc:a1b7dbd28ddf7a4bc0b92f2b684fa1bfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the private status of an agent with the given id. <br /></td></tr>
+<tr class="separator:a1b7dbd28ddf7a4bc0b92f2b684fa1bfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32b3e136aeab337089ed2b47af21ab96"><td class="memItemLeft" align="right" valign="top"><a id="a32b3e136aeab337089ed2b47af21ab96"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classuat_1_1agents__private__status__t.html#a32b3e136aeab337089ed2b47af21ab96">active_count</a> () const -&gt; <a class="el" href="type_8hpp.html#a598a59e264c02aabe15cf4917348a005">uint_t</a></td></tr>
+<tr class="memdesc:a32b3e136aeab337089ed2b47af21ab96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of active agents. <br /></td></tr>
+<tr class="separator:a32b3e136aeab337089ed2b47af21ab96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7e8d67573029f268feb137085f38b51"><td class="memItemLeft" align="right" valign="top"><a id="af7e8d67573029f268feb137085f38b51"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classuat_1_1agents__private__status__t.html#af7e8d67573029f268feb137085f38b51">active</a> () const -&gt; std::span&lt; const <a class="el" href="type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db">id_t</a> &gt;</td></tr>
+<tr class="memdesc:af7e8d67573029f268feb137085f38b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ids of the active agents. <br /></td></tr>
+<tr class="separator:af7e8d67573029f268feb137085f38b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Functor type that allows the simulation to access the private status of an agent. </p>
+<div class="textblock"><p>Private status of the collection of agents in the simulation. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/uat/<a class="el" href="simulation_8hpp_source.html">simulation.hpp</a></li>
 </ul>
