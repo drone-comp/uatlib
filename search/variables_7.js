@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['owner_110',['owner',['../structuat_1_1permit__private__status_1_1on__sale.html#ae2c125a6af609dc87ce1d46661a7b403',1,'uat::permit_private_status::on_sale']]]
+  ['seed_0',['seed',['../structuat_1_1simulation__opts__t.html#a9f497745b9d4a5aa144ab8a93670b1de',1,'uat::simulation_opts_t']]],
+  ['simulation_5fcallback_1',['simulation_callback',['../structuat_1_1simulation__opts__t.html#a30f5498e93187eca462bc70854704b5f',1,'uat::simulation_opts_t']]],
+  ['stop_5fcriterion_2',['stop_criterion',['../structuat_1_1simulation__opts__t.html#a35e7970b37b87d2751689b985f19e016',1,'uat::simulation_opts_t']]]
 ];

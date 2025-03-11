@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['current_101',['current',['../structuat_1_1permit__private__status__t.html#a91de13324c1a89bb9ea3691bca2ef3d6',1,'uat::permit_private_status_t']]]
+  ['factory_0',['factory',['../structuat_1_1simulation__opts__t.html#ae0e2403b84ba3702f9deeb4851223425',1,'uat::simulation_opts_t']]]
 ];

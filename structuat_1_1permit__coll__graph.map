@@ -1,4 +1,5 @@
 <map id="uat::permit&lt; Region &gt;" name="uat::permit&lt; Region &gt;">
-<area shape="rect" id="node1" title="A tuple containing a region and a time step." alt="" coords="5,95,175,121"/>
-<area shape="rect" id="node2" title=" " alt="" coords="57,5,123,32"/>
+<area shape="rect" id="Node000001" title="A tuple containing a region and a time step." alt="" coords="5,93,175,119"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="57,5,123,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,45,93,93,87,93,87,45"/>
 </map>

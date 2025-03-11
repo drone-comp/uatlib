@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['id_5ft_21',['id_t',['../type_8hpp.html#a7d930b40a930dbbc56650c99eccf92db',1,'uat']]],
-  ['in_5fuse_22',['in_use',['../structuat_1_1permit__private__status_1_1in__use.html',1,'uat::permit_private_status']]],
-  ['inactive_23',['inactive',['../structuat_1_1agent__private__status_1_1inactive.html',1,'uat::agent_private_status']]]
+  ['highest_5fbid_0',['highest_bid',['../structuat_1_1trade__value__t.html#a2d82e2d71245e68f83e8930bbcaed1ee',1,'uat::trade_value_t::highest_bid'],['../structuat_1_1permit__private__status_1_1on__sale.html#ae7a66536f7995f0cb8e9e3abe507b6ac',1,'uat::permit_private_status::on_sale::highest_bid']]],
+  ['highest_5fbidder_1',['highest_bidder',['../structuat_1_1permit__private__status_1_1on__sale.html#a4c1f44174e7c8ff34f0c681e64b96478',1,'uat::permit_private_status::on_sale']]],
+  ['history_2',['history',['../structuat_1_1permit__private__status__t.html#ae8ff30aa3b3716acff6fb31dac4728e3',1,'uat::permit_private_status_t']]]
 ];

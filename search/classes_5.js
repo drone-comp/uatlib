@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['region_5fview_78',['region_view',['../classuat_1_1region__view.html',1,'uat']]]
+  ['simulation_5fopts_5ft_0',['simulation_opts_t',['../structuat_1_1simulation__opts__t.html',1,'uat']]]
 ];

@@ -1,7 +1,11 @@
 <map id="include/uat/type.hpp" name="include/uat/type.hpp">
-<area shape="rect" id="node1" title="Basic types and utilities." alt="" coords="115,5,269,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,80,85,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="110,80,181,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="205,80,272,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="297,80,383,107"/>
+<area shape="rect" id="Node000001" title="Basic types and utilities." alt="" coords="115,5,269,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,85,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="170,33,83,75,80,70,167,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="110,79,181,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,32,163,69,158,66,182,30"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,79,272,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="202,30,226,66,221,69,197,32"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="297,79,383,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="217,28,305,70,302,75,215,33"/>
 </map>
