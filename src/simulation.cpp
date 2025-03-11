@@ -1,5 +1,6 @@
 #include <uat/simulation.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <deque>
 #include <functional>

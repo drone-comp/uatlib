@@ -18,8 +18,9 @@ target_compile_features(uat PRIVATE cxx_std_20)
 
 target_include_directories(uat PUBLIC include)
 
-find_package(Boost 1.56 REQUIRED)
+find_package(Boost CONFIG)
 target_link_libraries(uat PUBLIC cool type_safe)
+target_include_directories(uat PUBLIC Boost::headers)
 # target_link_libraries(uat PUBLIC jules fmt type_safe)
 
 option(UAT_BUILD_TEST "whether or not to build the test" OFF)
